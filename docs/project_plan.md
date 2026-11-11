@@ -8,7 +8,7 @@ numaraları bu tabloya göre yazılır ve otomatik olarak denetlenir (`scripts/r
 | 1 | Proje ortamının hazırlanması | Tamamlandı | Python 3.11 ortamı, bağımlılıklar, klasör iskeleti, testler, Git kuralları | — |
 | 2 | Veri setlerinin analizi ve doğrulanması | `COMPLETED` | Envanter, etiket ve sınıf doğrulama, sızıntı analizi, lisans, kullanım politikası, bölme manifesti, değerlendirme planı, son görsel inceleme | Model eğitimi, veri birleştirme, ham veri değişikliği |
 | 3 | Canlı kamera altyapısı | `COMPLETED` | OpenCV ile kamera erişimi, video akışı, FPS hesaplama, kamera hatalarının yönetimi, çoklu kişi analizi için görüntü akışı altyapısı. **Teknik işlev testleri:** FPS ölçümü ve hata yönetimi tamamlandı; gecikme ölçümü, yeniden bağlanma ve kare kaybı ölçümü kapanışta **ertelendi** (backlog B3-1…B3-5, aşağıda) | Yok: YOLO eğitimi, veri seti birleştirme, model doğruluğu değerlendirmesi |
-| 4 | Çoklu insan tespiti ve takibi | Planlandı | Kare başına çoklu insan tespiti, takip ID'leri (ByteTrack / BoT-SORT) | KKD modeli eğitimi |
+| 4 | Çoklu insan tespiti ve takibi | Devam ediyor (4A `READY_FOR_MANUAL_VERIFICATION`; 4B planlandı) | **4A:** kare başına çoklu insan tespiti (hazır YOLO, yalnızca `person`, kutu + güven + kişi sayısı, FPS/gecikme ölçümü). **4B:** takip ID'leri (ByteTrack / BoT-SORT) | KKD modeli eğitimi. 4A'da ayrıca: takip/Track ID, yüz tespiti, kimlik tanıma |
 | 5 | Çoklu yüz tespiti | Planlandı | Karedeki tüm görünür yüzlerin tespiti ve kişi izleriyle ilişkilendirilmesi | Kimlik tanıma |
 | 6 | Çalışan kayıt sistemi | Planlandı | En fazla 10 çalışanın KVKK uyumlu kaydı (`data/employees/`, Git dışı) | — |
 | 7 | Çoklu çalışan kimlik tanıma | Planlandı | ArcFace tabanlı tanıma; güvenilmeyen eşleşme "Bilinmeyen kişi" | — |
@@ -23,7 +23,7 @@ numaraları bu tabloya göre yazılır ve otomatik olarak denetlenir (`scripts/r
 | Değerlendirme | Aşama |
 |---|---|
 | Kamera teknik işlev testleri (FPS, gecikme, hata yönetimi) | 3 (FPS ölçümü ve hata yönetimi tamamlandı); gecikme, kare kaybı ve yeniden bağlanma: 4 ve 12 (backlog) |
-| İnsan tespiti/takibi ölçümleri | 4 |
+| İnsan tespiti/takibi ölçümleri | 4 (4A: hız/gecikme ölçüldü; Precision/Recall/mAP altyapısı hazır, etiketli bağımsız küme olmadığı için doğruluk ölçülmedi; 4B: takip) |
 | Yüz tespiti / kimlik tanıma ölçümleri | 5 / 7 |
 | KKD modeli geliştirme ölçümü (val) ve bağımsız saha testi | 8 (ilk model), 10 (geliştirilmiş model) |
 | Kişi düzeyi İSG uyumu (kaydedilmiş video) | 11 |
@@ -45,3 +45,12 @@ sürüm: `configs/project_stages.yaml` (`stage3_deferred_backlog`).
 | B3-3 | Gecikme (yakalama → sonuç) ölçümü | 4, sonra 12 | Anlamlı gecikme, model döngüdeyken ölçülür; nihai ölçüm Aşama 12'deki canlı kamera sistem testlerindedir |
 | B3-4 | Gerçek kamera FPS'inin ileri doğrulaması | 4, sonra 12 | Aşama 3'te yalnızca modelsiz FPS ölçüldü; model döngüdeyken, uzun süreli ve bağımsız zaman referansıyla doğrulanmalı |
 | B3-5 | Fiziksel bağlantı kopması testi | 12 | B3-1 ile birlikte; mevcut "kontrollü durma" davranışı istenirse daha önce de denenebilir |
+
+## Aşama 4 alt aşamaları
+
+Aşama 4 iki alt aşamada geliştirilir (kullanıcı kararı, 2026-11-12). Aşama 4 genel durumu, **4B de tamamlanana kadar `COMPLETED` olmaz**. Makine tarafından okunur sürüm: `configs/project_stages.yaml` (`stage4_substages`).
+
+| Alt aşama | Başlık | Durum | Not |
+|---|---|---|---|
+| 4A | Çoklu insan tespiti | `READY_FOR_MANUAL_VERIFICATION` | Kod, otomatik testler ve gerçek model doğrulamaları tamam. MacBook kamerasıyla canlı test ve yüksek açılı gerçek kamera testi **kullanıcı doğrulaması bekliyor**; doğruluk (Precision/Recall/mAP) etiketli test kümesi olmadığı için ölçülmedi. Ayrıntı: `docs/person_detection.md`, `reports/detection/STAGE_4A_REPORT.md` |
+| 4B | Çoklu insan takibi | Planlandı | Başlatılmadı; başlatma kararı kullanıcıya aittir |

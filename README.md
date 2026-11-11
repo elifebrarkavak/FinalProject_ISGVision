@@ -1,11 +1,15 @@
 # ISG_VISION — Yapay Zekâ Destekli Çoklu Çalışan Tanıma ve İSG Denetim Sistemi
 
-> **Mevcut durum: Aşama 3 — Canlı kamera altyapısı `COMPLETED` (2026-11-11, kullanıcı onayıyla kapatıldı).** Kamera/video okuma, ölçülen FPS, canlı pencere
+> **Mevcut durum: Aşama 4A — Çoklu insan tespiti `READY_FOR_MANUAL_VERIFICATION` (2026-11-12).** Hazır YOLO (`yolo11n.pt`) ile kare başına birden fazla insan tespiti (yalnızca `person`), canlı kutu/güven/kişi sayısı,
+> ölçülen FPS ve çıkarım gecikmesi, CPU/MPS karşılaştırması ve otomatik testler tamamlandı; **MacBook kamerasıyla canlı test ve yüksek açılı gerçek kamera testi kullanıcı doğrulaması bekliyor**, doğruluk (Precision/Recall/mAP) etiketli test kümesi olmadığı için ölçülmedi.
+> Aşama 4 genel durumu `COMPLETED` **değildir**: takip (Aşama 4B) başlatılmamıştır. Ayrıntı: [docs/person_detection.md](docs/person_detection.md), [reports/detection/STAGE_4A_REPORT.md](reports/detection/STAGE_4A_REPORT.md).
+>
+> Aşama 3 — Canlı kamera altyapısı `COMPLETED` (2026-11-11, kullanıcı onayıyla kapatıldı). Kamera/video okuma, ölçülen FPS, canlı pencere
 > (Q, Esc ve kırmızı kapatma düğmesiyle çıkış), CLI ve hata yönetimi tamamlandı. Gerçek kamera doğrulamaları (`camera:0`, 1280×720; Q, Esc ve pencere kapatma ile çıkış `exit=0`; FPS tanısı)
 > kullanıcı tarafından MacBook Pro M4 üzerinde yapıldı. Yeniden bağlanma, kare kaybı, gecikme ölçümü, ileri FPS doğrulaması ve fiziksel bağlantı kopması testi **ertelendi** (backlog B3-1…B3-5; yapılmadı).
 > Ayrıntı: [docs/camera_module.md](docs/camera_module.md), [reports/camera/STAGE_3_REPORT.md](reports/camera/STAGE_3_REPORT.md).
 > Aşama 1 (geliştirme ortamı) ve Aşama 2 (veri seti analizi, `COMPLETED`: `reports/dataset_audit/STAGE_2_CLOSURE_REPORT.md`) tamamlanmıştır.
-> Tespit, takip, yüz tanıma ve KKD denetimi özellikleri, veri birleştirme ve model eğitimi **henüz geliştirilmemiştir**; Aşama 4 başlatılmamıştır.
+> Takip, yüz tespiti/tanıma ve KKD denetimi özellikleri, veri birleştirme ve KKD model eğitimi **henüz geliştirilmemiştir**.
 
 ## 1. Proje adı
 
@@ -42,9 +46,9 @@ sistem geliştirmektir.
 | Dil | Python 3.11 | Evet |
 | Derin öğrenme | PyTorch (+ torchvision), MPS hızlandırma | Evet |
 | Görüntü işleme | OpenCV | Evet |
-| Nesne tespiti | Ultralytics YOLO | Evet (model indirilmedi) |
+| Nesne tespiti | Ultralytics YOLO | Evet; `yolo11n.pt` Aşama 4A'da resmî kaynaktan indirildi (Git dışı) |
 | Yüz tespiti | MediaPipe (veya SCRFD) | MediaPipe kurulu, kullanılmadı |
-| Çoklu kişi takibi | ByteTrack / BoT-SORT | Hayır (Aşama 4) |
+| Çoklu kişi takibi | ByteTrack / BoT-SORT | Hayır (Aşama 4B) |
 | Yüz tanıma | ArcFace tabanlı önceden eğitilmiş model | Hayır (Aşama 7) |
 | Sürüm kontrolü | Git | Evet |
 
@@ -240,6 +244,32 @@ Kod: `src/isg_vision/camera/` (`config.py`, `frame.py`, `capture.py`, `fps.py`, 
 * Kamera/video hataları (izin yok, kamera yok, kare okunamadı, bağlantı koptu, dosya yok/bozuk, pencere açılamadı) anlaşılır mesajla ve çıkış koduyla bildirilir; kaynaklar her koşulda serbest bırakılır.
 * Testler: `.venv/bin/python -m unittest discover -s tests` (gerçek kamera açmaz, izin istemez, ağ kullanmaz).
 
+## 13.3 Aşama 4A — Çoklu insan tespiti (komutlar)
+
+Durum: `READY_FOR_MANUAL_VERIFICATION`. Amaç: kamera paketinin kare akışındaki (`FrameSource` → `FramePacket`) her karede hazır YOLO modeliyle aynı anda birden fazla insanı tespit etmek, kutu + güven skoru + kişi sayısını göstermek,
+FPS ve çıkarım gecikmesini ölçmek. **Takip/Track ID, yüz ve kimlik yoktur**; görüntü kaydedilmez; model eğitilmez. Tam teknik doküman: [docs/person_detection.md](docs/person_detection.md).
+
+Kod: `src/isg_vision/human_detection/` (`config.py`, `results.py`, `person_detector.py`, `visualization.py`, `pipeline.py`, `cli.py`, `weights.py`, `benchmark.py`, `evaluation.py`, `errors.py`), betikler:
+`run_person_detection.py`, `download_person_model.py`, `benchmark_person_detection.py`, `evaluate_person_detection.py`.
+
+```bash
+.venv/bin/python scripts/download_person_model.py                                        # resmî yolo11n.pt (tek ağ adımı; SHA-256 doğrulanır; Git dışı)
+.venv/bin/python scripts/run_person_detection.py --source camera                         # canlı insan tespiti (MacBook kamerası)
+.venv/bin/python scripts/run_person_detection.py --source video --video-path /yol/video.mp4
+.venv/bin/python scripts/run_person_detection.py --source camera --device mps            # MPS yoksa hata verir; sessizce CPU'ya düşmez
+.venv/bin/python scripts/run_person_detection.py --source camera --device cpu --conf 0.35
+.venv/bin/python scripts/run_person_detection.py --source camera --no-display --max-frames 100
+.venv/bin/python scripts/benchmark_person_detection.py --video-path /yol/video.mp4       # CPU/MPS hız karşılaştırması (doğruluk ölçümü değildir)
+.venv/bin/python scripts/run_person_detection.py --help
+```
+
+* Model: Ultralytics **YOLO11n** (COCO, 80 sınıf; `person` kimliği metadata'dan okunur), lisans **AGPL-3.0**, `models/human_detection/yolo11n.pt` (Git dışı). Ayrıntı: docs/person_detection.md §3.
+* Ağ: yalnızca `download_person_model.py` indirir; tespit sırasında ağ kullanılmaz (`YOLO_OFFLINE=1`).
+* Pencere: `PERSONS: n`, FPS, çıkarım süresi, cihaz, kaynak, çözünürlük; çıkış `Q` / `Esc` / pencereyi kapatma / `Ctrl+C`.
+* **Güven skoru doğruluk değildir.** Precision/Recall/F1/mAP etiketli bağımsız test kümesi olmadığı için ölçülmedi; değerlendirme altyapısı hazırdır (`scripts/evaluate_person_detection.py`).
+* **Bekleyen manuel doğrulamalar:** MacBook kamerasıyla canlı test (Claude ortamında kamera izni yok) ve yüksek açılı gerçek kamera testi (`PENDING_REAL_CAMERA_VALIDATION`) — komutlar docs/person_detection.md §14.
+* Testler: `.venv/bin/python -m unittest discover -s tests` (gerçek kamera açmaz, ağ kullanmaz; gerçek model testleri ağırlık yoksa atlanır).
+
 ## 14. Geliştirme aşamaları
 
 Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [docs/project_plan.md](docs/project_plan.md)
@@ -248,7 +278,7 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 1. **Proje ortamının hazırlanması** — tamamlandı
 2. **Veri setlerinin analizi ve doğrulanması** — `COMPLETED` (22/22 kullanıcı kararı uygulandı; 990 görüntü = 794 train + 196 validation)
 3. **Canlı kamera altyapısı** — `COMPLETED`: OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
-4. **Çoklu insan tespiti ve takibi**
+4. **Çoklu insan tespiti ve takibi** — 4A tespit: `READY_FOR_MANUAL_VERIFICATION`; 4B takip: planlandı (Aşama 4 genel durumu 4B bitene kadar `COMPLETED` olmaz)
 5. **Çoklu yüz tespiti**
 6. **Çalışan kayıt sistemi**
 7. **Çoklu çalışan kimlik tanıma**
@@ -261,6 +291,11 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 Aşama kapanış kararları (Aşama 3 dahil) ve sonraki aşamaya geçiş kullanıcıya aittir.
 
 ## 15. Mevcut geliştirme durumu
+
+**Aşama 4A — Çoklu insan tespiti (`READY_FOR_MANUAL_VERIFICATION`, 2026-11-12).** Eklenenler: `PersonDetector` (hazır `yolo11n.pt`, yalnızca `person`, model bir kez yüklenir, `person` kimliği metadata'dan), `DetectionConfig`/cihaz seçimi (`auto`/`cpu`/`mps`; açıkça `mps` istenip yoksa hata),
+sonuç veri yapıları (piksel `xyxy`, güven), kutu/güven/kişi sayısı görselleştirmesi, `FrameSource` → `PersonDetector` döngüsü ve `scripts/run_person_detection.py`, ölçüm altyapısı (çıkarım gecikmesi, uçtan uca FPS, kare→sonuç gecikmesi), CPU/MPS karşılaştırması,
+Precision/Recall/F1/mAP değerlendirme altyapısı ve otomatik testler (mock testler ile **gerçek model** testleri ayrı). Gerçek model Ultralytics örnek görüntülerinde 4 ve 2 kişiyi tespit etti; sentetik 1280×720 videoda CPU ≈51,7 FPS / MPS ≈104,2 FPS (pencere yok, çıkarım medyanı 18,8 / 9,1 ms; yalnızca bu makine ve oturum).
+**Yapılmayan / bekleyen:** MacBook kamerasıyla canlı test ve yüksek açılı gerçek kamera testi (kullanıcı doğrulaması), doğruluk ölçümü (etiketli bağımsız küme yok), takip (4B). Aşama 4B başlatılmamıştır.
 
 **Aşama 3 — Canlı kamera altyapısı (`COMPLETED`, 2026-11-11, kullanıcı onayıyla).** Eklenenler: `FrameSource` (kamera/video ortak kare okuma), `FramePacket` (kare + metadata), `FpsMeter`, OpenCV
 canlı pencere (overlay), `scripts/run_camera.py`, hata yönetimi, macOS pencere kapatma düzeltmesi (`macos_window.py`) ve `tests/test_camera_*.py` otomatik testleri. Kullanıcı gerçek kamerada doğruladı:

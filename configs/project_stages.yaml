@@ -6,7 +6,7 @@ stages:
   1: {title: "Proje ortamının hazırlanması", status: completed}
   2: {title: "Veri setlerinin analizi ve doğrulanması", status: completed}
   3: {title: "Canlı kamera altyapısı", status: completed}
-  4: {title: "Çoklu insan tespiti ve takibi", status: planned}
+  4: {title: "Çoklu insan tespiti ve takibi", status: in_progress}   # 4A ve 4B alt aşamaları: aşağıdaki stage4_substages; 4 yalnızca 4B de bitince COMPLETED olur
   5: {title: "Çoklu yüz tespiti", status: planned}
   6: {title: "Çalışan kayıt sistemi", status: planned}
   7: {title: "Çoklu çalışan kimlik tanıma", status: planned}
@@ -33,6 +33,13 @@ stage3_deferred_backlog:
   B3-3: {title: "Gecikme ölçümü", target_stages: [4, 12]}
   B3-4: {title: "Gerçek kamera FPS'inin ileri doğrulaması", target_stages: [4, 12]}
   B3-5: {title: "Fiziksel bağlantı kopması testi", target_stages: [12]}
+
+# Aşama 4 alt aşamaları (kullanıcı kararı, 2026-11-12): 4A çoklu insan tespiti, 4B çoklu insan takibi. Aşama 4 genel durumu, 4B tamamlanana kadar COMPLETED OLMAZ.
+# 4A: kod, otomatik testler ve gerçek model doğrulamaları tamam; MacBook kamerasıyla canlı test ve yüksek açılı gerçek kamera testi kullanıcı doğrulaması bekliyor.
+# Ayrıntı: reports/detection/STAGE_4A_REPORT.md, docs/person_detection.md
+stage4_substages:
+  4A: {title: "Çoklu insan tespiti", status: ready_for_manual_verification}
+  4B: {title: "Çoklu insan takibi", status: planned}
 
 # Aşama 3 kapsamı DIŞINDA kalanlar (kullanıcı talimatı)
 stage3_excludes: ["YOLO eğitimi", "veri seti birleştirme", "model doğruluğu değerlendirmesi"]

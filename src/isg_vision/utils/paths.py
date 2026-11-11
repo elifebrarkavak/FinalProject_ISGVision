@@ -76,6 +76,11 @@ REQUIRED_FILES: tuple[str, ...] = (
     "docs/dataset_attributions.md",
     "scripts/run_camera.py",
     "docs/camera_module.md",
+    "scripts/run_person_detection.py",
+    "scripts/download_person_model.py",
+    "scripts/benchmark_person_detection.py",
+    "scripts/evaluate_person_detection.py",
+    "docs/person_detection.md",
 )
 
 CONFIG_FILES: tuple[str, ...] = ("configs/default.yaml", ".env.example")

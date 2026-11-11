@@ -30,6 +30,16 @@ MODULES = (
     "isg_vision.camera.preview",
     "isg_vision.camera.cli",
     "isg_vision.human_detection",
+    "isg_vision.human_detection.errors",
+    "isg_vision.human_detection.config",
+    "isg_vision.human_detection.results",
+    "isg_vision.human_detection.person_detector",
+    "isg_vision.human_detection.weights",
+    "isg_vision.human_detection.visualization",
+    "isg_vision.human_detection.pipeline",
+    "isg_vision.human_detection.cli",
+    "isg_vision.human_detection.benchmark",
+    "isg_vision.human_detection.evaluation",
     "isg_vision.tracking",
     "isg_vision.face_detection",
     "isg_vision.face_recognition",
@@ -41,6 +51,8 @@ MODULES = (
     "isg_vision.utils.device",
 )
 WATCHED = ("data", "models")
+# Aşama 4A: models/ altında YALNIZCA bu onaylı resmî ağırlık bulunabilir (SHA-256'sı weights.py'de sabitli; Git dışında).
+APPROVED_WEIGHTS = frozenset({"models/human_detection/yolo11n.pt"})
 
 
 def snapshot() -> dict[str, tuple[int, int]]:
@@ -74,6 +86,7 @@ class ImportSideEffectsTest(unittest.TestCase):
             p
             for suffix in ("*.pt", "*.onnx", "*.pth")
             for p in (ROOT / "models").rglob(suffix)
+            if p.relative_to(ROOT).as_posix() not in APPROVED_WEIGHTS
         ]
         self.assertEqual(weights, [], f"Beklenmeyen model dosyaları: {weights}")
 
