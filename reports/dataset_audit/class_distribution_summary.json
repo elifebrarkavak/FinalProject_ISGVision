@@ -1,0 +1,23 @@
+{
+  "construction_ppe": {
+    "excluded": {
+      "unsupported_rows": 0,
+      "images_without_labels": 0,
+      "empty_label_images": 0
+    }
+  },
+  "mendeley_ppe": {
+    "excluded": {
+      "unsupported_rows": 0,
+      "images_without_labels": 0,
+      "empty_label_images": 0
+    }
+  },
+  "site_safety": {
+    "excluded": {
+      "unsupported_rows": 0,
+      "images_without_labels": 0,
+      "empty_label_images": 23
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "total_items": 257,
+  "by_category": {
+    "Valid Annotation": 155,
+    "Needs Manual Review": 66,
+    "Likely Error": 32,
+    "Confirmed Error": 4
+  },
+  "by_dataset": {
+    "construction_ppe": {
+      "Valid Annotation": 19
+    },
+    "site_safety": {
+      "Needs Manual Review": 66,
+      "Valid Annotation": 136,
+      "Likely Error": 32,
+      "Confirmed Error": 4
+    }
+  },
+  "by_source": {
+    "audit_helmet": {
+      "Needs Manual Review": 5,
+      "Valid Annotation": 18,
+      "Likely Error": 1
+    },
+    "audit_no_helmet": {
+      "Valid Annotation": 17,
+      "Needs Manual Review": 6,
+      "Likely Error": 1
+    },
+    "audit_no_vest": {
+      "Needs Manual Review": 9,
+      "Valid Annotation": 13,
+      "Likely Error": 2
+    },
+    "audit_vest": {
+      "Needs Manual Review": 5,
+      "Valid Annotation": 18,
+      "Likely Error": 1
+    },
+    "duplicate_box": {
+      "Confirmed Error": 4
+    },
+    "empty_label": {
+      "Valid Annotation": 23
+    },
+    "near_duplicate_box": {
+      "Likely Error": 1
+    },
+    "semantic_conflict:helmet:overlap": {
+      "Needs Manual Review": 5,
+      "Likely Error": 5
+    },
+    "semantic_conflict:helmet:same_person": {
+      "Valid Annotation": 34,
+      "Needs Manual Review": 3
+    },
+    "semantic_conflict:vest:overlap": {
+      "Valid Annotation": 30,
+      "Needs Manual Review": 31
+    },
+    "semantic_conflict:vest:same_person": {
+      "Valid Annotation": 2,
+      "Needs Manual Review": 2
+    },
+    "tiny_box": {
+      "Likely Error": 21
+    }
+  },
+  "audit_sample": {
+    "n": 96,
+    "error_like": 5,
+    "wilson95": [
+      0.022,
+      0.116
+    ]
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "n_base_images": 90,
+  "thresholds": {
+    "min_inliers": 25,
+    "min_inlier_ratio": 0.3,
+    "uncertain_inliers": 12,
+    "min_ncc": 0.8,
+    "candidate_hash_bits": 10
+  },
+  "positives": {
+    "identity_resize50": {
+      "hash_candidate_rate": 1.0,
+      "orb_geometric_match_rate": 0.989,
+      "decided_same_image_derived_rate": 0.989,
+      "inliers_median": 410,
+      "inliers_p10": 349,
+      "ncc_median": 0.998,
+      "ncc_p10": 0.995
+    },
+    "jpeg_q30": {
+      "hash_candidate_rate": 1.0,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 1183,
+      "inliers_p10": 1083,
+      "ncc_median": 1.0,
+      "ncc_p10": 1.0
+    },
+    "brightness+25": {
+      "hash_candidate_rate": 0.989,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 1275,
+      "inliers_p10": 943,
+      "ncc_median": 0.996,
+      "ncc_p10": 0.978
+    },
+    "brightness-25": {
+      "hash_candidate_rate": 1.0,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 1415,
+      "inliers_p10": 1324,
+      "ncc_median": 1.0,
+      "ncc_p10": 1.0
+    },
+    "blur": {
+      "hash_candidate_rate": 1.0,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 830,
+      "inliers_p10": 728,
+      "ncc_median": 0.999,
+      "ncc_p10": 0.998
+    },
+    "flip": {
+      "hash_candidate_rate": 1.0,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 1500,
+      "inliers_p10": 1439,
+      "ncc_median": 1.0,
+      "ncc_p10": 1.0
+    },
+    "crop20": {
+      "hash_candidate_rate": 0.489,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 934,
+      "inliers_p10": 737,
+      "ncc_median": 1.0,
+      "ncc_p10": 1.0
+    },
+    "rot12": {
+      "hash_candidate_rate": 0.111,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 945,
+      "inliers_p10": 857,
+      "ncc_median": 1.0,
+      "ncc_p10": 1.0
+    },
+    "stretch640": {
+      "hash_candidate_rate": 1.0,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 1.0,
+      "inliers_median": 275,
+      "inliers_p10": 49,
+      "ncc_median": 0.999,
+      "ncc_p10": 0.995
+    },
+    "combo": {
+      "hash_candidate_rate": 0.0,
+      "orb_geometric_match_rate": 1.0,
+      "decided_same_image_derived_rate": 0.756,
+      "inliers_median": 673,
+      "inliers_p10": 506,
+      "ncc_median": 0.869,
+      "ncc_p10": 0.702
+    }
+  },
+  "negatives": {
+    "n_pairs": 400,
+    "hash_false_candidates": 0,
+    "geometric_false_positives": 2,
+    "inliers_max": 110,
+    "inliers_p99": 8,
+    "inliers_median": 3,
+    "geometric_matches_among_random_pairs": [
+      {
+        "inliers": 110,
+        "ncc": 0.702,
+        "path_a": "data/raw/mendeley_ppe/train/images/reflectivevest1529_jpg.rf.7c1c5d69cd7fae95164f9739cdd9874b.jpg",
+        "path_b": "data/raw/mendeley_ppe/train/images/reflectivevest-398_jpg.rf.04f96619c2e02b5efb07b07899d13d06.jpg"
+      },
+      {
+        "inliers": 62,
+        "ncc": 0.26,
+        "path_a": "data/raw/site_safety/train/images/construction-684-_jpg.rf.81acc46b837f53da38dcff475f2fcde6.jpg",
+        "path_b": "data/raw/site_safety/train/images/image_941_jpg.rf.3979c273f643ff197ba28daffcceaebc.jpg"
+      }
+    ]
+  },
+  "lsh_candidate_recall": {
+    "min_votes": 15,
+    "distractor_images": 6085,
+    "by_augmentation": {
+      "identity_resize50": 0.989,
+      "jpeg_q30": 1.0,
+      "brightness+25": 0.989,
+      "brightness-25": 1.0,
+      "blur": 1.0,
+      "flip": 1.0,
+      "crop20": 0.989,
+      "rot12": 1.0,
+      "stretch640": 0.489,
+      "combo": 1.0
+    }
+  }
+}

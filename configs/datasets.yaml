@@ -1,0 +1,83 @@
+# Aşama 2 - İSG veri seti kayıt defteri.
+# Yollar proje köküne görelidir. "published" alanları YEREL README/yaml dosyalarından
+# veya resmi sayfalardan alınmış yayımlanan değerlerdir; gerçek sayım sonuçları DEĞİLDİR.
+# "license" / "source" alanlarındaki "verification" notu, bilginin nereden doğrulandığını belirtir.
+
+datasets:
+  construction_ppe:
+    display_name: "Ultralytics Construction-PPE"
+    raw_dir: data/raw/construction_ppe
+    zip_patterns: ["construction-ppe*.zip"]
+    expected_class_names: [helmet, gloves, vest, boots, goggles, Person, no_helmet,
+                           no_goggle, no_gloves, no_boots, forklift, no_vest]
+    # Birbirini dışlaması gereken sınıf ID çiftleri (aynı bölgede örtüşürse şüpheli etiket)
+    contradiction_pairs: [[0, 6], [2, 11], [1, 8], [3, 9], [4, 7]]
+    # Anlamsal analiz için sınıf rolleri (Aşama 2 eksik giderme)
+    roles: {helmet: [0], no_helmet: [6], vest: [2], no_vest: [11], person: [5]}
+    published:
+      images: 1000
+      boxes: 14863
+      classes: 12
+      splits: {train: 800, val: 200, test: 0}
+      note: "Yerel README.md ve docs.ultralytics.com sayfası (ayrı test bölümü yok)"
+    source:
+      publisher: "Ultralytics team"
+      url: "https://docs.ultralytics.com/datasets/detect/construction-ppe/"
+      direct_zip: "https://github.com/ultralytics/assets/releases/download/v0.0.0/construction-ppe.zip"
+      version: "Sürüm numarası yok; 'November 2026' olarak yayımlanmış (yerel README)"
+    license:
+      type: "CC BY 4.0"
+      url: "https://creativecommons.org/licenses/by/4.0/"
+      verification: "Doğrulandı: yerel README.md ve resmi docs sayfası"
+      terms: "Atıf zorunlu; değişiklik yapıldıysa belirtilmeli; paylaşım ve uyarlamaya izin verir."
+      attribution: "Ultralytics Construction-PPE Dataset, Ultralytics team, November 2026, CC BY 4.0."
+
+  mendeley_ppe:
+    display_name: "Mendeley Data - Dataset of Personal Protective Equipment (PPE), v6"
+    raw_dir: data/raw/mendeley_ppe
+    zip_patterns: ["20250731-PPE2286*.zip"]
+    expected_class_names: [Helmet, NoHelmet, NoVest, Vest]
+    contradiction_pairs: [[0, 1], [3, 2]]
+    roles: {helmet: [0], no_helmet: [1], vest: [3], no_vest: [2]}
+    published:
+      images: 2286
+      boxes: null
+      classes: 4
+      splits: null
+      note: "Mendeley sayfası: 2,286 görüntü, 640x640 piksel"
+    source:
+      publisher: "Mei-Ling Huang, Ying Cheng (National Chin-Yi University of Technology)"
+      url: "https://data.mendeley.com/datasets/zkzghjvpn2/6"
+      doi: "10.17632/zkzghjvpn2.6"
+      version: "v6, yayım tarihi 28 Temmuz 2025"
+    license:
+      type: "CC BY 4.0"
+      url: "http://creativecommons.org/by/4.0"
+      verification: "Kısmen doğrulandı: resmi Mendeley sayfası ve API 'CC BY 4.0' diyor (yerel ZIP'in SHA-256'sı resmi API ile eşleşiyor); ÜST KAYNAK lisansları doğrulanamadı. Ayrıntı: configs/review/license_evidence.yaml"
+      terms: "Sayfa, veri setinin GitHub/Kaggle/Roboflow ve gerçek fotoğraflardan derlendiğini belirtiyor; bu üst kaynakların lisansları belirtilmemiş (doğrulanamadı)."
+      attribution: "Huang, M.-L.; Cheng, Y. Dataset of Personal Protective Equipment (PPE), Mendeley Data, v6, 2025. doi:10.17632/zkzghjvpn2.6"
+
+  site_safety:
+    display_name: "Roboflow Universe - Construction Site Safety v27 (YOLOv8)"
+    raw_dir: data/raw/site_safety
+    zip_patterns: ["Construction Site Safety*.zip"]
+    expected_class_names: [Hardhat, Mask, NO-Hardhat, NO-Mask, "NO-Safety Vest", Person,
+                           "Safety Cone", "Safety Vest", machinery, vehicle]
+    contradiction_pairs: [[0, 2], [7, 4], [1, 3]]
+    roles: {helmet: [0], no_helmet: [2], vest: [7], no_vest: [4], person: [5]}
+    published:
+      images: 2801
+      boxes: null
+      classes: 10
+      splits: null
+      note: "Yerel README.roboflow.txt: 'The dataset includes 2801 images'"
+    source:
+      publisher: "Roboflow Universe, workspace roboflow-universe-projects (veriyi bir Roboflow kullanıcısı sağlamış)"
+      url: "https://universe.roboflow.com/roboflow-universe-projects/construction-site-safety/dataset/27"
+      version: "v27, Roboflow'dan 10 Ocak 2023'te dışa aktarılmış (yerel README.roboflow.txt)"
+    license:
+      type: "CC BY 4.0"
+      url: "https://creativecommons.org/licenses/by/4.0/"
+      verification: "Yalnızca YEREL dosyalardan (data.yaml, README.dataset.txt); resmi Roboflow sayfaları HTTP 403 verdi, çevrimiçi DOĞRULANAMADI. Ayrıntı: configs/review/license_evidence.yaml"
+      terms: "README.dataset.txt, görüntülerin başka Roboflow Universe projelerinden ve iki YouTube videosundan türetildiğini söylüyor; üst kaynakların lisansları ayrıca doğrulanmadı."
+      attribution: "Construction Site Safety (v27), Roboflow Universe, roboflow-universe-projects, CC BY 4.0, https://universe.roboflow.com/roboflow-universe-projects/construction-site-safety/dataset/27"

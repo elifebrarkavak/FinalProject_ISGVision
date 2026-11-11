@@ -1,0 +1,149 @@
+# Aşama 2B/2C - VERİ KULLANIM POLİTİKASI (ileride uygulanacak; bu aşamada veri üzerinde çalıştırılmadı / veri değiştirilmedi).
+# Üretim: 2026-11-11 (2B), nihai sürüm 2026-11-11 (2C). Kararların gerekçe ve kanıtları:
+#   reports/dataset_audit/final_dataset_decisions.md (2B), reports/dataset_audit/STAGE_2_FINAL_REPORT.md (2C),
+#   configs/review/stage2c_decisions.yaml (2C görsel/analitik kayıtlar)
+# Doğrulama: scripts/apply_usage_policy.py (validate_policy), scripts/run_stage2c_checks.py, tests/test_stage2c_closure.py
+#
+# Durumlar (kullanım kategorileri):
+#   approved                    : sınıf uyumu + anotasyon kalitesi + kullanım hakkı doğrulandı
+#   quarantine                  : hatalı/şüpheli/belirsiz; şimdilik kullanılmaz
+#   needs_reannotation          : görüntü kullanılabilir ama etiketleri düzeltilmeli/yeniden çizilmeli
+#   pending_license_verification: hak/lisans doğrulaması tamamlanmamış KAYNAK (kaynak düzeyinde)
+# Kural: yalnızca doğrulanmış örnek onaylanır; hak durumu belirsiz kaynak asla otomatik onaylanmaz.
+# Kural: etiketsiz hedef nesne bırakmamak için başarısız kutu tek başına SİLİNMEZ; kutuyu içeren GÖRÜNTÜ kullanım dışı bırakılır.
+# Kural: orijinal veri/etiket/bölünme DEĞİŞTİRİLMEZ; türetilmiş çıktılar yeni klasörde üretilir (Aşama 8 eğitim hazırlığı / Aşama 9 birleştirme; plan: docs/project_plan.md).
+
+# Kural (2C): beklemedeki kaynak SİLİNMEZ; ham verisi ve tüm analiz kayıtları yeniden değerlendirme için korunur (raw_data_retention: keep).
+# Kural (2C): bekleme gerekçeleri (hold_reasons) kodla doğrulanır; geçerli değerler usage_policy.HOLD_REASONS.
+
+policy_version: 2
+target_classes: {0: helmet, 1: no_helmet, 2: vest, 3: no_vest}
+
+# Lisans/hak durumu (kanıt: configs/review/license_evidence.yaml, reports/dataset_audit/license_verification_report.md)
+sources:
+  construction_ppe:
+    license_status: verified_official          # resmi sayfa + arşivdeki lisans metni
+    rights_status: verified_publisher_original # yayıncı 'original dataset' diyor (insan toplu + üretilmiş görüntüler)
+    source_usage: approved_scope
+    class_map: {0: 0, 6: 1, 2: 2, 11: 3}       # helmet, no_helmet, vest, no_vest
+    ignored_classes: [1, 3, 4, 5, 7, 8, 9, 10] # hedef dışı sınıflar (eğitimde etiketlerin dışında bırakılır; hedef nesne değiller)
+    notes:
+      - "Taşınan (elde tutulan) baret de 'helmet' olarak etiketli (14 görüntü): sınıf 'baret nesnesi' demektir, 'takılı baret' değil."
+      - "Görüntülerin bir bölümü yapay üretilmiş (README: human-collected and generated); gerçek saha alanına kayma riski."
+      - "Ayrı test bölümü yok: bağımsız saha testi ZORUNLU (bkz. leakage.independent_field_test, docs/evaluation_plan.md)."
+    # 2C: nihai bölme. Yayıncı train/val bölünmesi korunur; bölümler arası dağılan kaynak birimi tek bölüme alınır.
+    # Önceki 2B önizlemesindeki (approved_now, %70/15/15) yeniden bölme bu karar ile GEÇERSİZDİR.
+    split_policy:
+      basis: original_publisher_split_with_unit_fix
+      unit_conflict_resolution: "Birimin kullanılan üyeleri farklı bölümlerdeyse birim çoğunluk bölümüne taşınır; eşitlikte train."
+      internal_test_split: none            # test = bağımsız saha testi (docs/evaluation_plan.md); val yalnızca model seçimi içindir
+      manifest: reports/dataset_audit/construction_ppe_split_manifest.csv
+    # 2C görüntü bazlı kararlar (kanıt: configs/review/stage2c_decisions.yaml). Orijinal dosyalar DEĞİŞTİRİLMEZ.
+    image_overrides:
+      data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg:
+        status: needs_reannotation
+        rule: CP-VISIBLE-TARGET-UNLABELED
+        evidence: "Çömelen kişinin baretsiz başı (gözlüklü) görünür ama no_helmet etiketi yok (görsel inceleme 2C)."
+    annotation_risk_rules: [CP-PERSON-ATTR-INCOMPLETE]
+    # 2D: 22 görüntülük son görsel incelemenin KULLANICI kararları. Yalnızca 'user_decision' sütunu uygulanır
+    # (model_decision yalnızca öneridir). Boş karar = kullanıcı kararı bekliyor (görüntü şimdilik işaretli 'approved' kalır,
+    # ancak kullanıcı doğrulaması sayılmaz). Kararlar scripts/apply_usage_policy.py çalıştırıldığında manifeste işlenir.
+    user_visual_review:
+      file: reports/dataset_audit/final_visual_review/review_decisions.csv
+      rule: USER-VISUAL-REVIEW
+      required_before_stage: 8     # Aşama 8 (ilk YOLO eğitimi) öncesi tüm satırlarda user_decision dolu olmalı
+  mendeley_ppe:
+    license_status: partially_verified         # veri seti lisansı CC BY 4.0 doğrulandı; ÜST KAYNAK lisansları doğrulanamadı
+    rights_status: rights_unverified           # filigranlı stok görseller, GitHub/Kaggle/Roboflow kaynaklı; hak sahipliği belgelenmemiş
+    source_usage: pending_license_verification
+    hold_reasons: [rights_unverified, annotation_quality, class_incompatibility]  # hak + eksik etiket (kalabalık) + Helmet (E05)
+    raw_data_retention: keep
+    checklist_items: {F02: external_verification_pending_source_excluded}
+    conditional_class_map: {1: 1, 3: 2, 2: 3}  # YALNIZCA hak doğrulanırsa: NoHelmet, Vest, NoVest
+    excluded_classes: {0: "E05: Helmet baş+baret kutusu helmet tanımıyla uyumsuz; dönüşüm güvenilir değil"}
+    conditional_rules: [MD-HELMET-IMAGE, MD-CROWD-INCOMPLETE]
+  site_safety:
+    license_status: verified_local_only        # CC BY 4.0 yalnızca yerel metadata; resmi sayfa HTTP 403, çevrimiçi doğrulanamadı
+    rights_status: rights_unverified           # YouTube kareleri + üst Roboflow projeleri (lisansları bilinmiyor)
+    source_usage: pending_license_verification
+    hold_reasons: [license_unverified, rights_unverified, label_noise, split_leakage, class_incompatibility]  # lisans + etiket + sızıntı (+E10/E12)
+    raw_data_retention: keep
+    checklist_items: {F01: external_verification_pending_source_excluded}
+    conditional_class_map: {0: 0, 7: 2}        # YALNIZCA hak doğrulanırsa: Hardhat, Safety Vest
+    ignored_classes: [1, 3, 5, 6, 8, 9]        # hedef dışı: Mask, NO-Mask, Person, Safety Cone, machinery, vehicle
+    excluded_classes:
+      2: "E10: NO-Hardhat saç/alın şeridi karışık; tam-baş alt kümesi güvenilir ayırt edilemedi"
+      4: "E12: NO-Safety Vest süzgeçle %90 kesinlik sağlanamadı"
+    conditional_rules: [RF-EXCLUDED-CLASS-IMAGE, RF-LIKELY-ERROR, RF-CONFLICT-UNRESOLVED, RF-TINY-TARGET, RF-PERSON-INCOMPLETE, RF-UNVERIFIED-NEGATIVE]
+
+# Görüntü seviyesi kurallar (kod: src/isg_vision/dataset_audit/usage_policy.py)
+rules:
+  MD-HELMET-IMAGE:
+    status: needs_reannotation
+    description: "Mendeley'de en az bir Helmet kutusu olan görüntü: Helmet satırları silinirse görüntüde etiketsiz baret kalır; görüntü yeniden etiketleme listesine alınır."
+  MD-CROWD-INCOMPLETE:
+    status: quarantine
+    params: {min_target_boxes: 3}
+    description: "Mendeley'de >=3 hedef kutulu (kalabalık) görüntü: görsel incelemede kalabalık sahnelerde etiket EKSİKLİĞİ görüldü; doğrulanana kadar karantina (önlem kuralı, doğrulanmış bir eşik DEĞİL)."
+  RF-EXCLUDED-CLASS-IMAGE:
+    status: needs_reannotation
+    description: "Roboflow'da NO-Hardhat veya NO-Safety Vest kutusu olan görüntü: sınıflar dışlandığından görüntüde etiketsiz hedef nesne kalır."
+  RF-LIKELY-ERROR:
+    status: quarantine
+    description: "label_review.csv'de Confirmed/Likely Error (çok küçük kutu, aşırı büyük Hardhat, kalite örneklemi hataları) içeren görüntü."
+  RF-CONFLICT-UNRESOLVED:
+    status: quarantine
+    description: "Çelişkili örtüşme adayı 'Needs Manual Review' kalan görüntü (belirsiz etiket sessizce kabul edilmez); C01/C03 özel kararlarına tabidir."
+  RF-TINY-TARGET:
+    status: quarantine
+    params: {min_target_height_px: 12}
+    description: "Hedef sınıf kutusu <12 px yüksekliğinde olan görüntü (güvenilir etiketlenemez)."
+  RF-PERSON-INCOMPLETE:
+    status: quarantine
+    params: {min_person_height_px: 60}
+    description: "Yüksekliği >=60 px olan bir Person kutusunda baş veya gövde özniteliği etiketi yoksa görüntü: eksik anotasyon riski (Roboflow'da kişilerin yalnızca %47'sinde hem baş hem gövde etiketi var; Construction-PPE'de %97)."
+  RF-UNVERIFIED-NEGATIVE:
+    status: quarantine
+    description: "Hedef kutusu olmayan görüntü: yalnızca görsel olarak doğrulanan 23 boş-etiket görüntüsü (EL01-EL23) geçerli negatif sayılır; diğerleri doğrulanamamış negatiftir."
+  CP-VISIBLE-TARGET-UNLABELED:
+    status: needs_reannotation
+    description: "Construction-PPE (2C): görsel incelemede görünür bir hedef nesnenin (baret/baş/yelek/gövde) etiketsiz olduğu görüntü. Yeniden etiketlenene kadar eğitim ve değerlendirmede kullanılmaz; orijinal etiket dosyası değiştirilmez."
+  CP-PERSON-ATTR-INCOMPLETE:
+    status: annotation_risk_flag
+    params: {min_person_height_px: 60}
+    description: "Construction-PPE (2C): >=60 px bir Person kutusunda baş veya gövde etiketi atanamıyor. Kaynakta kişilerin %97'si eksiksiz; işaretli kişilerin görsel örnekleminde çoğu kadraj dışı/örtülü/bulanık, 1 gerçek eksik etiket bulundu (690 -> CP-VISIBLE-TARGET-UNLABELED). Görüntü kullanımda kalır ama İŞARETLİDİR; Aşama 8 (ilk YOLO eğitimi) öncesi '*_unexplained' kodlu görüntüler insan tarafından incelenir (2D paketi: reports/dataset_audit/final_visual_review/) (bkz. construction_ppe_split_manifest.csv annotation_risk sütunu)."
+  USER-VISUAL-REVIEW:
+    status: per_user_decision
+    description: "Construction-PPE (2D): review_decisions.csv 'user_decision' = needs_reannotation | quarantine olan görüntü kullanım dışı olur; 'approved' kullanıcı doğrulamasıdır; boş = karar bekliyor. Geçersiz değer veya gerekçesiz dışlama politikayı geçersiz kılar (apply_usage_policy.py hata verir)."
+  DERIVE-DEDUPLICATE-ROWS:
+    status: derivation_step
+    description: "Türetme sırasında aynı sınıfta birebir aynı veya IoU>=0.95 etiket satırları tek satıra indirilir (orijinal dosya DEĞİŞMEZ). Etiketsiz nesne bırakmaz."
+
+# Veri sızıntısı önleme (bölme politikası). Kaynak grup üretimi: scripts/build_source_groups.py
+leakage:
+  split_unit: split_unit                    # source_group_manifest.csv: sert + yumuşak bağlantılı bileşen
+  never_split_a_unit: true                  # bir bölme birimi ASLA farklı bölümlere dağıtılmaz
+  random_image_level_split: forbidden
+  ratios: {train: 0.70, val: 0.15, test: 0.15}
+  seed: 42
+  unknown_relations: "Bağlantısı bilinmeyen görüntü ilişkisiz DEĞİLDİR (aday üretimi alt sınır). Yumuşak/belirsiz bağlantılar bölme birimine dahil edilir (birlikte tutulur)."
+  cross_dataset_units: "Birden çok veri setini kapsayan birim tek bölüme gider; veri setleri arası aynı-kaynak çiftleri birleşik sette tek örneğe indirilmelidir."
+  preview_only: true                        # 'proposed_split_preview' yalnızca BEKLEMEDEKİ kaynaklar için öneridir, UYGULANMAMIŞTIR
+  approved_source_split: "Onaylı kaynakların nihai bölmesi sources.<ad>.split_policy ile tanımlanır (construction_ppe_split_manifest.csv 'final_split')."
+  # 2C: gelecekte aynı kaynak grubunun farklı bölümlere düşmesini engelleyen uygulanabilir kurallar
+  group_integrity_rules:
+    - id: G1-GRAPH-BEFORE-SPLIT
+      rule: "Yeni eklenen her görüntü, bölmeden ÖNCE mevcut tüm görüntülere (beklemedeki kaynaklar dahil) karşı kopya/kaynak taramasından geçirilir: dosya SHA-256, pHash/dHash adayları + ORB (tam ve karo düzeyi) doğrulaması ve küçük resim NCC taraması (>=0.85 aday). Sonuç source_group_edges.csv'ye kenar olarak eklenir."
+    - id: G2-GENERATIVE-VARIANTS
+      rule: "Aynı taban kareden üretilmiş varyantlar (KKD/yüz değiştirilmiş, arka plan/poz aynı) SERT kenardır ve aynı bölme birimindedir."
+    - id: G3-SESSION-GROUPING
+      rule: "Saha/kamera verisinde bölme birimi en az kayıt oturumudur (kamera + gün + konum). Aynı oturumun kareleri asla farklı bölümlere düşmez; video kareleri tek tek bölünmez."
+    - id: G4-UNIT-ATOMIC
+      rule: "Bölme birim düzeyinde yapılır; görüntü kopyalanmaz. Mevcut bölünme ile çelişen birim çoğunluk bölümüne taşınır (eşitlikte train)."
+    - id: G5-TEST-ISOLATION
+      rule: "Bağımsız saha testi oturumları eğitim/val ile hiçbir kaynak, kişi-oturum veya kamera-gün paylaşmaz; test kümesi eşik/hiperparametre seçiminde kullanılmaz ve sürüm etiketiyle dondurulur."
+    - id: G6-AUTOMATED-GATE
+      rule: "Her bölme manifesti unit_integrity_violations() == {} ve onaylı-kapsam denetimlerinden geçmeden eğitimde kullanılamaz (scripts/run_stage2c_checks.py; tests/test_stage2c_closure.py)."
+  independent_field_test:
+    required: true
+    recommendation: "Hedef kamera/şantiye ortamından, eğitim verisiyle hiçbir kaynak bağı olmayan, oturum (kayıt) bazında gruplanmış >=300 görüntü; en az 100 baretli, 100 baretsiz, 100 yelekli, 100 yeleksiz örnek içermeli; iki bağımsız etiketleyici; ayarlama/eşik seçiminde kullanılmaz."

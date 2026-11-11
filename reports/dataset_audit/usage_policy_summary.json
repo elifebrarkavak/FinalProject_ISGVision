@@ -1,0 +1,125 @@
+{
+  "policy_version": 2,
+  "by_dataset": {
+    "construction_ppe": {
+      "images": 1000,
+      "status_now": {
+        "approved": 999,
+        "needs_reannotation": 1
+      },
+      "status_if_rights_verified": {
+        "approved": 999,
+        "needs_reannotation": 1
+      },
+      "reason_counts": {
+        "CP-VISIBLE-TARGET-UNLABELED": 1
+      }
+    },
+    "mendeley_ppe": {
+      "images": 2286,
+      "status_now": {
+        "pending_license_verification": 2286
+      },
+      "status_if_rights_verified": {
+        "quarantine": 482,
+        "needs_reannotation": 1167,
+        "approved": 637
+      },
+      "reason_counts": {
+        "MD-CROWD-INCOMPLETE": 482,
+        "MD-HELMET-IMAGE": 1390
+      }
+    },
+    "site_safety": {
+      "images": 2799,
+      "status_now": {
+        "pending_license_verification": 2799
+      },
+      "status_if_rights_verified": {
+        "quarantine": 2329,
+        "needs_reannotation": 348,
+        "approved": 122
+      },
+      "reason_counts": {
+        "RF-TINY-TARGET": 321,
+        "RF-PERSON-INCOMPLETE": 2097,
+        "RF-EXCLUDED-CLASS-IMAGE": 2173,
+        "RF-UNVERIFIED-NEGATIVE": 201,
+        "RF-CONFLICT-UNRESOLVED": 39,
+        "RF-LIKELY-ERROR": 31,
+        "RF-CONFLICT-OVERRIDE": 2
+      }
+    }
+  },
+  "approved_scope_target_boxes": {
+    "vest": 1815,
+    "helmet": 1576,
+    "no_helmet": 813,
+    "no_vest": 567
+  },
+  "approved_scope_final_split_images": {
+    "train": 800,
+    "val": 199
+  },
+  "approved_scope_target_boxes_by_final_split": {
+    "train": {
+      "helmet": 1282,
+      "no_helmet": 635,
+      "vest": 1475,
+      "no_vest": 438
+    },
+    "val": {
+      "helmet": 294,
+      "no_helmet": 178,
+      "vest": 340,
+      "no_vest": 129
+    }
+  },
+  "approved_scope_excluded_images": {
+    "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "CP-VISIBLE-TARGET-UNLABELED"
+  },
+  "approved_scope_unit_fixes": {
+    "construction_ppe": [
+      {
+        "split_unit": "SU00055",
+        "members": 3,
+        "original_splits": {
+          "train": 2,
+          "val": 1
+        },
+        "final_split": "train",
+        "moved": [
+          "data/raw/construction_ppe/images/val/source-9e10b0409f922546c35b276eb5a5756e.jpg"
+        ]
+      }
+    ]
+  },
+  "approved_scope_user_visual_review": {
+    "construction_ppe": {
+      "total": 22,
+      "user_decided": 0,
+      "pending_user": 22,
+      "by_user_decision": {
+        "approved": 0,
+        "needs_reannotation": 0,
+        "quarantine": 0
+      },
+      "complete": false
+    }
+  },
+  "approved_scope_annotation_risk": {
+    "flagged_images": 63,
+    "flagged_persons": 68,
+    "flagged_images_with_unexplained": 22,
+    "by_final_split": {
+      "excluded": 1,
+      "train": 47,
+      "val": 15
+    }
+  },
+  "split_preview_image_counts": {
+    "if_rights_verified/test": 114,
+    "if_rights_verified/train": 531,
+    "if_rights_verified/val": 114
+  }
+}

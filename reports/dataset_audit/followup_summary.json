@@ -1,0 +1,18 @@
+{
+  "checklist_items": 59,
+  "by_category": {
+    "B": 39,
+    "D": 11,
+    "A": 7,
+    "C": 2
+  },
+  "resolved_A_B": 46,
+  "remaining_D": 11,
+  "unresolved_technical_C": 2,
+  "stage2b_status": {
+    "resolved_verified": 43,
+    "resolved_excluded": 13,
+    "external_verification_pending_source_excluded": 2,
+    "pending_external_verification": 1
+  }
+}

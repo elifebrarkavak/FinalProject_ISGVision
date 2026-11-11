@@ -1,0 +1,29 @@
+# Projenin 12 aşamalı geliştirme planı — TEK REFERANS (kullanıcı tarafından belirlendi, 2026-11-11).
+# Belgelerdeki aşama numaraları bu dosyayla tutarlı olmalıdır (denetim: scripts/run_stage2c_checks.py T2D.2,
+# tests/test_stage2d_review.py). İnsan tarafından okunur sürüm: docs/project_plan.md
+
+stages:
+  1: {title: "Proje ortamının hazırlanması", status: completed}
+  2: {title: "Veri setlerinin analizi ve doğrulanması", status: ready_for_user_approval}
+  3: {title: "Canlı kamera altyapısı", status: planned}
+  4: {title: "Çoklu insan tespiti ve takibi", status: planned}
+  5: {title: "Çoklu yüz tespiti", status: planned}
+  6: {title: "Çalışan kayıt sistemi", status: planned}
+  7: {title: "Çoklu çalışan kimlik tanıma", status: planned}
+  8: {title: "İlk YOLO İSG modelinin eğitilmesi", status: planned}
+  9: {title: "Veri setlerinin birleştirilmesi", status: planned}
+  10: {title: "Geliştirilmiş YOLO İSG modelinin eğitilmesi", status: planned}
+  11: {title: "Kimlik tanıma ve İSG kontrolünün birleştirilmesi", status: planned}
+  12: {title: "Canlı arayüz, sistem testleri ve raporlama", status: planned}
+
+# Aşamalara bağlı kurallar (belgelerde bu numaralar kullanılır)
+milestones:
+  camera_infrastructure: 3          # OpenCV kamera erişimi, video akışı, FPS, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı
+  first_yolo_training: 8            # ilk YOLO İSG eğitimi; türetilmiş eğitim verisi ve manifest tabanlı sınıf dönüşümü bu aşamanın hazırlığında
+  dataset_merge: 9                  # Mendeley/Roboflow ancak lisans/hak doğrulanırsa; birleşik bölme G1-G6 ile
+  improved_yolo_training: 10
+  identity_ppe_integration: 11      # kişi düzeyi İSG kararı (yüz/kimlik + baret/yelek ilişkilendirmesi)
+  live_system_tests: 12             # canlı arayüz, uçtan uca sistem testleri, nihai raporlama
+
+# Aşama 3 kapsamı DIŞINDA kalanlar (kullanıcı talimatı)
+stage3_excludes: ["YOLO eğitimi", "veri seti birleştirme", "model doğruluğu değerlendirmesi"]

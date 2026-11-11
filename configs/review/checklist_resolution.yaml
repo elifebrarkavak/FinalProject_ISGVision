@@ -1,0 +1,41 @@
+# Manuel kontrol listesi (59 madde) çözümleri. Anahtarlar manual_review_checklist.md'deki sabit madde numaralarıdır.
+# category: A = otomatik doğrulandı | B = görsel olarak doğrulandı (görüntüler açılıp incelendi) |
+#           C = çözülemeyen teknik sorun (erişim/araç kısıtı) | D = kullanıcı kararı/onayı gerekir
+# C01-C10 ve D01-D15 maddeleri VERİ TABANLI çözülür (label_review.csv, duplicate_verification.csv); burada yalnızca statik maddeler var.
+# Görsel kararlar model destekli, tek değerlendirici incelemesidir (kullanıcı doğrulaması değil).
+
+items:
+  A01: {category: B, result: "EVET: kutu baret nesnesini sıkı sarıyor (8/8 karşılaştırma karosu, 24 kırpma). Kişi yüksekliğinin ~%13'ü, h/w=0.85. UYARI: 14 görüntüde baret ELDE taşınıyor ve yine 'helmet' etiketli.", evidence: "semantic_review/compare_helmet.jpg; semantic_metrics.json; label_review.csv (CO001-CO018)"}
+  A02: {category: B, result: "Başı (alın-çene) sarıyor, bütün insanı DEĞİL; kişi yüksekliğinin ~%17'si, h/w=1.10. Koyu başlık benzeri nesne içeren 1 şüpheli örnek.", evidence: "semantic_review/compare_no_helmet.jpg; semantic_metrics.json"}
+  A03: {category: B, result: "EVET: yelekli gövdeyi sarıyor (kişi yüksekliğinin ~%40'ı).", evidence: "semantic_review/compare_vest.jpg; semantic_metrics.json"}
+  A04: {category: B, result: "Gövde (göğüs-bel), tüm kişi değil; kişi yüksekliğinin ~%40'ı (vest ile aynı).", evidence: "semantic_review/compare_no_vest.jpg; semantic_metrics.json"}
+  A05: {category: B, result: "Baş+baret bölgesi (yüz dahil); Construction helmet kutusundan farklı (baş/gövde 0.53 vs 0.33). AYNI DEĞİL.", evidence: "semantic_review/compare_helmet.jpg; semantic_metrics.json (single_head_torso_pairs)"}
+  A06: {category: B, result: "Baş/yüz kutusu (saç, yüz); şapka/maske/mozaik yüz örnekleri var ancak 'baret yok' anlamı korunuyor. Baş/gövde 0.44 ≈ Construction no_helmet 0.43.", evidence: "semantic_review/compare_no_helmet.jpg; crops/class_01_NoHelmet.jpg"}
+  A07: {category: B, result: "Yelekli gövde bölgesi; Construction vest ile tutarlı (dolaylı ölçü).", evidence: "semantic_review/compare_vest.jpg"}
+  A08: {category: B, result: "Gövde kutuları; çoğu inşaat dışı sıradan sahne (alan kayması, anlam doğru).", evidence: "semantic_review/compare_no_vest.jpg"}
+  A09: {category: B, result: "Çoğunlukla sıkı; rastgele 24 örneklemde 18 geçerli, 5 belirsiz, 1 olası hata. Çok küçük/bulanık/kırpılmış kutular var (p10 yükseklik 8 px).", evidence: "roboflow_review/audit_helmet.jpg; label_review.csv (AH01-AH24)"}
+  A10: {category: B, result: "Karışık: ~10/24 kutu saç/alın şeridi veya kısmi yüz; AN13'te mavi baret görünüyor (HATA). 1/24 olası hata, 6/24 belirsiz.", evidence: "roboflow_review/audit_no_helmet.jpg; label_review.csv (AN01-AN24)"}
+  A11: {category: B, result: "24 örneklemde 18 geçerli, 5 belirsiz, 1 olası hata (karanlık cam bölgesi). Beyaz/koyu giysi örnekleri bu örneklemde görülmedi ancak şerit kutular var.", evidence: "roboflow_review/audit_vest.jpg; label_review.csv (AV01-AV24)"}
+  A12: {category: B, result: "24 örneklemde 13 geçerli, 9 belirsiz, 2 olası hata (parlak sarı-yeşil giysi 'yelek yok' etiketli); çoğu kutu yakın çekim/kısmi.", evidence: "roboflow_review/audit_no_vest.jpg; label_review.csv (AX01-AX24)"}
+  B01: {category: B, result: "Construction helmet ≈ Roboflow Hardhat (sıkı baret nesnesi); Mendeley Helmet FARKLI (baş+baret).", evidence: "semantic_validation_report.md; compare_helmet.jpg"}
+  B02: {category: B, result: "Construction no_helmet ≈ Mendeley NoHelmet (tüm baş); Roboflow NO-Hardhat heterojen (şerit/kısmi/hatalı).", evidence: "semantic_validation_report.md; compare_no_helmet.jpg"}
+  B03: {category: B, result: "vest/no_vest: üç veri setinde de gövde bölgesi (uyumlu); Roboflow'da kısmi/gürültülü kutular, Mendeley'de alan kayması.", evidence: "semantic_validation_report.md; compare_vest.jpg, compare_no_vest.jpg"}
+  B04: {category: D, result: "Kutuların görüntü içinde ve geçerli olduğu KODLA doğrulandı, anlamsal doğruluk crop/karşılaştırma sayfalarında görsel incelendi; ancak 12 adet tam görüntü contact_sheet dosyasına ayrıca göz atılmadı. İsteğe bağlı genel kontrol.", evidence: "visual_samples/*/contact_sheet_*.jpg"}
+  D16: {category: D, result: "Olgu: Mendeley val görüntülerinin %9.4'ü (43/457) train ile eşleşiyor (aynı video karesi/aynı fotoğraf). Kabul edilebilirlik bir POLİTİKA kararıdır; grup bazlı yeniden bölme önerilir (Aşama 2'de uygulanmadı).", evidence: "duplicate_verification_report.md"}
+  E01: {category: B, result: "confirmed (güvenilirlik Yüksek)", evidence: "candidate_class_mapping.yaml; semantic_validation_report.md"}
+  E02: {category: B, result: "confirmed (Yüksek)", evidence: "candidate_class_mapping.yaml"}
+  E03: {category: B, result: "confirmed (Yüksek)", evidence: "candidate_class_mapping.yaml"}
+  E04: {category: B, result: "confirmed (Yüksek)", evidence: "candidate_class_mapping.yaml"}
+  E05: {category: D, result: "incompatible: baş+baret kutusu helmet tanımıyla uyumsuz. Çözüm yolunun (dışarıda bırak / baş kutusu olarak ayrı sınıf / yeniden etiketle) KULLANICI kararı gerekir; hiçbiri uygulanmadı.", evidence: "semantic_validation_report.md"}
+  E06: {category: B, result: "confirmed (Orta): baş kutusu Construction no_helmet ile uyumlu; alan kayması notu", evidence: "candidate_class_mapping.yaml"}
+  E07: {category: B, result: "confirmed (Orta): dolaylı ölçü + görsel", evidence: "candidate_class_mapping.yaml"}
+  E08: {category: B, result: "confirmed (Orta): anlam doğru, çoğu görüntü inşaat dışı (alan kayması)", evidence: "candidate_class_mapping.yaml"}
+  E09: {category: B, result: "confirmed (Orta): semantik uyumlu; ~%4 olası hata, ~%21 belirsiz (n=24)", evidence: "label_review.csv"}
+  E10: {category: D, result: "incompatible: kutu tanımı heterojen + olası hatalı etiket. Filtrelenmiş alt küme kullanılsın mı / tamamen dışarıda mı bırakılsın KULLANICI kararı gerekir.", evidence: "roboflow_label_review_report.md"}
+  E11: {category: B, result: "confirmed (Orta): semantik uyumlu; ~%4 olası hata, ~%21 belirsiz (n=24)", evidence: "label_review.csv"}
+  E12: {category: D, result: "needs_review: olası hata %8, belirsiz %38 (n=24). Eşiği aşıyor; insan incelemesi/filtreleme kararı gerekir.", evidence: "roboflow_label_review_report.md"}
+  F01: {category: C, result: "Roboflow sayfaları HTTP 403 (erişim kontrolü, aşılmadı). Lisans yalnızca yerel dosyalardan (CC BY 4.0) biliniyor; çevrimiçi doğrulama araç/erişim kısıtı nedeniyle YAPILAMADI. Kullanıcı tarayıcıda açıp teyit edebilir.", evidence: "license_verification_report.md"}
+  F02: {category: C, result: "KISMEN çözüldü: Mendeley resmi sayfa+API 'CC BY 4.0' diyor ve yerel ZIP'in SHA-256'sı resmi API ile eşleşiyor. ÜST KAYNAKLARIN (GitHub/Kaggle/Roboflow) lisansları yayıncı tarafından listelenmediği ve Roboflow sayfaları 403 olduğu için DOĞRULANAMADI.", evidence: "license_verification_report.md"}
+  F03: {category: D, result: "Atıf metinleri hazır (license_verification_report.md); bitirme raporuna eklenip eklenmediği yalnızca KULLANICI tarafından bilinir.", evidence: "license_verification_report.md"}
+  F04: {category: A, result: "Olgu doğrulandı: sayfa 640x640 diyor, gerçekte 905 farklı çözünürlük (yalnızca 472/2286 görüntü 640x640). Veri bütünlüğü sorunu değil; eğitimde yeniden boyutlandırma ile giderilir. Rapora olgu farkı olarak yazıldı.", evidence: "dataset_inventory.csv; dataset_audit_report.md §4"}
+  G01: {category: D, result: "Birleştirmeye geçiş kararı kullanıcıya aittir. Ön koşulların durumu remaining_manual_reviews.md içinde.", evidence: "remaining_manual_reviews.md"}

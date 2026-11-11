@@ -1,0 +1,310 @@
+{
+  "date": "2026-11-11",
+  "total": 12,
+  "passed": 12,
+  "all_passed": true,
+  "checks": [
+    {
+      "id": "T1.1",
+      "question": "Construction-PPE 1000 görüntü yayıncı envanteriyle (manifest.jsonl: ad, bölüm, SHA-256, anotasyon sayısı) eşleşiyor mu?",
+      "passed": true,
+      "detail": {
+        "manifest_entries": 1000,
+        "image_files": 1000,
+        "duplicate_manifest_names": 0,
+        "missing_on_disk": 0,
+        "not_in_manifest": 0,
+        "split_mismatch": 0,
+        "sha256_mismatch": 0,
+        "annotation_count_mismatch": 0,
+        "missing_label": 0,
+        "by_split": {
+          "train": 800,
+          "val": 200
+        },
+        "ok": true
+      }
+    },
+    {
+      "id": "T1.2",
+      "question": "Dört hedef sınıfın kutu sayıları etiket dosyalarından yeniden sayıldığında önceki raporla ve politika özetiyle tutarlı mı?",
+      "passed": true,
+      "detail": {
+        "all_1000_by_original_split": {
+          "train": {
+            "helmet": 1282,
+            "no_helmet": 634,
+            "no_vest": 437,
+            "vest": 1476
+          },
+          "val": {
+            "helmet": 294,
+            "no_helmet": 179,
+            "no_vest": 130,
+            "vest": 340
+          }
+        },
+        "all_1000_total": {
+          "helmet": 1576,
+          "no_helmet": 813,
+          "no_vest": 567,
+          "vest": 1816
+        },
+        "expected_stage2b": {
+          "helmet": 1576,
+          "no_helmet": 813,
+          "vest": 1816,
+          "no_vest": 567
+        },
+        "usable_images_total": {
+          "helmet": 1576,
+          "no_helmet": 813,
+          "no_vest": 567,
+          "vest": 1815
+        },
+        "usage_policy_summary": {
+          "vest": 1815,
+          "helmet": 1576,
+          "no_helmet": 813,
+          "no_vest": 567
+        }
+      }
+    },
+    {
+      "id": "T6.2",
+      "question": "Veri kullanım politikası iç tutarlı ve kararlarla uyumlu mu (Construction onaylı; Mendeley hak+anotasyon, Roboflow lisans+etiket+sızıntı nedeniyle beklemede)?",
+      "passed": true,
+      "detail": {
+        "validate_policy_problems": [],
+        "approved_scope_sources": [
+          "construction_ppe"
+        ],
+        "hold_reasons": {
+          "mendeley_ppe": [
+            "rights_unverified",
+            "annotation_quality",
+            "class_incompatibility"
+          ],
+          "site_safety": [
+            "license_unverified",
+            "rights_unverified",
+            "label_noise",
+            "split_leakage",
+            "class_incompatibility"
+          ]
+        }
+      }
+    },
+    {
+      "id": "T6.1",
+      "question": "Onaylı veri kapsamı doğru mu (yalnızca Construction-PPE; Mendeley/Roboflow'dan hiçbir görüntü onaylı/bölmeli değil; kullanım dışı görüntü bölmede yok)?",
+      "passed": true,
+      "detail": {
+        "approved_images": 999,
+        "by_final_split": {
+          "train": 800,
+          "val": 199
+        },
+        "excluded_in_scope": {
+          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "CP-VISIBLE-TARGET-UNLABELED"
+        },
+        "mendeley_or_roboflow_in_approved_or_split": 0,
+        "pending_by_dataset": {
+          "mendeley_ppe": 2286,
+          "site_safety": 2799
+        }
+      }
+    },
+    {
+      "id": "T6.3",
+      "question": "Construction-PPE train/val sızıntısı için karar tanımlanmış mı (her bölümler arası birim için kayıtlı düzeltme + görsel karar)?",
+      "passed": true,
+      "detail": {
+        "cross_split_units_original": [
+          "SU00055"
+        ],
+        "unit_fixes": [
+          {
+            "split_unit": "SU00055",
+            "members": 3,
+            "original_splits": {
+              "train": 2,
+              "val": 1
+            },
+            "final_split": "train",
+            "moved": [
+              "data/raw/construction_ppe/images/val/source-9e10b0409f922546c35b276eb5a5756e.jpg"
+            ]
+          }
+        ],
+        "visual_decisions": [
+          "reassign_unit_to_train",
+          "keep_together_in_train"
+        ]
+      }
+    },
+    {
+      "id": "T6.4",
+      "question": "Kaynak gruplarının ayrılmama kuralı korunuyor mu (nihai bölme, tek tek kenarlar ve beklemedeki önizleme)?",
+      "passed": true,
+      "detail": {
+        "final_split_unit_violations": {},
+        "edge_violations": [],
+        "preview_violations": {},
+        "group_integrity_rules": [
+          "G1-GRAPH-BEFORE-SPLIT",
+          "G2-GENERATIVE-VARIANTS",
+          "G3-SESSION-GROUPING",
+          "G4-UNIT-ATOMIC",
+          "G5-TEST-ISOLATION",
+          "G6-AUTOMATED-GATE"
+        ]
+      }
+    },
+    {
+      "id": "T6.5",
+      "question": "Lisansı/hakkı doğrulanmamış veri yanlışlıkla onaylanıyor mu? (geçmesi için: HAYIR)",
+      "passed": true,
+      "detail": {
+        "approved_images_from_unverified_sources": 0,
+        "F01": "external_verification_pending_source_excluded",
+        "F02": "external_verification_pending_source_excluded",
+        "license_status": {
+          "construction_ppe": "verified_official",
+          "mendeley_ppe": "partially_verified",
+          "site_safety": "verified_local_only"
+        }
+      }
+    },
+    {
+      "id": "T6.6",
+      "question": "Eksik anotasyon riski taşıyan görüntüler doğru işaretleniyor mu (bağımsız yeniden hesapla birebir; görsel olarak doğrulanan eksik etiket kullanım dışı)?",
+      "passed": true,
+      "detail": {
+        "flagged_images": 63,
+        "flagged_persons": 68,
+        "recomputed_equal": true,
+        "overrides": {
+          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "needs_reannotation"
+        },
+        "flag_by_final_split": {
+          "train": 47,
+          "excluded": 1,
+          "val": 15
+        },
+        "roboflow_person_incomplete_marked_approved": 0
+      }
+    },
+    {
+      "id": "T6.7",
+      "question": "Önceki raporlarla güncel kararlar çelişiyor mu ve beklemedeki kaynakların analiz kayıtları korunuyor mu? (geçmesi için: çelişki yok, kayıt eksik yok)",
+      "passed": true,
+      "detail": {
+        "contradictions": [],
+        "missing_analysis_records": [],
+        "pending_raw_dirs_present": {
+          "mendeley_ppe": true,
+          "site_safety": true
+        }
+      }
+    },
+    {
+      "id": "T6.8",
+      "question": "Ham veri dosyaları korunuyor mu (Construction SHA-256 = yayıncı manifesti; tüm ham dosyalar özgün ZIP'lerle boyut+CRC32 eşleşmesi; ek/eksik dosya yok)?",
+      "passed": true,
+      "detail": {
+        "construction_sha256_mismatch": 0,
+        "zip_comparison": {
+          "construction_ppe": {
+            "zip": "/Users/ebrmac/Downloads/construction-ppe.zip",
+            "zip_present": true,
+            "zip_files": 2004,
+            "disk_files": 2004,
+            "placeholders_ignored": [
+              ".gitkeep"
+            ],
+            "missing_on_disk": 0,
+            "extra_on_disk": 0,
+            "content_mismatch": 0,
+            "ok": true
+          },
+          "mendeley_ppe": {
+            "zip": "/Users/ebrmac/Downloads/20250731-PPE2286y.zip",
+            "zip_present": true,
+            "zip_files": 4576,
+            "disk_files": 4576,
+            "placeholders_ignored": [
+              ".gitkeep"
+            ],
+            "missing_on_disk": 0,
+            "extra_on_disk": 0,
+            "content_mismatch": 0,
+            "ok": true
+          },
+          "site_safety": {
+            "zip": "/Users/ebrmac/Downloads/Construction Site Safety.v27-yolov8.yolov8.zip",
+            "zip_present": true,
+            "zip_files": 5601,
+            "disk_files": 5601,
+            "placeholders_ignored": [
+              ".gitkeep"
+            ],
+            "missing_on_disk": 0,
+            "extra_on_disk": 0,
+            "content_mismatch": 0,
+            "ok": true
+          }
+        },
+        "owner_writable_files": {
+          "construction_ppe": 0,
+          "mendeley_ppe": 0,
+          "site_safety": 0
+        },
+        "note": "Yalnızca okunarak karşılaştırıldı. owner_writable_files bilgi amaçlıdır (dosya izni), içerik değişikliği göstermez."
+      }
+    },
+    {
+      "id": "T2D.1",
+      "question": "22 görüntülük görsel inceleme paketi eksiksiz mi (CSV şeması, beklenen görüntü kümesi, her görüntü için sayfa, 22 sayfalık PDF, model önerisi + gerekçe, rehber)?",
+      "passed": true,
+      "detail": {
+        "rows": 22,
+        "by_split": {
+          "train": 18,
+          "val": 4
+        },
+        "csv_problems": [],
+        "missing_pages": [],
+        "missing_model_decision": [],
+        "pdf_pages": 22,
+        "model_decisions": {
+          "approved_candidate": 13,
+          "needs_reannotation": 5,
+          "quarantine": 1,
+          "inconclusive": 3
+        },
+        "user_review_state": {
+          "total": 22,
+          "user_decided": 0,
+          "pending_user": 22,
+          "by_user_decision": {
+            "approved": 0,
+            "needs_reannotation": 0,
+            "quarantine": 0
+          },
+          "complete": false
+        },
+        "note": "Kullanıcı kararı bekleyen satırlar bu denetimi başarısız yapmaz; kullanıcı doğrulaması SAYILMAZ (Aşama 8 öncesi kapı: check_visual_review.py --require-complete)."
+      }
+    },
+    {
+      "id": "T2D.2",
+      "question": "Belgelerdeki aşama numaraları 12 aşamalı planla tutarlı mı (Aşama 3 = kamera altyapısı; eğitim Aşama 8, birleştirme Aşama 9)?",
+      "passed": true,
+      "detail": {
+        "problems": [],
+        "reference": "configs/project_stages.yaml, docs/project_plan.md"
+      }
+    }
+  ]
+}

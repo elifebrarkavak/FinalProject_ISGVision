@@ -1,0 +1,38 @@
+{
+  "construction_ppe": {
+    "samples": 1000,
+    "label_files_read": 1000,
+    "boxes_parsed": 14863,
+    "samples_with_error_level_issue": 0,
+    "issues_by_code": {},
+    "issues_by_severity": {},
+    "class_warnings": []
+  },
+  "mendeley_ppe": {
+    "samples": 2286,
+    "label_files_read": 2286,
+    "boxes_parsed": 6038,
+    "samples_with_error_level_issue": 0,
+    "issues_by_code": {},
+    "issues_by_severity": {},
+    "class_warnings": []
+  },
+  "site_safety": {
+    "samples": 2799,
+    "label_files_read": 2799,
+    "boxes_parsed": 38835,
+    "samples_with_error_level_issue": 0,
+    "issues_by_code": {
+      "BOX_VERY_SMALL": 21,
+      "CONFLICTING_OVERLAP": 3,
+      "DUPLICATE_BOX": 4,
+      "LABEL_EMPTY": 23,
+      "NEAR_DUPLICATE_BOX": 1
+    },
+    "issues_by_severity": {
+      "info": 23,
+      "warning": 29
+    },
+    "class_warnings": []
+  }
+}

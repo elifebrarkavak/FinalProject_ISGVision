@@ -1,0 +1,78 @@
+# Aşama 2D — 22 görüntülük son görsel inceleme: MODEL ÖNERİLERİ (kullanıcı kararı DEĞİLDİR).
+# Tarih: 2026-11-11. Her sayfa (reports/dataset_audit/final_visual_review/pages/RNN_*.jpg) tek tek açılarak incelendi:
+#   orijinal görüntü, tüm kutular, şüpheli kişi yakınlaştırması ve baş/gövde bölgesi (kutulu/kutusuz) yakınlaştırması.
+# Karar ölçütü (yayıncı notuyla uyumlu: "örtülü/kadraj dışı bölge tek başına eksik KKD kanıtı değildir"):
+#   approved_candidate : hedef bölge (baş/gövde) örtülü, kadraj dışı veya ayırt edilemeyecek kadar küçük/bulanık/karanlık -> etiket beklenmez
+#   needs_reannotation : hedef bölge açıkça görünüyor ve benzer boyuttaki diğer kişiler etiketliyken etiketsiz
+#   quarantine         : birden çok etiket şüpheli; görüntünün etiket güvenilirliği yetersiz
+#   inconclusive       : hedef bölge kısmen görünüyor ama doğru sınıf/etiket gerekliliği görsel kanıtla belirlenemiyor
+# "Başka kişiye ait etiket" kontrolü: şüpheli kişi bölgesine değen her baş/gövde etiketinin hangi kişiye atandığı sayfada ve CSV'de
+# (nearby_labels) gösterilir. 22 görüntünün hiçbirinde şüpheli kişiye ait olması gereken bir etiketin yanlış kişiye atandığı görülmedi.
+
+reviews:
+  - image_path: data/raw/construction_ppe/images/train/source-3403f252ac25e929eef3aa6978ad32b4.jpg
+    model_decision: approved_candidate
+    model_rationale: "Ekskavatör operatörü; başı bom kolu ve kabin direği arkasında görünmüyor. Gövdesi 'vest' ile etiketli (doğru kişiye atanmış). Eksik hedef etiketi yok."
+  - image_path: data/raw/construction_ppe/images/train/source-48e807e0a9dac5ff23128d8ebe6406ab.jpg
+    model_decision: needs_reannotation
+    model_rationale: "Arkadan görünen uzak kişi (vest etiketli). Başı açıkça görünüyor (gri saç/bere, baret görünmüyor) ama helmet/no_helmet etiketi yok; aynı boyuttaki P2-P4'te baş etiketi var. Muhtemel eksik: no_helmet (küçük boyut nedeniyle sınıfı insan teyit etmeli)."
+  - image_path: data/raw/construction_ppe/images/train/source-4d2c19e2da2bb558fe8ec1deef1a2500.jpg
+    model_decision: approved_candidate
+    model_rationale: "Kamyonet yanındaki arka plan kişisi omzunda yük taşıyor; baş bölgesi yük/kol arkasında ayırt edilemiyor. Gövdesi 'no_vest' ile etiketli. Eksik hedef etiketi görülmedi."
+  - image_path: data/raw/construction_ppe/images/train/source-76c5536c698f0876c67f76c14c3c2e96.jpg
+    model_decision: needs_reannotation
+    model_rationale: "Forklift sürücüsü arkadan; koyu saçlı çıplak baş açıkça görünüyor, baret yok. 'vest' etiketli ama baş etiketi yok; sahnedeki diğer kişilerin başları no_helmet ile etiketli. Eksik: no_helmet."
+  - image_path: data/raw/construction_ppe/images/train/source-8ead761447ba33e51dc962d76ef2e676.jpg
+    model_decision: quarantine
+    model_rationale: "Forklift sürücüsü koyu kapüşonlu; baş görünür ama etiketsiz (baret görünmüyor). Ayrıca 'vest' kutusu reflektif olmayan koyu montun üzerinde: vest etiketi şüpheli. İki şüpheli etiket bir arada -> etiket güvenilirliği yetersiz."
+  - image_path: data/raw/construction_ppe/images/train/source-cd9d56ab45c2a6dd95a5a95a9531b3a4.jpg
+    model_decision: approved_candidate
+    model_rationale: "Silindir kabininde, renkli cam arkasında siluet; baş/gövde KKD durumu ayırt edilemiyor (yalnızca Person etiketli). Örtülme kuralına uygun."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-001.jpg
+    model_decision: needs_reannotation
+    model_rationale: "Alan derinliği nedeniyle bulanık arka plan kişisi; yine de koyu saçlı çıplak baş ve koyu mont seçilebiliyor. Benzer boyuttaki komşu arka plan kişileri (P3, P6) etiketli. Eksik: no_helmet ve no_vest (orta güven; bulanıklık nedeniyle insan teyidi gerekli)."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-003.jpg
+    model_decision: approved_candidate
+    model_rationale: "P3, öndeki iki kişinin arasında/arkasında duruyor; baş ve gövdesi eller, demir çubuk ve önündeki kişiler tarafından büyük ölçüde örtülü. Yakındaki vest (P1) ve no_vest (P2) doğru kişilere ait."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-007.jpg
+    model_decision: approved_candidate
+    model_rationale: "Kapı aralığındaki kadın; başı no_helmet ile etiketli. Gövdesi öndeki P2'nin kolu/gövdesi arkasında büyük ölçüde örtülü. Eksik hedef etiketi görülmedi (2C'de de tam çözünürlükte incelenmişti)."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-034.jpg
+    model_decision: approved_candidate
+    model_rationale: "Arka plandaki küçük kişi; başı no_helmet ile etiketli. Gövdesi öndeki kaynakçının eldiveni ve kaynak parlaması arkasında görünmüyor."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-264.jpg
+    model_decision: approved_candidate
+    model_rationale: "P3 görüntünün üst kenarında yalnızca bacak ve botlarıyla görünüyor; baş ve gövde kadraj dışında. Yakındaki helmet/vest P2'ye ait (doğru)."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-433.jpg
+    model_decision: approved_candidate
+    model_rationale: "P2 (gri kollu kişi) öndeki kadının arkasında; başı P1'in kaldırılmış kolu ve eli arkasında görünmüyor. Gövdesi 'vest' ile etiketli; vest L5 P1'e ait (doğru)."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-516.jpg
+    model_decision: inconclusive
+    model_rationale: "Tünel ağzından görünen çok bulanık (bokeh) uzak figür; turuncu bir bölge yelek olabilir ama baş/gövde ayırt edilemiyor. Etiket gerekip gerekmediği görsel kanıtla belirlenemiyor."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-517.jpg
+    model_decision: approved_candidate
+    model_rationale: "P2 beton bloğun arkasında; yalnızca bir bacak ve bot görünüyor. Baş/gövde görünmüyor."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-528.jpg
+    model_decision: needs_reannotation
+    model_rationale: "Ekskavatör kabinindeki operatör: başı no_helmet ile etiketli; üst gövdesi camdan görünüyor (koyu gömlek, parlak yelek yok) ama no_vest etiketi yok. Baş etiketlenip gövdenin etiketlenmemesi tutarsız. Eksik: no_vest (orta güven; cam/bulanıklık)."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-580.jpg
+    model_decision: approved_candidate
+    model_rationale: "Arka plandaki iş makinesi kabininde ters ışıkta karanlık siluet; KKD durumu ayırt edilemiyor."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-634.jpg
+    model_decision: approved_candidate
+    model_rationale: "Arka plandaki forkliftte çok karanlık ve bulanık figür; baş/gövde ayırt edilemiyor. Yakındaki vest L4 P1'e ait (doğru)."
+  - image_path: data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-642.jpg
+    model_decision: approved_candidate
+    model_rationale: "Arka planda çok küçük ve aşırı bulanık açık renkli leke; kişi olarak bile zor seçiliyor, KKD durumu belirlenemez."
+  - image_path: data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-022.jpg
+    model_decision: needs_reannotation
+    model_rationale: "Kalabalık atölyede arkası dönük arka plan kişisi (P10): çıplak baş (saç) ve koyu ceket görünüyor; aynı kalabalıktaki P6-P9 baş/gövde etiketli. Eksik: no_helmet ve no_vest. Yakındaki vest (P1) ve no_vest (P8) doğru kişilere ait. VAL görüntüsü: ölçümü etkiler."
+  - image_path: data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-023.jpg
+    model_decision: inconclusive
+    model_rationale: "Demiryolu boyunca uzakta, alan derinliği bulanıklığında küçük kişi; baş bölgesi koyu bir leke, baret olup olmadığı ve gövde KKD durumu güvenilir belirlenemiyor."
+  - image_path: data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-048.jpg
+    model_decision: inconclusive
+    model_rationale: "Ekskavatör operatörü cam arkasında; şapkalı baş no_helmet ile etiketli (doğru). Gövdede direksiyon arkasında turuncu-kahve bir giysi görünüyor: yansıtıcı yelek mi sıradan giysi mi ayırt edilemiyor (vest/no_vest belirsiz)."
+  - image_path: data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-622.jpg
+    model_decision: approved_candidate
+    model_rationale: "Tünelin derinliğinde çok küçük, karanlık siluet; baş/gövde ayırt edilemiyor."

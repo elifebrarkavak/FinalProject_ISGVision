@@ -1,0 +1,59 @@
+# Lisans kanıt kaydı (Aşama 2 eksik giderme). Kontrol tarihi: 2026-11-11.
+# Kanıt türleri: official_page (yayıncının resmi sayfası/API'si), local_file (arşiv içi dosya), third_party_doc (yayıncı dışı resmi dokümantasyon).
+# Doğrulama düzeyi: verified_official | verified_local_only | partially_verified | not_verified
+# "Yerel README'de CC BY 4.0 yazması bağımsız çevrimiçi doğrulama DEĞİLDİR" ilkesi uygulanmıştır.
+
+datasets:
+  construction_ppe:
+    claimed_license: "CC BY 4.0"
+    verification_status: verified_official
+    official_link: "https://docs.ultralytics.com/datasets/detect/construction-ppe/"
+    license_link: "https://creativecommons.org/licenses/by/4.0/"
+    evidence:
+      - {type: official_page, url: "https://docs.ultralytics.com/datasets/detect/construction-ppe/", result: "HTTP 200; 'released ... under Creative Commons Attribution 4.0 International (CC BY 4.0)'; önerilen atıf metni ve BibTeX var"}
+      - {type: local_file, url: "data/raw/construction_ppe/LICENSE.txt + README.md", result: "Tam CC BY 4.0 yasal metni ve aynı atıf talimatı arşivde mevcut"}
+    known_terms: "Atıf zorunlu (yaratıcı adı, telif/lisans bildirimi, lisans bağlantısı, değişiklik belirtme); paylaşım ve uyarlamaya izin verir. Önerilen atıf: 'Ultralytics Construction-PPE Dataset, Ultralytics team, November 2026, CC BY 4.0.'"
+    open_uncertainties:
+      - "Veri 'insan toplu ve üretilmiş görüntüler' içeriyor (README); üretilmiş görüntülerin ayrıca üçüncü taraf hakkı taşıyıp taşımadığı belgelenmemiş."
+      - "Sürüm numarası yok; 'November 2026' tarihine atıf yapılmalı."
+
+  mendeley_ppe:
+    claimed_license: "CC BY 4.0"
+    verification_status: partially_verified
+    official_link: "https://data.mendeley.com/datasets/zkzghjvpn2/6"
+    license_link: "http://creativecommons.org/by/4.0 (Mendeley API 'data_licence.url' alanında verildiği haliyle)"
+    evidence:
+      - {type: official_page, url: "https://data.mendeley.com/datasets/zkzghjvpn2/6", result: "HTTP 200; 'Licence: CC BY 4.0'; Yayım 28 Temmuz 2025, Sürüm 6, DOI 10.17632/zkzghjvpn2.6; yazarlar Mei-Ling Huang, Ying Cheng (National Chin-Yi University of Technology); 2,286 görüntü 640x640 iddiası"}
+      - {type: official_page, url: "https://data.mendeley.com/public-api/datasets/zkzghjvpn2", result: "HTTP 200 JSON; data_licence short_name 'CC BY 4.0', full_name 'Creative Commons Attribution 4.0 International'; dosya girdisi 20250731-PPE2286y.zip, 236065015 bayt, sha256 7a22e5cbc0327971f56358e14f1fce88fec1d6ab30cfac642de0746202ae1f0d"}
+      - {type: local_file, url: "~/Downloads/20250731-PPE2286y.zip", result: "YEREL ZIP'in SHA-256'sı ve boyutu resmi API ile BİREBİR eşleşiyor (kendi hesabımız): indirilen dosya resmi arşivle aynı"}
+      - {type: local_file, url: "data/raw/mendeley_ppe/README.dataset.txt", result: "Veri seti Roboflow Universe projesi 'ying2001/20250731-ppe2286-m0ega' (v1, 26 Tem 2025) olarak dışa aktarılmış; 'License: CC BY 4.0' (yerel, bağımsız doğrulama değil)"}
+      - {type: official_page, url: "https://data.mendeley.com/faq", result: "Mendeley SSS: depositor veriye sahip kalır; telifli içerik (sahibi olmadığınız görüntü vb.) yüklenmemelidir; lisans alanı varsayılan CC BY 4.0'dır. Yayıncı bu veri setindeki üçüncü taraf görsellerin haklarını ayrıca teyit etmiyor"}
+      - {type: official_page, url: "https://creativecommons.org/faq/", result: "CC lisansları yalnızca lisans verenin sahip olduğu haklar için geçerlidir; üçüncü taraf materyal ayrıca işaretlenmeli (SSS'ten özetlenen ifade; sayfanın bir kısmı özet olarak okundu)"}
+    known_terms: "CC BY 4.0: uygun atıf, lisans bağlantısı, değişiklik belirtme. Mendeley API açıklaması: 'üçüncü tarafa ait olarak tanımlanan içerik için ek izin gerekebilir'."
+    open_uncertainties:
+      - "Görseller 'GitHub, Kaggle, Roboflow ve gerçek fotoğraflar'dan derlenmiş (sayfa: yalnızca genel kaynak adları; kaynak listesi, bağlantı ve üst kaynak lisansları YOK)."
+      - "Üst kaynakların lisansları ve görsel bazında hak sahipliği DOĞRULANAMADI; veri setinin CC BY 4.0 olması, içindeki üçüncü taraf görseller için otomatik hak doğrulaması sağlamaz (Mendeley sayfası da bunu belirtiyor)."
+      - "Görsel incelemede (bu aşamada) veri setindeki bazı görüntülerin ticari fotoğraf/ürün resimleri (filigranlı stok fotoğraf, ürün fotoğrafı) olduğu görüldü: kaynak haklarının ayrıca değerlendirilmesi gerekir."
+      - "Mendeley sayfası 'resmi YOLO biçimi, 640x640' diyor; gerçekte 905 farklı çözünürlük var (olgu farkı)."
+      - "Roboflow proje sayfası (ying2001/20250731-ppe2286-m0ega) HTTP 403 verdi; çevrimiçi doğrulanamadı."
+      - "Mendeley sitesinin altbilgisi site içeriği için metin/veri madenciliği ve yapay zekâ eğitimi haklarını saklı tuttuğunu söylüyor; bu site içeriği içindir, dataset lisansı CC BY 4.0'dır (açık erişim içerik için CC şartları geçerli). Hukuki yorum değildir."
+
+  site_safety:
+    claimed_license: "CC BY 4.0"
+    verification_status: verified_local_only
+    official_link: "https://universe.roboflow.com/roboflow-universe-projects/construction-site-safety/dataset/27"
+    license_link: "https://creativecommons.org/licenses/by/4.0/"
+    evidence:
+      - {type: official_page, url: "https://universe.roboflow.com/roboflow-universe-projects/construction-site-safety/dataset/27", result: "HTTP 403 Forbidden (erişim kontrolü); aşılmaya çalışılmadı"}
+      - {type: official_page, url: "https://universe.roboflow.com/roboflow-universe-projects/construction-site-safety", result: "HTTP 403 Forbidden"}
+      - {type: local_file, url: "data/raw/site_safety/data.yaml", result: "'roboflow: workspace roboflow-universe-projects, project construction-site-safety, version 27, license: CC BY 4.0' (Roboflow dışa aktarım metadatası)"}
+      - {type: local_file, url: "data/raw/site_safety/README.dataset.txt", result: "'Provided by a Roboflow user. License: CC BY 4.0'; görüntüler başka Roboflow Universe projelerinden ve iki YouTube videosundan klonlanmış"}
+      - {type: local_file, url: "data/raw/site_safety/README.roboflow.txt", result: "10 Ocak 2023 dışa aktarım, v27, 2801 görüntü, ön işleme ve augmentation listesi"}
+      - {type: official_page, url: "https://docs.roboflow.com/ ve https://roboflow.com/universe", result: "HTTP 200 ancak Universe lisans alanının tanımı veya üçüncü taraf içerik sorumluluğu hakkında metin bulunamadı"}
+      - {type: official_page, url: "https://docs.roboflow.com/datasets/create-and-upload/adding-data", result: "HTTP 200; 'You retain ownership over all images and videos you upload' (yükleyici sahipliği); Universe lisansını tanımlamıyor"}
+    known_terms: "Yerel metadata CC BY 4.0 diyor (atıf + değişiklik belirtme varsayılır); resmi sayfadan bağımsız doğrulama YOK."
+    open_uncertainties:
+      - "Lisans yalnızca arşivdeki Roboflow dışa aktarım metadatasından ve README'den biliniyor; yayıncının sayfası (403) ve Roboflow dokümantasyonu bu bilgiyi doğrulamadı."
+      - "Üst projelerin sayfaları (personal-protective-equipment-combined-model, people-and-ladders, safety-vests, excavators-cwlh0, mit-indoor-scene-recognition, people-detection-general, construction-madness) HTTP 403: üst kaynak lisansları BİLİNMİYOR."
+      - "Görüntüler iki YouTube videosundan karelerdir (README); video sahiplerinin hakları/YouTube lisansı belgelenmemiş. 'MIT indoor scenes' kaynaklı boş (null) görüntülerin kendi koşulları da doğrulanmadı."
+      - "Görüntülerin bir kısmı filigranlı/ticari görünümlü fotoğraflar ve kolajlar (görsel inceleme); hak sahipliği doğrulanamadı."

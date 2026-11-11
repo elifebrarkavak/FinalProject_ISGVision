@@ -1,0 +1,71 @@
+# Aşama 2C kararları (nihai kontrol). Model destekli, tek değerlendirici görsel/analitik inceleme; kullanıcı doğrulaması DEĞİLDİR.
+# Tarih: 2026-11-11. Orijinal veri/etiket/bölünme DEĞİŞTİRİLMEMİŞTİR; kararlar politika ve manifest dosyalarına işlenmiştir.
+
+construction_ppe_linked_units:
+  # source_group_edges.csv'deki sert kenarlar (orb:same_image_derived). Görsel: reports/dataset_audit/stage2c_review/_construction_cross_split.jpg
+  - split_unit_members:
+      - data/raw/construction_ppe/images/train/source-3978abe9cfed5d8a5faa5a98dfe4b00a.jpg
+      - data/raw/construction_ppe/images/train/source-efc23273c04e007083114c0f217335f0.jpg
+      - data/raw/construction_ppe/images/val/source-9e10b0409f922546c35b276eb5a5756e.jpg
+    relation: Confirmed Same Source (generative variants of one base frame)
+    evidence: "Üçü de 1448x1086, aynı kapı/şantiye arka planı, aynı kamera açısı ve aynı yürüme pozu. ORB inlier 351-726, NCC 0.83-0.91; küçük resim NCC 0.83-0.92. Görüntüler aynı taban karenin üretken düzenlemeleri: (1) baretli + yelekli, (2) aynı kişi yeleksiz, (3) val: yüzü değiştirilmiş baretsiz + yeleksiz kişi. Etiketler her varyantta görsel olarak doğru (helmet/vest -> no_vest -> no_helmet/no_vest)."
+    leakage_risk: "ORTA (görüntü başına yüksek, küme düzeyinde düşük): val görüntüsü arka plan, poz ve kutu konumlarını train varyantlarıyla paylaşıyor; model bu sahneyi ezberleyebilir ve val ölçümü iyimser olur. Etki 1/200 val görüntüsü (%0.5) ve 8 kutu (2 hedef kutu: no_helmet, no_vest). Sınıf kararı farklı olduğu için (helmet->no_helmet) 'zor negatif' çifti oluşturur; eğitimde faydalı, değerlendirmede sızıntı."
+    decision: reassign_unit_to_train
+    rationale: "Birim tek bölüme alınır (G4-UNIT-ATOMIC). Çoğunluk train (2/3) olduğundan val üyesi train'e taşınır: veri kaybı yok, val orijinal val'in alt kümesi kalır (yayıncı ölçümleriyle karşılaştırılabilirlik büyük ölçüde korunur). Dosya taşınmaz; karar construction_ppe_split_manifest.csv 'final_split' sütunundadır."
+  - split_unit_members:
+      - data/raw/construction_ppe/images/train/source-40471b5afe759eb420a90db737aa9a93.jpg
+      - data/raw/construction_ppe/images/train/source-9ec80cefaef867295b0c9b5b6c7757c8.jpg
+    relation: Confirmed Same Source (generative variants)
+    evidence: "Aynı kişi/aynı kare: biri baretli+gözlüklü+yelekli, diğeri baretsiz+yeleksiz. Görsel: stage2c_review/_construction_train_pair.jpg"
+    leakage_risk: "YOK (iki görüntü de train)."
+    decision: keep_together_in_train
+
+construction_ppe_supplementary_scan:
+  method: "1000 görüntünün 48x36 gri küçük resimleri arasında tüm çiftler için normalize çapraz korelasyon (499.500 çift)."
+  thresholds: {">=0.97": 0, ">=0.95": 0, ">=0.90": 1, ">=0.85": 2, ">=0.80": 9}
+  result: ">=0.85 eşiğini geçen 2 çiftin ikisi de bilinen birimde. 0.80-0.85 aralığındaki 7 çiftten bilinen tren çifti dışındakiler (a837cc97/150feca6/884ce8ac, 0736c04f/1a83ec5c/63861e81 ve 122e6627/7721c50d/dc88190b) GÖRSEL olarak incelendi: benzer kompozisyonlu FARKLI sahneler (farklı şantiye/kişi/hava). Yeni kaynak ilişkisi bulunmadı."
+  caveat: "Tarama alt sınırdır; yüksek oranda değiştirilmiş üretken varyantları kaçırabilir. Bu nedenle bağımsız saha testi zorunludur."
+  other_observation: "Train'deki 8 forklift görüntüsü (ultralytics-ppe-nov2026-085/285/335/385/485/535/635/685) aynı forklift modelinin farklı arka planlarda üretilmiş varyantları gibi görünüyor; hepsi train'de (sızıntı yok). Hedef sınıf içermezler (negatif örnek)."
+
+construction_ppe_annotation_risk:
+  heuristic: "CP-PERSON-ATTR-INCOMPLETE: >=60 px Person kutusuna baş veya gövde etiketi atanamıyor. 2443 kişiden 68'i (63 görüntü) işaretli."
+  visual_review: "68 kişinin tamamı kırpıntı sayfasında, 12 görüntü tam çözünürlükte incelendi. Büyük çoğunluk: kadraj dışı baş/gövde, kenarda kesik kişi, araç camı/nesne arkasında örtülü kişi, alan derinliği bulanıklığındaki arka plan figürü veya etiketi olup atama sezgiselinin kaçırdığı kişi. 1 gerçek eksik hedef etiket: ultralytics-ppe-nov2026-690 (görünür baretsiz baş, no_helmet yok)."
+  decisions:
+    data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg: {decision: needs_reannotation, rule: CP-VISIBLE-TARGET-UNLABELED}
+  remaining_flagged: "Diğer 62 görüntü 'approved' kalır ama annotation_risk ile İŞARETLİDİR; '*_unexplained' kodlu olanlar Aşama 8 (ilk YOLO eğitimi) öncesi insan incelemesine alınır (2D notu: aşama numarası 12 aşamalı plana göre düzeltildi; inceleme paketi reports/dataset_audit/final_visual_review/)."
+  reviewed_full_resolution_no_missing_target:
+    - train/ultralytics-ppe-nov2026-003
+    - train/ultralytics-ppe-nov2026-007
+    - train/ultralytics-ppe-nov2026-033
+    - train/ultralytics-ppe-nov2026-433
+    - train/ultralytics-ppe-nov2026-517
+    - train/ultralytics-ppe-nov2026-640
+    - val/ultralytics-ppe-nov2026-023
+    - val/ultralytics-ppe-nov2026-024
+    - val/ultralytics-ppe-nov2026-025
+    - val/ultralytics-ppe-nov2026-249
+    - val/ultralytics-ppe-nov2026-375
+
+construction_ppe_zero_target_images:
+  count: 10
+  decision: valid_negative
+  evidence: "10 görüntünün tamamı görsel incelendi: 8 forklift (insan yok), 2 depo geniş çekimi (görünür/etiketlenebilir insan yok). Hedef sınıf etiketi olmaması doğru."
+
+license_items:
+  F01:
+    status: external_verification_pending_source_excluded
+    reevaluation: "2C'de yeni doğrulama YAPILAMADI (resmi Roboflow sayfaları önceki denemede HTTP 403; erişim kontrolü aşılmadı). Yeni lisans iddiası oluşturulmadı. Kaynak onaylı kapsam dışında."
+  F02:
+    status: external_verification_pending_source_excluded
+    reevaluation: "Mendeley veri seti lisansı (CC BY 4.0) doğrulanmış; üst kaynak/görsel hakları hâlâ belgelenmemiş. Yeni hak iddiası oluşturulmadı. Kaynak onaylı kapsam dışında."
+  meaning: "Bu durum lisans/hak sorununun ÇÖZÜLDÜĞÜ anlamına GELMEZ; ilgili kaynak onaylı veri kapsamından çıkarıldığı için kullanım riski kontrol altındadır."
+
+evidence_images:
+  directory: reports/dataset_audit/stage2c_review
+  files:
+    _construction_cross_split.jpg: "Bölümler arası birim (2 train + 1 val), tüm kutular"
+    _construction_train_pair.jpg: "Train içi üretken varyant çifti"
+    scan_negatives_01.jpg..03.jpg: "NCC taramasında 0.75-0.82 aralığındaki adaylar: farklı sahneler"
+    person_attr_flags_01.jpg, person_attr_flags_02.jpg: "68 işaretli kişinin kırpıntıları (sarı = kişi kutusu)"
+    full_res_review_01.jpg..04.jpg: "Tam çözünürlükte incelenen işaretli görüntüler (690 dahil)"
+    zero_target_01.jpg, zero_target_02.jpg: "Hedef kutusu olmayan 10 görüntü"

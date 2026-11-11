@@ -1,0 +1,70 @@
+{
+  "helmet": {
+    "construction_ppe": {
+      "n_total": 1576,
+      "n_eligible": 1253,
+      "shown": 8
+    },
+    "mendeley_ppe": {
+      "n_total": 2421,
+      "n_eligible": 2266,
+      "shown": 8
+    },
+    "site_safety": {
+      "n_total": 3551,
+      "n_eligible": 2148,
+      "shown": 8
+    }
+  },
+  "no_helmet": {
+    "construction_ppe": {
+      "n_total": 813,
+      "n_eligible": 532,
+      "shown": 8
+    },
+    "mendeley_ppe": {
+      "n_total": 1174,
+      "n_eligible": 1122,
+      "shown": 8
+    },
+    "site_safety": {
+      "n_total": 2428,
+      "n_eligible": 1755,
+      "shown": 8
+    }
+  },
+  "vest": {
+    "construction_ppe": {
+      "n_total": 1816,
+      "n_eligible": 1764,
+      "shown": 8
+    },
+    "mendeley_ppe": {
+      "n_total": 1385,
+      "n_eligible": 1383,
+      "shown": 8
+    },
+    "site_safety": {
+      "n_total": 3258,
+      "n_eligible": 2685,
+      "shown": 8
+    }
+  },
+  "no_vest": {
+    "construction_ppe": {
+      "n_total": 567,
+      "n_eligible": 531,
+      "shown": 8
+    },
+    "mendeley_ppe": {
+      "n_total": 1058,
+      "n_eligible": 1058,
+      "shown": 8
+    },
+    "site_safety": {
+      "n_total": 4153,
+      "n_eligible": 3816,
+      "shown": 8
+    }
+  }
+}

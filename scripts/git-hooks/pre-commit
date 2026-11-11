@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""Git pre-commit kontrolü: biyometrik/kişisel veri, veri seti ve model dosyalarının
+yanlışlıkla commit edilmesini engeller.
+
+Yalnızca Python standart kütüphanesini kullanır (sistem python3 ile de çalışır).
+Yalnızca commit'e EKLENEN dosyaların yoluna ve uzantısına bakar; dosya içeriğini incelemez.
+Kurulum: git config core.hooksPath scripts/git-hooks   (bkz. README)
+"""
+
+from __future__ import annotations
+
+import subprocess
+import sys
+from pathlib import PurePosixPath
+
+KEEP_NAME = ".gitkeep"
+
+# Bu klasörlerin altındaki hiçbir şey (.gitkeep hariç) commit edilemez.
+BLOCKED_DIRS = (
+    "data/",  # ham/işlenmiş/birleştirilmiş veri setleri ve data/employees/ (çalışan fotoğrafları)
+    "reports/dataset_audit/visual_samples/",  # veri setlerinden türetilmiş görsel örnekler
+    "reports/dataset_audit/semantic_review/",
+    "reports/dataset_audit/duplicate_verification/",
+    "reports/dataset_audit/roboflow_review/",
+)
+
+# Bu adlardaki klasörlerin altındaki görüntüler commit edilemez (herhangi bir derinlikte).
+SENSITIVE_DIR_NAMES = {"employees", "faces", "face_db", "biometric", "embeddings"}
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff", ".heic"}
+
+# Uzantıya göre engellenenler (yüz embedding'leri, model ağırlıkları, arşivler, veritabanları).
+BLOCKED_SUFFIXES = {
+    ".npy", ".npz", ".pkl", ".pickle", ".embedding", ".embeddings", ".emb", ".faiss",
+    ".pt", ".pth", ".onnx", ".engine", ".mlpackage", ".mlmodel", ".tflite", ".safetensors", ".ckpt",
+    ".zip", ".7z", ".rar", ".tar", ".gz",
+    ".sqlite", ".sqlite3", ".db",
+    ".pem", ".key",
+}
+
+
+def reason_for(path: str) -> str | None:
+    """Dosya commit edilemezse nedenini, edilebilirse None döndürür."""
+    p = PurePosixPath(path)
+    if p.name == KEEP_NAME:
+        return None
+    for blocked in BLOCKED_DIRS:
+        if path.startswith(blocked):
+            return f"'{blocked}' altındaki veriler Git'e eklenemez"
+    if p.name == ".env" or (p.name.startswith(".env.") and p.name != ".env.example"):
+        return "gizli yapılandırma (.env) dosyası"
+    if p.suffix.lower() in IMAGE_SUFFIXES and SENSITIVE_DIR_NAMES.intersection(p.parts[:-1]):
+        return "çalışan/yüz/biyometrik klasöründe görüntü dosyası"
+    if p.suffix.lower() in BLOCKED_SUFFIXES:
+        return f"engellenen dosya türü ({p.suffix.lower()}): embedding, model, arşiv, veritabanı veya anahtar"
+    if SENSITIVE_DIR_NAMES.intersection(p.parts[:-1]) and p.suffix.lower() not in {".md", ".py", ".txt", ".yaml", ".yml"}:
+        return "biyometrik/çalışan klasöründe izin verilmeyen dosya"
+    return None
+
+
+def staged_files() -> list[str]:
+    out = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"],
+        check=True, capture_output=True,
+    ).stdout.decode("utf-8", errors="replace")
+    return [name for name in out.split("\0") if name]
+
+
+def main() -> int:
+    violations = [(f, r) for f in staged_files() if (r := reason_for(f))]
+    if not violations:
+        return 0
+    print("COMMIT ENGELLENDİ: kişisel/biyometrik veya yasaklı dosyalar commit'e eklenmiş.", file=sys.stderr)
+    for name, reason in violations:
+        print(f"  - {name}  ({reason})", file=sys.stderr)
+    print(
+        "\nBu dosyaları commit'ten çıkarın:  git restore --staged <dosya>\n"
+        "Bu kontrol bilerek aşılmamalıdır (git commit --no-verify önerilmez).",
+        file=sys.stderr,
+    )
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

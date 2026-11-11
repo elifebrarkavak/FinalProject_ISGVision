@@ -1,0 +1,104 @@
+# Şüpheli etiketlerin GÖRSEL inceleme kararları (Aşama 2 eksik giderme).
+# Kaynak: görüntülerin kendisi açılıp incelendi (model destekli, tek değerlendirici); kullanıcı doğrulaması DEĞİLDİR.
+# Kategoriler: Confirmed Error | Likely Error | Valid Annotation | Needs Manual Review
+# ids: virgülle ayrılmış öğe numaraları ve aralıklar (ör. "SI022-SI026, SI028").
+# Öğe numaraları reports/dataset_audit/semantic_conflicts.csv (CO*/SI*), annotation_issues.csv sırası (TB*/EL*/DB*/ND*) ve
+# roboflow_audit_sample.csv (AH*/AN*/AV*/AX* = Hardhat/NO-Hardhat/Safety Vest/NO-Safety Vest örneklem karosu) ile eşleşir.
+# Sayfalar: reports/dataset_audit/semantic_review/ ve roboflow_review/ (Git dışı; `--render` ile yeniden üretilir).
+
+verdicts:
+  # ---------------- Construction-PPE anlamsal çelişki adayları ----------------
+  - ids: "CO001-CO010, CO012-CO013, CO017-CO018"
+    category: Valid Annotation
+    reason: "Kişi baretini ELİNDE taşıyor: baş bölgesi no_helmet, taşınan baret nesnesi helmet olarak etiketlenmiş. Etiket doğru; ancak helmet sınıfı 'TAKILI baret' değil 'baret nesnesi' anlamına geliyor."
+    evidence: "semantic_review/conflicts_construction_ppe/conflicts_01-02.jpg (görsel)"
+  - ids: "CO011, CO014-CO016"
+    category: Valid Annotation
+    reason: "Yan yana iki farklı kişi: biri yelekli, diğeri yeleksiz; kutular birbirine değiyor. Çelişki yok."
+    evidence: "semantic_review/conflicts_construction_ppe/conflicts_01.jpg (görsel)"
+  - ids: "CO019"
+    category: Valid Annotation
+    reason: "Öndeki kişi baret takıyor, arkadaki (kabindeki) kişi baretsiz: farklı kişiler. Otomatik kişi ataması yanlış kişiyi eşleştirmiş."
+    evidence: "semantic_review/conflicts_construction_ppe/conflicts_02.jpg (görsel)"
+
+  # ---------------- Roboflow Construction Site Safety v27 çelişki adayları ----------------
+  - ids: "SI022-SI026, SI028-SI036, SI042, SI044-SI047, SI053-SI055, SI064, SI066, SI071-SI074, SI079, SI082-SI087, SI091, SI095-SI098, SI100, SI101, SI103, SI109-SI112"
+    category: Valid Annotation
+    reason: "Çelişen kutular FARKLI kişilere ait (yan yana/önde-arkada kişiler), elde taşınan baret + baretsiz baş ya da vest kutusunun içindeki çok küçük arka plan kişisinin NO-Safety Vest kutusu. Çoklu anotasyon meşru."
+    evidence: "semantic_review/conflicts_site_safety/conflicts_01-06.jpg (görsel)"
+  - ids: "SI038, SI056, SI075, SI080, SI094"
+    category: Likely Error
+    reason: "Hardhat kutusu baretten belirgin biçimde büyük; baş-omuz/gövdeyi de kapsıyor görünüyor (bir kişinin baretli başı ile yan kişinin baretsiz başı aynı kutuyla örtüşüyor)."
+    evidence: "semantic_review/conflicts_site_safety/conflicts_02-05.jpg (görsel; kutu boyutu baret boyutunun ~2 katından fazla)"
+  - ids: "SI020, SI021, SI027, SI037, SI039-SI041, SI043, SI048-SI052, SI057-SI063, SI065, SI067-SI070, SI076-SI078, SI081, SI088-SI090, SI092-SI093, SI099, SI102, SI104-SI108"
+    category: Needs Manual Review
+    reason: "Düşük çözünürlük/piksellenme, kısmen görünen veya arkadaki kişi, kolaj kenarı ya da belirsiz kutu konumu nedeniyle görselden güvenilir karar verilemedi."
+    evidence: "semantic_review/conflicts_site_safety/conflicts_01-06.jpg (görsel; belirsiz)"
+
+  # ---------------- Roboflow teknik sorunlar ----------------
+  - ids: "TB01-TB21"
+    category: Likely Error
+    reason: "1-2 piksel genişlikte/yükseklikte kutular; çoğu augmentation ile ince şeride kırpılmış, bulanık/pikselli görüntü üzerinde. Anlamlı bir nesne olarak öğrenilemez (9 tanesi test görüntüsünde)."
+    evidence: "roboflow_review/tiny_boxes.jpg (görsel)"
+  - ids: "DB01-DB04"
+    category: Confirmed Error
+    reason: "Aynı sınıf ve birebir aynı koordinatlı yinelenen etiket satırı (label_text sütununda satır metinleri aynı). Teknik tekrar; kolaj görüntü üzerinde."
+    evidence: "annotation_issues.csv + roboflow_review/duplicate_boxes.jpg"
+  - ids: "ND01"
+    category: Likely Error
+    reason: "Aynı sınıfta IoU>=0.95 ile neredeyse aynı iki kutu; farklı iki nesne olması pratikte mümkün değil."
+    evidence: "annotation_issues.csv + roboflow_review/duplicate_boxes.jpg"
+  - ids: "EL01-EL23"
+    category: Valid Annotation
+    reason: "Görüntülerde insan/KKD yok (kitapçı, havalimanı, kumarhane, hastane koridoru, kuş, iskele/eğitim slaytı kareleri); boş etiket meşru negatif örnek. Tek belirsizlik: EL04'te kitapçıda karton insan figürü (insan değil)."
+    evidence: "roboflow_review/empty_labels_01-02.jpg (23/23 görüntü incelendi)"
+
+  # ---------------- Roboflow rastgele kalite örneklemi (n=24 / rol; kutu yüksekliği >=24 px) ----------------
+  - ids: "AH02, AH04-AH06, AH08-AH10, AH13-AH17, AH19-AH24"
+    category: Valid Annotation
+    reason: "Kutu baret nesnesini sıkı biçimde sarıyor."
+    evidence: "roboflow_review/audit_helmet.jpg (görsel)"
+  - ids: "AH01, AH03, AH07, AH12, AH18"
+    category: Needs Manual Review
+    reason: "Bulanık/dar şerit/kenarda kısmi nesne; baret olup olmadığı belirlenemedi."
+    evidence: "roboflow_review/audit_helmet.jpg (görsel)"
+  - ids: "AH11"
+    category: Likely Error
+    reason: "Kutu baretsiz, mor tişörtlü bir gövde bölgesini kapsıyor; baret görünmüyor."
+    evidence: "roboflow_review/audit_helmet.jpg (görsel)"
+  - ids: "AN01-AN04, AN06, AN07, AN10-AN12, AN14, AN16-AN19, AN22-AN24"
+    category: Valid Annotation
+    reason: "Baretsiz baş; ancak kutu çoğunlukla SAÇ/ALIN şeridi veya yüzün üst kısmı (tüm baş değil): kutu tanımı tutarsız ama etiket anlamca doğru."
+    evidence: "roboflow_review/audit_no_helmet.jpg (görsel)"
+  - ids: "AN05, AN08, AN09, AN15, AN20, AN21"
+    category: Needs Manual Review
+    reason: "Kenarda kısmi/bulanık nesne; kutunun neyi gösterdiği belirsiz."
+    evidence: "roboflow_review/audit_no_helmet.jpg (görsel)"
+  - ids: "AN13"
+    category: Likely Error
+    reason: "NO-Hardhat kutusunda mavi baret görünüyor (baretli baş baretsiz etiketlenmiş)."
+    evidence: "roboflow_review/audit_no_helmet.jpg (görsel)"
+  - ids: "AV03-AV06, AV08-AV15, AV18-AV22, AV24"
+    category: Valid Annotation
+    reason: "Kutu yelekli gövdeyi sarıyor (yansıtıcı/yüksek görünürlüklü yelek); bir örnekte yelek yerde."
+    evidence: "roboflow_review/audit_vest.jpg (görsel)"
+  - ids: "AV01, AV02, AV07, AV16, AV17"
+    category: Needs Manual Review
+    reason: "Gri/bulanık/kenarda şerit veya koyu kıyafet; yelek olup olmadığı belirlenemedi."
+    evidence: "roboflow_review/audit_vest.jpg (görsel)"
+  - ids: "AV23"
+    category: Likely Error
+    reason: "Kutu karanlık bir cam/pencere bölgesinde; yelek görünmüyor."
+    evidence: "roboflow_review/audit_vest.jpg (görsel)"
+  - ids: "AX04, AX06-AX08, AX10, AX12, AX14, AX16, AX18-AX21, AX23"
+    category: Valid Annotation
+    reason: "Yeleksiz gövde (koyu/sade tişört, ceket); çoğu maskeli yüz yakın çekimi veya sıradan kıyafet: etiket doğru ama sahne inşaat bağlamı dışı."
+    evidence: "roboflow_review/audit_no_vest.jpg (görsel)"
+  - ids: "AX01-AX03, AX05, AX13, AX15, AX17, AX22, AX24"
+    category: Needs Manual Review
+    reason: "Bulanık/kenarda şerit/belirsiz bölge; gövde olup olmadığı veya yelek bulunup bulunmadığı belirlenemedi."
+    evidence: "roboflow_review/audit_no_vest.jpg (görsel)"
+  - ids: "AX09, AX11"
+    category: Likely Error
+    reason: "NO-Safety Vest kutusunda parlak sarı-yeşil (yüksek görünürlüklü) giysi görünüyor; yelek/hi-vis kıyafet var."
+    evidence: "roboflow_review/audit_no_vest.jpg (görsel)"

@@ -1,0 +1,65 @@
+{
+  "images": 6085,
+  "hard_edges": 4065,
+  "soft_edges": 67,
+  "tile_level_pairs_checked": 166,
+  "hard_groups": 3780,
+  "split_units": 3750,
+  "unit_size_histogram": {
+    "1": 3570,
+    "2": 126,
+    "3": 24,
+    "4": 11,
+    "5": 6,
+    "6": 6,
+    "8": 2,
+    "10": 1,
+    "14": 1,
+    "16": 1,
+    "39": 1,
+    "1986": 1
+  },
+  "by_dataset": {
+    "construction_ppe": {
+      "images": 1000,
+      "linked_hard": 5,
+      "linked_soft_only": 0,
+      "images_in_cross_split_hard_groups": 3,
+      "images_in_cross_split_units": 3,
+      "images_in_cross_dataset_units": 0,
+      "by_split_in_cross_split_hard_groups": {
+        "train": 2,
+        "val": 1
+      },
+      "largest_unit": 3
+    },
+    "mendeley_ppe": {
+      "images": 2286,
+      "linked_hard": 288,
+      "linked_soft_only": 0,
+      "images_in_cross_split_hard_groups": 163,
+      "images_in_cross_split_units": 163,
+      "images_in_cross_dataset_units": 8,
+      "by_split_in_cross_split_hard_groups": {
+        "train": 117,
+        "val": 46
+      },
+      "largest_unit": 1986
+    },
+    "site_safety": {
+      "images": 2799,
+      "linked_hard": 2196,
+      "linked_soft_only": 26,
+      "images_in_cross_split_hard_groups": 2044,
+      "images_in_cross_split_units": 2074,
+      "images_in_cross_dataset_units": 1984,
+      "by_split_in_cross_split_hard_groups": {
+        "test": 70,
+        "train": 1882,
+        "val": 92
+      },
+      "largest_unit": 1986
+    }
+  },
+  "caveat": "Kenarlar aday üretimi + ORB doğrulaması ile bulunan ALT SINIRDIR; bağlantısız görüntüler ilişkisiz kanıtlı DEĞİLDİR."
+}

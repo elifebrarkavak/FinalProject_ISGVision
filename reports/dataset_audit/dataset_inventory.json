@@ -1,0 +1,412 @@
+[
+  {
+    "dataset": "construction_ppe",
+    "raw_dir": "construction_ppe",
+    "dataset_root": ".",
+    "yaml_file": "data.yaml",
+    "yaml_fields": {
+      "path": "construction-ppe",
+      "train": "images/train",
+      "val": "images/val",
+      "test": null,
+      "nc": null
+    },
+    "yaml_paths": {
+      "path": "construction-ppe",
+      "train": {
+        "value": "images/train",
+        "resolves": false
+      },
+      "val": {
+        "value": "images/val",
+        "resolves": false
+      },
+      "test": {
+        "value": null,
+        "resolves": null
+      },
+      "path_is_absolute_foreign": false
+    },
+    "names_format": "sözlük",
+    "nc_declared": null,
+    "classes": {
+      "0": "helmet",
+      "1": "gloves",
+      "2": "vest",
+      "3": "boots",
+      "4": "goggles",
+      "5": "Person",
+      "6": "no_helmet",
+      "7": "no_goggle",
+      "8": "no_gloves",
+      "9": "no_boots",
+      "10": "forklift",
+      "11": "no_vest"
+    },
+    "class_warnings": [],
+    "splits": {
+      "train": {
+        "layout": "A",
+        "original_name": "train",
+        "images_dir": "images/train",
+        "labels_dir": "labels/train"
+      },
+      "val": {
+        "layout": "A",
+        "original_name": "val",
+        "images_dir": "images/val",
+        "labels_dir": "labels/val"
+      }
+    },
+    "notes": [
+      "Ayrı bir test bölümü yok."
+    ],
+    "total_size_bytes_on_disk": 647834864,
+    "resolutions_top20": [
+      {
+        "size": "2048x1360",
+        "count": 361
+      },
+      {
+        "size": "2048x1152",
+        "count": 141
+      },
+      {
+        "size": "1360x2048",
+        "count": 141
+      },
+      {
+        "size": "1152x2048",
+        "count": 141
+      },
+      {
+        "size": "2048x2048",
+        "count": 141
+      },
+      {
+        "size": "1536x1024",
+        "count": 42
+      },
+      {
+        "size": "2048x1536",
+        "count": 26
+      },
+      {
+        "size": "1448x1086",
+        "count": 5
+      },
+      {
+        "size": "1264x848",
+        "count": 2
+      }
+    ],
+    "totals": {
+      "dataset": "construction_ppe",
+      "split": "ALL",
+      "images": 1000,
+      "label_files": 1000,
+      "boxes": 14863,
+      "unsupported_rows": 0,
+      "classes_defined": 12,
+      "image_formats": ".jpg:1000",
+      "min_resolution": "1264x848",
+      "max_resolution": "2048x2048",
+      "distinct_resolutions": 9,
+      "top_resolutions": "2048x1360:361;2048x1152:141;1360x2048:141;1152x2048:141;2048x2048:141",
+      "size_mb": 617.1,
+      "empty_labels": 0,
+      "missing_labels": 0,
+      "orphan_labels": 0,
+      "unreadable_images": 0,
+      "unreadable_labels": 0,
+      "exif_rotated_images": 0
+    },
+    "published": {
+      "images": 1000,
+      "boxes": 14863,
+      "classes": 12,
+      "splits": {
+        "train": 800,
+        "val": 200,
+        "test": 0
+      },
+      "note": "Yerel README.md ve docs.ultralytics.com sayfası (ayrı test bölümü yok)"
+    },
+    "published_vs_actual": [
+      "görüntü: gerçek 1000 / yayımlanan 1000",
+      "kutu: gerçek 14863 / yayımlanan 14863"
+    ]
+  },
+  {
+    "dataset": "mendeley_ppe",
+    "raw_dir": "mendeley_ppe",
+    "dataset_root": ".",
+    "yaml_file": "data.yaml",
+    "yaml_fields": {
+      "path": "C:/Users/0/Desktop/ultralytics-8391/20250731-ppe2286y",
+      "train": "./train/images",
+      "val": "./valid/images",
+      "test": null,
+      "nc": 4
+    },
+    "yaml_paths": {
+      "path": "C:/Users/0/Desktop/ultralytics-8391/20250731-ppe2286y",
+      "train": {
+        "value": "./train/images",
+        "resolves": false
+      },
+      "val": {
+        "value": "./valid/images",
+        "resolves": false
+      },
+      "test": {
+        "value": null,
+        "resolves": null
+      },
+      "path_is_absolute_foreign": true
+    },
+    "names_format": "liste",
+    "nc_declared": 4,
+    "classes": {
+      "0": "Helmet",
+      "1": "NoHelmet",
+      "2": "NoVest",
+      "3": "Vest"
+    },
+    "class_warnings": [],
+    "splits": {
+      "train": {
+        "layout": "B",
+        "original_name": "train",
+        "images_dir": "train/images",
+        "labels_dir": "train/labels"
+      },
+      "val": {
+        "layout": "B",
+        "original_name": "valid",
+        "images_dir": "valid/images",
+        "labels_dir": "valid/labels"
+      }
+    },
+    "notes": [
+      "Ayrı bir test bölümü yok."
+    ],
+    "total_size_bytes_on_disk": 239509547,
+    "resolutions_top20": [
+      {
+        "size": "640x640",
+        "count": 472
+      },
+      {
+        "size": "1200x800",
+        "count": 71
+      },
+      {
+        "size": "1280x720",
+        "count": 63
+      },
+      {
+        "size": "500x333",
+        "count": 61
+      },
+      {
+        "size": "600x400",
+        "count": 41
+      },
+      {
+        "size": "1024x683",
+        "count": 39
+      },
+      {
+        "size": "500x375",
+        "count": 34
+      },
+      {
+        "size": "600x450",
+        "count": 20
+      },
+      {
+        "size": "800x533",
+        "count": 20
+      },
+      {
+        "size": "4032x3024",
+        "count": 18
+      },
+      {
+        "size": "550x367",
+        "count": 17
+      },
+      {
+        "size": "800x600",
+        "count": 15
+      },
+      {
+        "size": "400x300",
+        "count": 15
+      },
+      {
+        "size": "600x420",
+        "count": 14
+      },
+      {
+        "size": "275x183",
+        "count": 13
+      },
+      {
+        "size": "1280x960",
+        "count": 13
+      },
+      {
+        "size": "450x300",
+        "count": 12
+      },
+      {
+        "size": "800x800",
+        "count": 12
+      },
+      {
+        "size": "225x225",
+        "count": 12
+      },
+      {
+        "size": "1300x956",
+        "count": 11
+      }
+    ],
+    "totals": {
+      "dataset": "mendeley_ppe",
+      "split": "ALL",
+      "images": 2286,
+      "label_files": 2286,
+      "boxes": 6038,
+      "unsupported_rows": 0,
+      "classes_defined": 4,
+      "image_formats": ".jpg:2286",
+      "min_resolution": "204x136",
+      "max_resolution": "5712x4284",
+      "distinct_resolutions": 905,
+      "top_resolutions": "640x640:472;1200x800:71;1280x720:63;500x333:61;600x400:41",
+      "size_mb": 228.0,
+      "empty_labels": 0,
+      "missing_labels": 0,
+      "orphan_labels": 0,
+      "unreadable_images": 0,
+      "unreadable_labels": 0,
+      "exif_rotated_images": 0
+    },
+    "published": {
+      "images": 2286,
+      "boxes": null,
+      "classes": 4,
+      "splits": null,
+      "note": "Mendeley sayfası: 2,286 görüntü, 640x640 piksel"
+    },
+    "published_vs_actual": [
+      "görüntü: gerçek 2286 / yayımlanan 2286"
+    ]
+  },
+  {
+    "dataset": "site_safety",
+    "raw_dir": "site_safety",
+    "dataset_root": ".",
+    "yaml_file": "data.yaml",
+    "yaml_fields": {
+      "path": null,
+      "train": "../train/images",
+      "val": "../valid/images",
+      "test": "../test/images",
+      "nc": 10
+    },
+    "yaml_paths": {
+      "path": null,
+      "train": {
+        "value": "../train/images",
+        "resolves": false
+      },
+      "val": {
+        "value": "../valid/images",
+        "resolves": false
+      },
+      "test": {
+        "value": "../test/images",
+        "resolves": false
+      },
+      "path_is_absolute_foreign": false
+    },
+    "names_format": "liste",
+    "nc_declared": 10,
+    "classes": {
+      "0": "Hardhat",
+      "1": "Mask",
+      "2": "NO-Hardhat",
+      "3": "NO-Mask",
+      "4": "NO-Safety Vest",
+      "5": "Person",
+      "6": "Safety Cone",
+      "7": "Safety Vest",
+      "8": "machinery",
+      "9": "vehicle"
+    },
+    "class_warnings": [],
+    "splits": {
+      "train": {
+        "layout": "B",
+        "original_name": "train",
+        "images_dir": "train/images",
+        "labels_dir": "train/labels"
+      },
+      "val": {
+        "layout": "B",
+        "original_name": "valid",
+        "images_dir": "valid/images",
+        "labels_dir": "valid/labels"
+      },
+      "test": {
+        "layout": "B",
+        "original_name": "test",
+        "images_dir": "test/images",
+        "labels_dir": "test/labels"
+      }
+    },
+    "notes": [],
+    "total_size_bytes_on_disk": 155775965,
+    "resolutions_top20": [
+      {
+        "size": "640x640",
+        "count": 2799
+      }
+    ],
+    "totals": {
+      "dataset": "site_safety",
+      "split": "ALL",
+      "images": 2799,
+      "label_files": 2799,
+      "boxes": 38835,
+      "unsupported_rows": 0,
+      "classes_defined": 10,
+      "image_formats": ".jpg:2799",
+      "min_resolution": "640x640",
+      "max_resolution": "640x640",
+      "distinct_resolutions": 1,
+      "top_resolutions": "640x640:2799",
+      "size_mb": 146.6,
+      "empty_labels": 23,
+      "missing_labels": 0,
+      "orphan_labels": 0,
+      "unreadable_images": 0,
+      "unreadable_labels": 0,
+      "exif_rotated_images": 0
+    },
+    "published": {
+      "images": 2801,
+      "boxes": null,
+      "classes": 10,
+      "splits": null,
+      "note": "Yerel README.roboflow.txt: 'The dataset includes 2801 images'"
+    },
+    "published_vs_actual": [
+      "görüntü: gerçek 2799 / yayımlanan 2801"
+    ]
+  }
+]

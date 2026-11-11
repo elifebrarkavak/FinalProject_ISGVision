@@ -1,0 +1,17 @@
+# ISG Vision - varsayilan yapilandirma (Asama 1: yalnizca iskelet).
+# Tum yollar proje köküne goreli yazilir.
+project:
+  name: ISG_VISION
+  stage: "Asama 1 - Gelistirme ortami"
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  merged_ppe: data/merged_ppe
+  employees: data/employees
+  models: models
+  results: results
+  reports: reports
+
+runtime:
+  device: auto   # auto | mps | cuda | cpu

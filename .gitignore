@@ -1,0 +1,98 @@
+# ===== ISG Vision .gitignore =====
+# Kural: kaynak kod, README, testler ve yapılandırma ŞABLONLARI takip edilir.
+# Veri, biyometrik bilgi, model ağırlıkları ve gizli bilgiler ASLA takip edilmez.
+
+# --- Python ortamı ---
+/.venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# --- macOS / editör ---
+.DS_Store
+.AppleDouble
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Gizli yapılandırmalar ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+secrets.*
+
+# --- Veri setleri (ham / işlenmiş / birleştirilmiş) + çalışan fotoğrafları ---
+# data/ altındaki her şey yok sayılır; yalnızca klasörler ve .gitkeep takip edilir.
+/data/**
+!/data/**/
+!/data/**/.gitkeep
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# --- Çalışan fotoğrafları, yüz embedding'leri, biyometrik kayıtlar ---
+*.embedding
+*.embeddings
+*.emb
+*.npy
+*.npz
+*.faiss
+*.pkl
+*.pickle
+*.sqlite
+*.sqlite3
+*.db
+biometric/
+embeddings/
+face_db/
+
+# --- Model ağırlıkları ---
+/models/**/*.pt
+/models/**/*.pth
+/models/**/*.onnx
+/models/**/*.engine
+/models/**/*.mlpackage
+/models/**/*.mlmodel
+/models/**/*.tflite
+/models/**/*.safetensors
+/models/**/*.bin
+*.pt
+*.pth
+*.onnx
+*.engine
+*.safetensors
+*.ckpt
+
+# --- Geçici sonuçlar / eğitim çıktıları ---
+/results/*
+!/results/.gitkeep
+/runs/
+runs/
+*.log
+tmp/
+temp/
+
+# --- Aşama 2: görsel doğrulama örnekleri (veri setlerinden türetilmiş görüntüler) ---
+/reports/dataset_audit/visual_samples/
+/reports/dataset_audit/semantic_review/
+/reports/dataset_audit/duplicate_verification/
+/reports/dataset_audit/roboflow_review/
+/reports/dataset_audit/stage2c_review/
+/reports/dataset_audit/final_visual_review/pages/
+/reports/dataset_audit/final_visual_review/contact_sheet.pdf

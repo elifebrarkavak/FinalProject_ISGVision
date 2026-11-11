@@ -1,0 +1,130 @@
+# Aşama 2 - ADAY sınıf eşleme taslağı (KESİNLEŞMİŞ DEĞİL; hiçbir etiket yeniden yazılmadı / dönüştürülmedi).
+# Hedef sınıflar: 0 helmet, 1 no_helmet, 2 vest, 3 no_vest
+#
+# Önerilen hedef kutu tanımı (bu aşamada UYGULANMADI; kullanıcı kararı gerekir):
+#   helmet    = baret nesnesinin kendisi (sıkı kutu)        no_helmet = baretsiz BAŞ bölgesi (saç/yüz dahil)
+#   vest      = yelekli gövde bölgesi                       no_vest   = yeleksiz gövde bölgesi
+#
+# status (Aşama 2 eksik giderme, küçük harfli sözlük):
+#   confirmed    : kutu tanımı hedefle tutarlı (nicel ölçü + görsel inceleme + dokümantasyon) VE örneklemde olası hata <= %10
+#   needs_review : tanım tutarlı görünüyor ama etiket kalitesi/örneklem belirsiz (belirsiz >= %30 veya olası hata > %10) ya da kanıt yetersiz
+#   incompatible : kutu tanımı hedefle tutarsız veya hedef dışı sınıf; DOĞRUDAN birleştirilmemeli
+# compatibility: Uyumlu | Uyumsuz | Karar verilemedi   (kutu semantiği açısından)
+# reliability  : kanıtın güvenilirliği (Yüksek | Orta | Düşük)
+# user_review "Pending" her satır için geçerlidir (kullanıcı onayı bekler).
+#
+# NOT (düzeltme): İlk Aşama 2 taslağı kutu semantiğini medyan "görüntü alanı" ile karşılaştırmıştı; bu ölçü kadraj yakınlığından
+# etkilendiği için yanıltıcıydı (ör. 'no_helmet helmet'ten 4x küçük' ve 'no_vest vest'ten 3x büyük' sonucu). Şimdiki kanıt
+# kişi kutusuna göre göreli boyutlar ve baş/gövde oranlarıdır (semantic_metrics.json). Görsel kayıtlar:
+# configs/review/label_review_verdicts.yaml ve reports/dataset_audit/semantic_validation_report.md.
+
+target_classes: {0: helmet, 1: no_helmet, 2: vest, 3: no_vest}
+
+mappings:
+  # ---------------- Ultralytics Construction-PPE ----------------
+  - {dataset: construction_ppe, id: 0, name: helmet, target: 0, status: confirmed, compatibility: Uyumlu, reliability: Yüksek,
+     box_semantics: "Baret nesnesinin kendisi (sıkı kutu); kişiye göre yükseklik 0.13, en-boy h/w=0.85 (baş-baret genişten yüksek değil)",
+     visual_result: "24 kırpma + karşılaştırma sayfası (8/8): kutu bareti sıkı sarıyor, yüz/boyun dahil değil",
+     inconsistencies: "Elde TAŞINAN baret de 'helmet' (14 görüntü, çelişki incelemesinde doğrulandı): sınıf 'takılı baret' değil 'baret nesnesi' anlamında",
+     evidence: "Resmi doküman + semantic_metrics.json (person_relative) + görsel inceleme",
+     risk: "Taşınan baretler 'baret takıyor' kararını yanıltabilir; kişi-ekipman eşleştirmesinde baş bölgesiyle konum kontrolü gerekir"}
+  - {dataset: construction_ppe, id: 6, name: no_helmet, target: 1, status: confirmed, compatibility: Uyumlu, reliability: Yüksek,
+     box_semantics: "Baretsiz tüm BAŞ (saç/yüz); kişiye göre yükseklik 0.17, h/w=1.10",
+     visual_result: "8/8 karşılaştırma + 24 kırpma: kutu başı (alından çeneye) sarıyor; kişinin tamamı değil",
+     inconsistencies: "Çok küçük/bulanık/arkadan baş örnekleri; bir örnekte koyu başlık benzeri nesne no_helmet olabilir",
+     evidence: "Resmi doküman ('visible head without a helmet') + ölçü + görsel",
+     risk: "Başlıklı (şapka) baş etiketi kullanımı belirsiz"}
+  - {dataset: construction_ppe, id: 2, name: vest, target: 2, status: confirmed, compatibility: Uyumlu, reliability: Yüksek,
+     box_semantics: "Yelekli gövde; kişi yüksekliğinin ~%40'ı, üstten %15 aşağıda başlıyor",
+     visual_result: "8/8 + 24 kırpma: kutu yelekli gövdeyi sarıyor",
+     inconsistencies: "Yok (kişi dışı kutu görülmedi)",
+     evidence: "semantic_metrics.json + görsel (resmi doküman vest için kutu tanımı vermiyor)",
+     risk: "Doküman vest kutusunu tanımlamıyor; kanıt ölçü+görsel"}
+  - {dataset: construction_ppe, id: 11, name: no_vest, target: 3, status: confirmed, compatibility: Uyumlu, reliability: Yüksek,
+     box_semantics: "Yeleksiz GÖVDE; kişiye göre yükseklik 0.40 (vest ile aynı), tüm kişi değil",
+     visual_result: "8/8 + 24 kırpma: kutu göğüs-bel gövdesini sarıyor",
+     inconsistencies: "Yok",
+     evidence: "Resmi doküman ('visible torso without high-visibility safety clothing') + ölçü + görsel",
+     risk: "Oklüzyon tek başına 'yelek yok' kanıtı değil (dokümanın kendi uyarısı)"}
+  - {dataset: construction_ppe, id: 1, name: gloves, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Eldiven", visual_result: "—", inconsistencies: "Hedef dört sınıfta karşılığı yok", evidence: "Sınıf adı/YAML", risk: "Birleştirmede dışarıda bırakılmalı"}
+  - {dataset: construction_ppe, id: 3, name: boots, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Bot", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: construction_ppe, id: 4, name: goggles, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Gözlük", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: construction_ppe, id: 5, name: Person, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Tüm kişi", visual_result: "—", inconsistencies: "Hedef dışı",
+     evidence: "Sınıf adı/YAML", risk: "İnsan tespiti projede ayrı modülde (human_detection) yapılacak; kullanım kararı bekliyor"}
+  - {dataset: construction_ppe, id: 7, name: no_goggle, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Gözlüksüz göz bölgesi", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: construction_ppe, id: 8, name: no_gloves, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Eldivensiz el", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: construction_ppe, id: 9, name: no_boots, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Botsuz ayak", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: construction_ppe, id: 10, name: forklift, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Forklift", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+
+  # ---------------- Mendeley PPE v6 ----------------
+  - {dataset: mendeley_ppe, id: 0, name: Helmet, target: 0, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Baret + yüzün/başın tamamı (baş kutusu); baş/gövde oranı 0.53 (Construction helmet 0.33), h/w=1.19 (Construction 0.85)",
+     visual_result: "8/8 karşılaştırma + 24 kırpma: kutu yüzü ve çeneyi de kapsıyor; baret nesnesine sıkı DEĞİL",
+     inconsistencies: "Aynı sınıf adı farklı bölge: Construction/Roboflow 'baret nesnesi' vs Mendeley 'baş+baret'",
+     evidence: "semantic_metrics.json (single_head_torso_pairs) + görsel",
+     risk: "Doğrudan helmet olarak birleştirilirse kutu tanımı tutarsız olur; dönüştürme/yeniden etiketleme kararı gerekir (UYGULANMADI)"}
+  - {dataset: mendeley_ppe, id: 1, name: NoHelmet, target: 1, status: confirmed, compatibility: Uyumlu, reliability: Orta,
+     box_semantics: "Baretsiz tüm baş (saç/yüz); baş/gövde oranı 0.44 (Construction no_helmet 0.43), h/w=1.20 (1.10)",
+     visual_result: "8/8 + 24 kırpma: baş/yüz kutusu; şapka/maske/kapüşonlular ve piksellenmiş yüzler de var",
+     inconsistencies: "Sahneler çoğunlukla inşaat dışı sıradan insanlar; başlıklı (şapka) baş da NoHelmet",
+     evidence: "Nicel baş/gövde oranı + görsel",
+     risk: "Alan kayması (inşaat dışı); 'Helmet' sınıfıyla aynı kutu tanımını paylaşıyor (baş), Construction no_helmet ile uyumlu"}
+  - {dataset: mendeley_ppe, id: 3, name: Vest, target: 2, status: confirmed, compatibility: Uyumlu, reliability: Orta,
+     box_semantics: "Yelekli gövde (torso); torso/baş boyutları Construction ile tutarlı (NoHelmet bazlı oran 0.44 vs 0.43)",
+     visual_result: "8/8 + 24 kırpma: kutu yelekli gövdeyi sarıyor; yansıtıcı/yarı yansıtıcı çeşitli yelek türleri",
+     inconsistencies: "Kişi sınıfı olmadığından kişiye göre ölçü yok; torso uyumu dolaylı (baş oranı üzerinden)",
+     evidence: "Baş/gövde oranı + görsel",
+     risk: "Dolaylı nicel kanıt; birkaç kutu yelek parçası veya kolaj kenarı"}
+  - {dataset: mendeley_ppe, id: 2, name: NoVest, target: 3, status: confirmed, compatibility: Uyumlu, reliability: Orta,
+     box_semantics: "Yeleksiz gövde (göğüs-bel)",
+     visual_result: "8/8 + 24 kırpma: gövde kutuları; çoğu sıradan kıyafetli (inşaat dışı) kişi",
+     inconsistencies: "KKD gerektiren bağlam çoğu görüntüde yok: 'yelek yok' ama yelek zorunlu bir ortam olmayabilir",
+     evidence: "Baş/gövde oranı + görsel",
+     risk: "Alan kayması; modelin 'her sıradan kıyafet = no_vest' öğrenme riski"}
+
+  # ---------------- Roboflow Construction Site Safety v27 ----------------
+  - {dataset: site_safety, id: 0, name: Hardhat, target: 0, status: confirmed, compatibility: Uyumlu, reliability: Orta,
+     box_semantics: "Baret nesnesi (sıkı kutu), h/w=1.08",
+     visual_result: "8/8 karşılaştırma; rastgele 24 örneklemde 18 geçerli, 5 belirsiz, 1 olası hata (gövde bölgesine kutu)",
+     inconsistencies: "Çok küçük/bulanık kutular (p10 yükseklik 8 px), kolaj/augmentation kenarında kesik kutular; 5 kutu >=%45 kişi boyunda (çoğu yakın çekim)",
+     evidence: "label_review.csv (AH01-AH24) + semantic_metrics.json",
+     risk: "Etiket gürültüsü ~%4 olası hata, ~%21 doğrulanamayan (örneklem küçük: n=24)"}
+  - {dataset: site_safety, id: 2, name: NO-Hardhat, target: 1, status: incompatible, compatibility: Uyumsuz, reliability: Orta,
+     box_semantics: "Karışık: saç/alın ŞERİDİ (h/w medyan 0.80, yaygın <0.5), yüzün üst yarısı ve bazen tüm baş; Construction no_helmet h/w=1.10",
+     visual_result: "8/8 karşılaştırma ve 24 örneklem: ~10/24 kutu saç/alın şeridi veya kısmi yüz; AN13'te mavi baret görünüyor (hata)",
+     inconsistencies: "Kutu tanımı heterojen; olası etiket hatası (baretli baş); eşik altı bulanık/kenar kutular",
+     evidence: "label_review.csv (AN01-AN24) + semantic_metrics.json (aspect, person_relative)",
+     risk: "Doğrudan no_helmet'e birleştirilmemeli; filtrelenmiş alt küme (h/w>=0.9 ve yükseklik>=24 px) insan kontrolüyle değerlendirilebilir"}
+  - {dataset: site_safety, id: 7, name: Safety Vest, target: 2, status: confirmed, compatibility: Uyumlu, reliability: Orta,
+     box_semantics: "Yelek/gövde bölgesi, kişiye göre yükseklik 0.49 (kısmi/yakın çekim kişi kutuları nedeniyle yayılmış)",
+     visual_result: "8/8 karşılaştırma; 24 örneklemde 18 geçerli, 5 belirsiz, 1 olası hata (karanlık cam bölgesi)",
+     inconsistencies: "Kolaj/augmentation kaynaklı kısmi şerit kutular; bir örnek yerdeki yelek",
+     evidence: "label_review.csv (AV01-AV24) + görsel",
+     risk: "Örneklem küçük (n=24); parça/şerit kutular"}
+  - {dataset: site_safety, id: 4, name: NO-Safety Vest, target: 3, status: needs_review, compatibility: Karar verilemedi, reliability: Düşük,
+     box_semantics: "Yeleksiz gövde/göğüs; çok sayıda kısmi (şerit), yakın çekim (maskeli yüz+tişört) veya belirsiz bölge",
+     visual_result: "24 örneklemde 13 geçerli, 9 belirsiz, 2 olası hata (parlak sarı-yeşil giysi 'yelek yok' etiketli); 8/8 karşılaştırmada baret/kumaş bölgeleri",
+     inconsistencies: "Baret yakın çekimi veya yüksek görünürlüklü giysi içeren NO-Safety Vest kutuları; birçok kutu gövde dışı",
+     evidence: "label_review.csv (AX01-AX24) + görsel",
+     risk: "Olası hata %8, belirsiz %38: eşiği aşıyor; insan incelemesi/filtreleme olmadan kullanılmamalı"}
+  - {dataset: site_safety, id: 1, name: Mask, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Maske", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: site_safety, id: 3, name: NO-Mask, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Maskesiz yüz", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: site_safety, id: 5, name: Person, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Kişi (çoğu kısmi/kırpılmış: h/w medyan 1.64)", visual_result: "—", inconsistencies: "Hedef dışı; kişi kutuları sık kısmi",
+     evidence: "Sınıf adı/YAML + semantic_metrics.json", risk: "İnsan tespiti için kullanım kararı bekliyor"}
+  - {dataset: site_safety, id: 6, name: Safety Cone, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Güvenlik konisi", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: site_safety, id: 8, name: machinery, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "İş makinesi", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}
+  - {dataset: site_safety, id: 9, name: vehicle, target: null, status: incompatible, compatibility: Uyumsuz, reliability: Yüksek,
+     box_semantics: "Araç", visual_result: "—", inconsistencies: "Hedef dışı", evidence: "Sınıf adı/YAML", risk: ""}

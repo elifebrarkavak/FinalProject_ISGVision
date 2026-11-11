@@ -1,0 +1,57 @@
+{
+  "images_hashed": 6085,
+  "unreadable_images": [],
+  "near_threshold_bits_of_64": 5,
+  "near_pair_count_by_threshold": {
+    "<=0": 35,
+    "<=2": 53,
+    "<=5": 83,
+    "<=8": 131,
+    "<=10": 234,
+    "<=12": 737
+  },
+  "near_pairs_truncated": false,
+  "per_dataset_images": {
+    "construction_ppe": 1000,
+    "mendeley_ppe": 2286,
+    "site_safety": 2799
+  },
+  "source_name_overlap_groups": {
+    "cross_dataset": 8,
+    "within_dataset_same_split": 503,
+    "within_dataset_cross_split": 8
+  },
+  "matches": {
+    "near": {
+      "pairs": {
+        "cross_dataset:mendeley_ppe|site_safety": 4,
+        "within_dataset_cross_split:test|val": 2,
+        "within_dataset_cross_split:train|val": 10,
+        "within_dataset_same_split:train|train": 32,
+        "within_dataset_same_split:val|val": 6
+      },
+      "total_pairs": 54,
+      "distinct_images_involved": 79
+    },
+    "near_flipped": {
+      "pairs": {
+        "within_dataset_cross_split:train|val": 7,
+        "within_dataset_same_split:train|train": 20,
+        "within_dataset_same_split:val|val": 2
+      },
+      "total_pairs": 29,
+      "distinct_images_involved": 53
+    }
+  },
+  "manifest_checks": {
+    "construction_ppe": {
+      "entries": 1000,
+      "sha_mismatch": 0,
+      "split_mismatch": 0,
+      "missing_locally": 0,
+      "box_count_mismatch": 0,
+      "label_unchecked": 0,
+      "only_in_local_not_in_manifest": 0
+    }
+  }
+}

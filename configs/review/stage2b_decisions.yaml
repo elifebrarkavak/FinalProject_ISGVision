@@ -1,0 +1,75 @@
+# Aşama 2B kararları (görsel/analitik inceleme kayıtları). Model destekli, tek değerlendirici; kullanıcı doğrulaması DEĞİLDİR.
+# Tarih: 2026-11-11. Orijinal veri değiştirilmemiştir.
+
+source_relation_decisions:
+  # D07/D08: kolaj karo düzeyinde ORB + görsel karşılaştırma (reports/dataset_audit/duplicate_verification/_d07_d08.jpg)
+  - group: IMG_0871_mp4-23
+    decision: Confirmed Same Source
+    evidence: "Tam görüntü ORB sınırdaydı (24 inlier). Karo düzeyinde ORB: train kolajının karelerinden biri test görüntüsüyle eşleşiyor (5 çiftte inlier 30/46/54/78/131, oran 0.73-0.96; en iyi çiftte hizalı NCC 0.85). Görsel: aynı kadın, aynı maske, aynı el hareketi — aynı videonun aynı karesi."
+    edge: hard
+    pairs_scope: cross_split
+  - group: IMG_3103_mp4-17
+    decision: Likely Same Source
+    evidence: "ORB 5/5 çiftte ≤6 inlier (geometrik eşleşme yok; kare/poz farklı). Görsel: train kolajındaki kulaklıklı, gözlüklü, maskeli kadın karesi val görüntüsündeki kişiyle AYNI kişi/aynı kayıt oturumu görünüyor (yüz ifadesi/poz farklı). Aynı video olduğu kesinleştirilemedi."
+    edge: soft
+    pairs_scope: cross_split
+  - group: youtube-51
+    decision: Different Source
+    evidence: "Görsel ve ORB (5/5 not_duplicate): ortak içerik yok"
+    edge: none
+  - group: image_55
+    decision: Different Source
+    evidence: "Görsel ve ORB (5/5 not_duplicate): ortak içerik yok"
+    edge: none
+  - group: youtube-504
+    decision: Different Source
+    evidence: "Görsel ve ORB (5/5 not_duplicate): ortak içerik yok"
+    edge: none
+  - group: youtube-260
+    decision: Different Source
+    evidence: "Görsel ve ORB (5/5 not_duplicate): ortak içerik yok"
+    edge: none
+  - group: youtube-391
+    decision: Different Source
+    evidence: "ORB 5/5 çift not_duplicate (inlier ≤4) ve karo düzeyinde de eşleşme yok; 3/5 çift görsel incelendi (val: merdivenli işçi; train kolajlarında ortak içerik yok)"
+    edge: none
+  - group: Movie-on-10-31-22-at-10_08-AM_mov-13
+    decision: Confirmed Same Source
+    evidence: "ORB eşleşmesi (en yüksek inlier 159) ve val/test ardışık kareleri görsel doğrulandı"
+    edge: none   # kenarlar duplicate_verification.csv'den gelir
+
+conflict_decisions:
+  # C01 = SI057, C03 = SI081 (reports/dataset_audit/roboflow_review/c01_c03_original.jpg: 1.5x orijinal çözünürlük)
+  SI057:
+    decision: quarantine
+    evidence: "Kolajın sol alt karesi döndürülmüş, gri tonlu, yoğun kalabalık: L13-L16 ardışık NO-Safety Vest kutuları ve L17 Safety Vest kutusu aynı kişiler üzerinde üst üste biniyor; düşük çözünürlükte hangi kutunun doğru olduğu görsel olarak belirlenemedi. Belirsiz etiket sessizce kabul edilmedi."
+  SI081:
+    decision: needs_reannotation
+    evidence: "Mavi panel karesinde sağ kenardaki kareli gömlekli kişi için L9 (Safety Vest) ve L16 (NO-Safety Vest) aynı bölgede (IoU 0.45): iki etiketten biri kesinlikle yanlış; kişi kareli gömlek giyiyor ve belirgin yelek görünmüyor, Safety Vest etiketi büyük olasılıkla hatalı. Görüntü yeniden etiketleme sonrası kullanılabilir."
+
+class_decisions:
+  E05_mendeley_Helmet:
+    decision: excluded_from_merged_training_candidates
+    evidence: "Kutu baş+baret (yüz dahil); baş/gövde oranı 0.53 (Construction helmet 0.33; Roboflow Hardhat baret nesnesine sıkı); h/w 1.19 vs 0.85. Otomatik geometrik dönüşüm: baret kutusunun baş kutusu içindeki konumu poz/siperlik/kamera açısına göre değiştiği ve kalibrasyon için eşleştirilmiş doğru kutu bulunmadığı için GÜVENİLİR DEĞİL; tahmini küçültme uygulanmadı. Mendeley IQR/medyan baş-gövde oranı 0.32 (sabit bir küçültme katsayısı kutu başına büyük hata üretir)."
+  E10_site_safety_NO_Hardhat:
+    decision: excluded_from_merged_training_candidates
+    evidence: "Geometri süzgeci (h>=32 px, 0.9<=h/w<=1.8, kenara değmeyen, Hardhat ile örtüşmeyen, kişiye atanan) 2428 kutunun 354'ünü geçiriyor (%14.6). Geçen 40 kutuluk görsel örneklemde tam-baş uyumlu yalnızca ~12/40 (%30): çoğu saç/alın üst kısmı (~19/40) veya belirsiz/koyu (~9/40). Güvenilir bir tam-baş alt kümesi ayırt edilemedi. 24 örneklemde AN13 (mavi baret görünen hata) süzgeçle elendi (iyi), ancak süzgeç tam-baş uyumunu garanti etmiyor."
+  E12_site_safety_NO_Safety_Vest:
+    decision: excluded_from_merged_training_candidates
+    evidence: "Geometri süzgeci (h>=48 px, 0.8<=h/w<=3.0, kenara değmeyen, kişiye göre >=%25, Safety Vest/Hardhat ile örtüşmeyen) 4153 kutunun 992'sini geçiriyor. Geçen 44 kutuluk görsel örneklemde geçerli gövde ~30/44 (%68); hi-vis renkli giysi ~3, yanlış bölge ~1, belirsiz/parça ~10. Yüksek görünürlük renk ölçütü 24 denetim karosunda 2/2 olası hatayı yakalayamadı (AX09 oran 0.10, AX11 0.0). %90 kesinlik sağlanamadı."
+
+contact_sheet_review:
+  # 12 contact sheet dosyasının tamamı AÇILARAK incelendi (model destekli görsel inceleme).
+  construction_ppe:
+    sheets_viewed: 4
+    findings: "Kutular nesneler üzerinde ve sınıflar tutarlı (helmet/no_helmet/vest/no_vest/gloves/boots/goggles/Person/forklift, no_* sınıfları görünür vücut bölgesinde). Yanlış sınıf veya belirgin yanlış konum görülmedi. Uzak/küçük kişilerin bulunduğu geniş çekimlerde (gözetim kamerası/balıkgözü) çok sayıda küçük ve iç içe kutu var. Görüntülerin önemli bölümü yapay üretilmiş görünümde (README: 'human-collected and generated images'). val 599 gibi örneklerde sağdaki kişi no_helmet ile işaretlenmiş, doğru."
+    suspicious_images: []
+  mendeley_ppe:
+    sheets_viewed: 4
+    findings: "Etiketler EKSİK: kalabalık sahnelerde (00289, 00877, 01029, 01051, 00197, 08371) baretli/yelekli birçok kişi etiketsiz, yalnızca bazıları işaretli. Çok sayıda stok/ticari fotoğraf filigranı (alamy, depositphotos, CanStockPhoto, paixin, vcg, redocn, Fang.com, weibo) => görüntü hakları belirsiz. 00071'de elinde baret taşıyan kişi NoHelmet (geçerli). NoVest örneklerinin çoğu inşaat dışı sıradan sahneler (istasyon, çarşı, yürüyüş yolu)."
+    suspicious_images: [00289, 00877, 01029, 01051, 00197, 08371]
+  site_safety:
+    sheets_viewed: 4
+    findings: "Train görüntüleri 2x2 kolaj, siyah kare (cutout), döndürme ve renk bozulması içeriyor; birçok görüntüde karo sınırları kutuları kesiyor. Alan dışı içerik yoğun (kitapçı, bowling, havalimanı, yakın çekim maskeli yüzler) ve bu karolarda NO-Safety Vest/NO-Hardhat kutuları var. Çok sayıda iç içe Person kutusu ve üst üste binen NO-Safety Vest kutuları. Val/test görüntüleri kolaj değil, normal tek görüntü (dağılım farkı). Yanlış sınıf örnekleri: yakın çekim yüze NO-Safety Vest, maskeli yüze Mask+Hardhat şeridi."
+    suspicious_images: []
+  comparison_with_crop_review: "Önceki crop incelemeleriyle tutarlı: Construction-PPE temiz; Mendeley tutarlı ama eksik etiketli ve haklar belirsiz; Roboflow gürültülü ve dağılım olarak train/val-test farklı. Yeni bulgular: (1) Mendeley etiket EKSİKLİĞİ, (2) Mendeley filigranlı stok görseller, (3) Roboflow train kolaj/cutout yapısı."

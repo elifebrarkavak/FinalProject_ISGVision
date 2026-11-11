@@ -1,0 +1,43 @@
+{
+  "construction_ppe": {
+    "train": {
+      "images": 800,
+      "cutout": 3,
+      "cutout_pct": 0.4
+    },
+    "val": {
+      "images": 200,
+      "cutout": 1,
+      "cutout_pct": 0.5
+    }
+  },
+  "mendeley_ppe": {
+    "train": {
+      "images": 1829,
+      "cutout": 42,
+      "cutout_pct": 2.3
+    },
+    "val": {
+      "images": 457,
+      "cutout": 17,
+      "cutout_pct": 3.7
+    }
+  },
+  "site_safety": {
+    "train": {
+      "images": 2603,
+      "cutout": 301,
+      "cutout_pct": 11.6
+    },
+    "val": {
+      "images": 114,
+      "cutout": 2,
+      "cutout_pct": 1.8
+    },
+    "test": {
+      "images": 82,
+      "cutout": 1,
+      "cutout_pct": 1.2
+    }
+  }
+}

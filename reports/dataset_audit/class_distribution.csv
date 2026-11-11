@@ -1,0 +1,89 @@
+dataset,class_id,class_name,split,boxes,images_with_class,share_of_split_boxes_pct
+construction_ppe,0,helmet,train,1282,613,10.77
+construction_ppe,0,helmet,val,294,146,9.93
+construction_ppe,0,helmet,ALL,1576,759,10.6
+construction_ppe,1,gloves,train,1548,546,13.01
+construction_ppe,1,gloves,val,381,136,12.87
+construction_ppe,1,gloves,ALL,1929,682,12.98
+construction_ppe,2,vest,train,1476,644,12.4
+construction_ppe,2,vest,val,340,157,11.48
+construction_ppe,2,vest,ALL,1816,801,12.22
+construction_ppe,3,boots,train,2003,576,16.83
+construction_ppe,3,boots,val,481,155,16.24
+construction_ppe,3,boots,ALL,2484,731,16.71
+construction_ppe,4,goggles,train,612,437,5.14
+construction_ppe,4,goggles,val,139,102,4.69
+construction_ppe,4,goggles,ALL,751,539,5.05
+construction_ppe,5,Person,train,1962,791,16.48
+construction_ppe,5,Person,val,481,200,16.24
+construction_ppe,5,Person,ALL,2443,991,16.44
+construction_ppe,6,no_helmet,train,634,337,5.33
+construction_ppe,6,no_helmet,val,179,91,6.05
+construction_ppe,6,no_helmet,ALL,813,428,5.47
+construction_ppe,7,no_goggle,train,265,227,2.23
+construction_ppe,7,no_goggle,val,82,56,2.77
+construction_ppe,7,no_goggle,ALL,347,283,2.33
+construction_ppe,8,no_gloves,train,839,340,7.05
+construction_ppe,8,no_gloves,val,203,94,6.86
+construction_ppe,8,no_gloves,ALL,1042,434,7.01
+construction_ppe,9,no_boots,train,569,244,4.78
+construction_ppe,9,no_boots,val,178,71,6.01
+construction_ppe,9,no_boots,ALL,747,315,5.03
+construction_ppe,10,forklift,train,275,201,2.31
+construction_ppe,10,forklift,val,73,46,2.47
+construction_ppe,10,forklift,ALL,348,247,2.34
+construction_ppe,11,no_vest,train,437,300,3.67
+construction_ppe,11,no_vest,val,130,84,4.39
+construction_ppe,11,no_vest,ALL,567,384,3.81
+mendeley_ppe,0,Helmet,train,1970,1130,40.52
+mendeley_ppe,0,Helmet,val,451,260,38.35
+mendeley_ppe,0,Helmet,ALL,2421,1390,40.1
+mendeley_ppe,1,NoHelmet,train,960,506,19.74
+mendeley_ppe,1,NoHelmet,val,214,116,18.2
+mendeley_ppe,1,NoHelmet,ALL,1174,622,19.44
+mendeley_ppe,2,NoVest,train,836,521,17.19
+mendeley_ppe,2,NoVest,val,222,140,18.88
+mendeley_ppe,2,NoVest,ALL,1058,661,17.52
+mendeley_ppe,3,Vest,train,1096,636,22.54
+mendeley_ppe,3,Vest,val,289,173,24.57
+mendeley_ppe,3,Vest,ALL,1385,809,22.94
+site_safety,0,Hardhat,train,3362,1322,8.99
+site_safety,0,Hardhat,val,79,42,11.33
+site_safety,0,Hardhat,test,110,30,14.47
+site_safety,0,Hardhat,ALL,3551,1394,9.14
+site_safety,1,Mask,train,1743,1104,4.66
+site_safety,1,Mask,val,21,19,3.01
+site_safety,1,Mask,test,28,16,3.68
+site_safety,1,Mask,ALL,1792,1139,4.61
+site_safety,2,NO-Hardhat,train,2318,1391,6.2
+site_safety,2,NO-Hardhat,val,69,37,9.9
+site_safety,2,NO-Hardhat,test,41,25,5.39
+site_safety,2,NO-Hardhat,ALL,2428,1453,6.25
+site_safety,3,NO-Mask,train,3209,1503,8.59
+site_safety,3,NO-Mask,val,74,44,10.62
+site_safety,3,NO-Mask,test,79,30,10.39
+site_safety,3,NO-Mask,ALL,3362,1577,8.66
+site_safety,4,NO-Safety Vest,train,3957,1829,10.59
+site_safety,4,NO-Safety Vest,val,106,56,15.21
+site_safety,4,NO-Safety Vest,test,90,36,11.84
+site_safety,4,NO-Safety Vest,ALL,4153,1921,10.69
+site_safety,5,Person,train,9691,2506,25.93
+site_safety,5,Person,val,166,84,23.82
+site_safety,5,Person,test,174,59,22.89
+site_safety,5,Person,ALL,10031,2649,25.83
+site_safety,6,Safety Cone,train,3170,626,8.48
+site_safety,6,Safety Cone,val,44,13,6.31
+site_safety,6,Safety Cone,test,92,8,12.11
+site_safety,6,Safety Cone,ALL,3306,647,8.51
+site_safety,7,Safety Vest,train,3156,1313,8.44
+site_safety,7,Safety Vest,val,41,28,5.88
+site_safety,7,Safety Vest,test,61,22,8.03
+site_safety,7,Safety Vest,ALL,3258,1363,8.39
+site_safety,8,machinery,train,5238,2081,14.01
+site_safety,8,machinery,val,55,26,7.89
+site_safety,8,machinery,test,44,22,5.79
+site_safety,8,machinery,ALL,5337,2129,13.74
+site_safety,9,vehicle,train,1534,741,4.1
+site_safety,9,vehicle,val,42,16,6.03
+site_safety,9,vehicle,test,41,15,5.39
+site_safety,9,vehicle,ALL,1617,772,4.16

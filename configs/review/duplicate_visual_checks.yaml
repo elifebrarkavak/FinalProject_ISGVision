@@ -1,0 +1,160 @@
+# Yakın kopya çiftlerinin GÖRSEL doğrulama kayıtları (görüntüler yan yana açılıp incelendi; model destekli, kullanıcı doğrulaması değildir).
+# pair_id, scripts/verify_duplicates.py çıktısıyla (aday küme ve parametreler sabitken) eşleşir; a/b dosya adı parçalarıyla ayrıca doğrulanır.
+# Örneklem: 6 öncelikli çift + 12 Roboflow (1'i öncelikli çiftle ortak) + 9 Mendeley bölümler-arası eşleşme (rastgele, seed=5). Sonuç: 26/26 çift görsel olarak aynı kaynağa/sahneye ait (6 öncelikli + 11 Roboflow + 9 Mendeley; bir Roboflow çifti öncelikli listeyle ortak).
+checks:
+  DV0079:
+    a: 00596_jpg.rf.e056867eae13eca
+    b: 00596_jpg.rf.d030c5d98b937d0
+    result: confirmed_same_source_image
+    note: Mendeley train ile Roboflow val aynı fotoğraf; Roboflow sürümü 640x640 'stretch'
+      (anizotropi 0.56)
+  DV0751:
+    a: 02912_jpg.rf.d68699bf2aa81dc
+    b: ppe_1228_jpg.rf.29b714c415ea
+    result: confirmed_same_source_image
+    note: Mendeley val ile Roboflow val aynı fotoğraf (kırmızı baretli işçi, tablet);
+      Roboflow sürümü gerilmiş
+  DV0081:
+    a: 00624_jpg.rf.6d31c7a4e92fe52
+    b: ppe_0665_jpg.rf.1dad479f7f54
+    result: confirmed_same_source_image
+    note: Mendeley train ile Roboflow val aynı grup fotoğrafı; Roboflow sürümü gerilmiş
+  DV0428:
+    a: 02646_jpg.rf.4b5bddb3448f629
+    b: 02646_jpg.rf.5c93ba95bdc0380
+    result: confirmed_same_source_image
+    note: Mendeley train ile Roboflow val aynı fotoğraf (kürekli işçi); Roboflow sürümü
+      gerilmiş
+  DV4609:
+    a: Movie-on-10-31-22-at-10_08-A
+    b: Movie-on-10-31-22-at-10_08-A
+    result: confirmed_same_scene_different_frame
+    note: 'Roboflow val/test: aynı videodan ardışık kareler (aynı oda, farklı poz);
+      aynı görüntü değil'
+  DV4612:
+    a: youtube-194_jpg.rf.601da70a1
+    b: youtube-198_jpg.rf.e89faeb97
+    result: confirmed_same_scene_different_frame
+    note: 'Roboflow val/test: aynı tünel/ekskavatör videosundan neredeyse özdeş ardışık
+      kareler'
+  DV4307:
+    a: youtube-460_jpg.rf.9d2d6108b
+    b: image_55_jpg.rf.27ae4341a9b9
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajının bir karesi test görüntüsündeki aynı sahne (turuncu
+      yelekli görevli, kapı)
+  DV2759:
+    a: construction-1-_mp4-51_jpg.r
+    b: youtube-53_jpg.rf.e96f8f8138
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki tuğla ev karesi test görüntüsüyle aynı sahne
+  DV2905:
+    a: construction-2-_mp4-15_jpg.r
+    b: construction-2-_mp4-13_jpg.r
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki damperli kamyon karesi test görüntüsüne çok benzer
+      sahne (aynı kaynak olası)
+  DV1346:
+    a: 2009_002883_jpg.rf.eb448e7e5
+    b: 2009_003991_jpg.rf.c4fadb57b
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki sandalyede çocuk karesi val görüntüsüyle aynı
+      sahne
+  DV4180:
+    a: youtube-25_jpg.rf.1bafaa3388
+    b: class1_150_jpg.rf.5995dce34d
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki merdivendeki adam karesi test görüntüsüyle aynı
+      sahne
+  DV4577:
+    a: youtube-829_jpg.rf.a5ff6a1ce
+    b: construction-1159-_jpg.rf.9f
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki sarı yükleyici karesi test görüntüsüyle aynı
+      fotoğraf
+  DV4608:
+    a: Movie-on-10-31-22-at-10_08-A
+    b: Movie-on-10-31-22-at-10_08-A
+    result: confirmed_same_scene_different_frame
+    note: 'Roboflow val/test: aynı videodan ardışık kareler (maskeli adam)'
+  DV4004:
+    a: ppe_0015_jpg.rf.6afa74a49a19
+    b: construction-3-_mp4-21_jpg.r
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki CAT yükleyici karesi val görüntüsüne çok benzer
+      sahne
+  DV4390:
+    a: youtube-534_jpg.rf.ae9569ad3
+    b: youtube-540_jpg.rf.b229e14d5
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki ev/direk karesi val görüntüsüyle aynı sahne
+  DV3834:
+    a: image_829_jpg.rf.cf4b8676dc0
+    b: 004424_jpg.rf.0470713b945b08
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki direk tırmanan işçi karesi val görüntüsüyle aynı
+      sahne
+  DV4231:
+    a: youtube-345_jpg.rf.07f7ba28c
+    b: youtube-277_jpg.rf.1bda1581c
+    result: confirmed_shared_collage_tile
+    note: Roboflow train kolajındaki Tyvek kaplı ev karesi val görüntüsüyle aynı sahne
+  DV0187:
+    a: 00712_jpg.rf.383718dfc5b101d
+    b: 00728_jpg.rf.2a89b2987edb327
+    result: confirmed_same_scene_different_frame
+    note: 'Mendeley train/val: aynı çatı gözetim videosundan farklı kareler (zaman
+      damgası farklı)'
+  DV0267:
+    a: 00719_jpg.rf.a690974ebd3a018
+    b: 00724_jpg.rf.ac94043c6f77078
+    result: confirmed_same_scene_different_frame
+    note: 'Mendeley train/val: aynı çatı gözetim videosundan farklı kareler'
+  DV0292:
+    a: 00722_jpg.rf.0054750e8cfdd29
+    b: 00721_jpg.rf.c55bede6add8357
+    result: confirmed_same_scene_different_frame
+    note: 'Mendeley train/val: aynı çatı gözetim videosundan farklı kareler'
+  DV0254:
+    a: 00717_jpg.rf.9cec5c9b30da4a3
+    b: 00716_jpg.rf.2f526e0ea15785c
+    result: confirmed_same_scene_different_frame
+    note: 'Mendeley train/val: aynı çatı gözetim videosundan farklı kareler'
+  DV0692:
+    a: reflectivevest1966_jpg.rf.48
+    b: reflectivevest1965_jpg.rf.e4
+    result: confirmed_same_source_image
+    note: 'Mendeley train/val: aynı bisikletçi fotoğrafı, biri dikey çevrilmiş (ters)'
+  DV0447:
+    a: 02944_jpg.rf.66db8b6bd52e58d
+    b: 02476_jpg.rf.b7bc819fdd857d5
+    result: confirmed_same_source_image
+    note: 'Mendeley train/val: aynı grup fotoğrafı (köprü önünde)'
+  DV0662:
+    a: reflectivevest-693_jpg.rf.aa
+    b: reflectivevest1736_jpg.rf.91
+    result: confirmed_same_source_image
+    note: 'Mendeley train/val: aynı ürün fotoğrafı, farklı kırpma'
+  DV0702:
+    a: reflectivevest899_jpg.rf.3db
+    b: reflectivevest-374_jpg.rf.a2
+    result: confirmed_same_source_image
+    note: 'Mendeley train/val: gece bisikletçi grubu fotoğrafı iki görüntüde ortak'
+  DV0507:
+    a: 64_jpg.rf.39c44e494d9ae5cc82
+    b: 75_jpg.rf.b5655d4816660586e1
+    result: confirmed_same_photo_session
+    note: 'Mendeley train/val: aynı kişi ve mekan, aynı çekim oturumundan farklı fotoğraf
+      (aynı görüntü değil)'
+
+# Roboflow: bölümler arası aynı kaynak adını taşıyan 8 grup (source_name_overlap.csv). Ad çakışması ≠ kopya: görsel/geometrik sonuç.
+# category: B = görsel doğrulandı, A = yalnızca otomatik, D = kullanıcı/yeni yöntem gerekir
+name_groups:
+  Movie-on-10-31-22-at-10_08-AM_mov-13: {category: A, result: "ORB geometrik eşleşme VAR (5 çiftten 3'ü eşleşme, en yüksek inlier 159): aynı videodan kareler"}
+  youtube-51:        {category: B, result: "Görsel: train kolajı (inşaat sahneleri) ile val görüntüsü (sinek kuşları) ortak içerik YOK; ORB 5/5 çift not_duplicate"}
+  image_55:          {category: B, result: "Görsel: train kolajı ile test görüntüsü (maskeli görevli, kapı) ortak içerik YOK; ORB 5/5 not_duplicate"}
+  youtube-504:       {category: B, result: "Görsel: train kolajı (ekskavatör, sarı duvar) ile val (iskelede işçi) ortak içerik YOK; ORB 5/5 not_duplicate"}
+  youtube-260:       {category: B, result: "Görsel: train kolajı ile val (hava görüntüsü, kamyon) ortak içerik YOK; ORB 5/5 not_duplicate"}
+  youtube-391:       {category: A, result: "ORB 5/5 çift not_duplicate (inlier ≤4); görsel olarak AYRICA bakılmadı"}
+  IMG_3103_mp4-17:   {category: D, result: "ORB eşleşmedi ama train kolajındaki maskeli kulaklıklı kadın karesi val görüntüsüyle aynı kişi/videodan olabilir (görsel benzerlik); yöntemle KESİNLEŞTİRİLEMEDİ"}
+  IMG_0871_mp4-23:   {category: D, result: "ORB sınırda (24 inlier, 'uncertain'); train kolajındaki maskeli kadın karesi test görüntüsündekiyle aynı kişi/videodan olabilir; KESİNLEŞTİRİLEMEDİ"}

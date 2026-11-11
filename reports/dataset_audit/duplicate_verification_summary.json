@@ -1,0 +1,56 @@
+{
+  "images": 6085,
+  "unreadable": [],
+  "candidate_pairs": 4621,
+  "min_votes": 15,
+  "hash_bits": 10,
+  "thresholds": {
+    "min_inliers": 25,
+    "min_inlier_ratio": 0.3,
+    "uncertain_inliers": 12,
+    "min_ncc": 0.8,
+    "candidate_hash_bits": 10
+  },
+  "decisions": {
+    "not_duplicate": 500,
+    "same_image_derived": 630,
+    "partial_region_match": 273,
+    "same_scene_different_frame": 3152,
+    "uncertain": 66
+  },
+  "decisions_by_relation": {
+    "cross_dataset": {
+      "not_duplicate": 79,
+      "same_scene_different_frame": 10,
+      "same_image_derived": 4,
+      "uncertain": 3
+    },
+    "within_dataset_cross_split": {
+      "same_image_derived": 160,
+      "not_duplicate": 79,
+      "same_scene_different_frame": 570,
+      "uncertain": 5,
+      "partial_region_match": 16
+    },
+    "within_dataset_same_split": {
+      "not_duplicate": 342,
+      "same_image_derived": 466,
+      "partial_region_match": 257,
+      "same_scene_different_frame": 2572,
+      "uncertain": 58
+    }
+  },
+  "risk_counts_excluding_not_duplicate": {
+    "low": 3353,
+    "HIGH": 758,
+    "medium": 9,
+    "low-medium": 1
+  },
+  "sibling_candidate_recall_eval": {
+    "n": 400,
+    "decided_geometric_match": 101,
+    "dhash_le5": 0,
+    "phash_multicrop_le10": 0,
+    "lsh_votes_ge_min": 13
+  }
+}
