@@ -74,6 +74,8 @@ REQUIRED_FILES: tuple[str, ...] = (
     "scripts/apply_usage_policy.py",
     "scripts/generate_stage2b_reports.py",
     "docs/dataset_attributions.md",
+    "scripts/run_camera.py",
+    "docs/camera_module.md",
 )
 
 CONFIG_FILES: tuple[str, ...] = ("configs/default.yaml", ".env.example")

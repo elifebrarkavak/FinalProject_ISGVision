@@ -1,8 +1,9 @@
 # ISG_VISION — Yapay Zekâ Destekli Çoklu Çalışan Tanıma ve İSG Denetim Sistemi
 
-> **Mevcut durum: Aşama 2 — Veri seti analizi ve doğrulama `COMPLETED` (`reports/dataset_audit/STAGE_2_CLOSURE_REPORT.md`). Aşama 3 başlatılmadı.**
-> Aşama 1 (geliştirme ortamı) tamamlanmıştır. Tespit, takip, yüz tanıma ve KKD denetimi özellikleri, veri birleştirme ve model eğitimi
-> **henüz geliştirilmemiştir**.
+> **Mevcut durum: Aşama 3 — Canlı kamera altyapısı `IN_PROGRESS`.** Kamera/video okuma, FPS ve canlı pencere kodu yazıldı ve otomatik testlerden geçti;
+> gerçek kamera donanım doğrulaması kullanıcı tarafından (macOS kamera izniyle) yapılacaktır (`READY_FOR_MANUAL_VERIFICATION`). Ayrıntı: [docs/camera_module.md](docs/camera_module.md).
+> Aşama 1 (geliştirme ortamı) ve Aşama 2 (veri seti analizi, `COMPLETED`: `reports/dataset_audit/STAGE_2_CLOSURE_REPORT.md`) tamamlanmıştır.
+> Tespit, takip, yüz tanıma ve KKD denetimi özellikleri, veri birleştirme ve model eğitimi **henüz geliştirilmemiştir**; Aşama 4 başlatılmamıştır.
 
 ## 1. Proje adı
 
@@ -214,6 +215,29 @@ Kararlar ve kanıtlar: `configs/review/stage2b_decisions.yaml`, `reports/dataset
 Politika ham veriyi değiştirmeden manifeste uygulanmıştır: 990 kullanılabilir Construction-PPE görüntüsü (794 train, 196 validation).
 Kullanıcı görsel kararları: 13 `approved`, 4 `needs_reannotation`, 5 `quarantine`. Mendeley ve Roboflow beklemededir.
 
+## 13.2 Aşama 3 — Canlı kamera altyapısı (komutlar)
+
+Durum: `IN_PROGRESS`. Amaç: MacBook kamerasından veya video dosyasından kare okuyan, FPS ölçen ve durum bilgisini OpenCV penceresinde gösteren,
+sonraki aşamalardaki modüllerin (insan tespiti, takip, yüz, KKD) aynı kare akışını kullanabileceği modüler altyapı. Bu aşamada **hiçbir yapay zekâ
+modeli çalıştırılmaz**, görüntü kaydedilmez. Tam teknik doküman: [docs/camera_module.md](docs/camera_module.md).
+
+Kod: `src/isg_vision/camera/` (`config.py`, `frame.py`, `capture.py`, `fps.py`, `display.py`, `preview.py`, `cli.py`, `errors.py`), başlatıcı: `scripts/run_camera.py`.
+
+```bash
+.venv/bin/python scripts/run_camera.py --source camera                                   # varsayılan kamera, 1280x720 istenir
+.venv/bin/python scripts/run_camera.py --source camera --camera-index 1                  # kamera indeksi seç
+.venv/bin/python scripts/run_camera.py --source camera --width 640 --height 480          # çözünürlük (ikisi birlikte)
+.venv/bin/python scripts/run_camera.py --source video --video-path /yol/video.mp4        # MP4 / MOV / AVI
+.venv/bin/python scripts/run_camera.py --source camera --no-display --max-frames 100     # penceresiz kısa deneme
+.venv/bin/python scripts/run_camera.py --help
+```
+
+* Pencerede: kaynak, **ölçülen FPS**, kaynağın bildirdiği FPS, gerçek çözünürlük, durum. Çıkış: `Q` / `Esc` / pencereyi kapatma / terminalde `Ctrl+C`.
+* **macOS kamera izni:** programı çalıştıran uygulamaya (Terminal, VS Code ...) Sistem Ayarları → Gizlilik ve Güvenlik → Kamera bölümünden izin verilmelidir;
+  `not authorized to capture video` hatası izin eksikliğini gösterir. Bu proje izinleri değiştirmez veya aşmaz.
+* Kamera/video hataları (izin yok, kamera yok, kare okunamadı, bağlantı koptu, dosya yok/bozuk, pencere açılamadı) anlaşılır mesajla ve çıkış koduyla bildirilir; kaynaklar her koşulda serbest bırakılır.
+* Testler: `.venv/bin/python -m unittest discover -s tests` (gerçek kamera açmaz, izin istemez, ağ kullanmaz).
+
 ## 14. Geliştirme aşamaları
 
 Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [docs/project_plan.md](docs/project_plan.md)
@@ -221,7 +245,7 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 
 1. **Proje ortamının hazırlanması** — tamamlandı
 2. **Veri setlerinin analizi ve doğrulanması** — `COMPLETED` (22/22 kullanıcı kararı uygulandı; 990 görüntü = 794 train + 196 validation)
-3. **Canlı kamera altyapısı** — OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
+3. **Canlı kamera altyapısı** — `IN_PROGRESS`: OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
 4. **Çoklu insan tespiti ve takibi**
 5. **Çoklu yüz tespiti**
 6. **Çalışan kayıt sistemi**
@@ -232,14 +256,18 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 11. **Kimlik tanıma ve İSG kontrolünün birleştirilmesi**
 12. **Canlı arayüz, sistem testleri ve raporlama**
 
-Aşama 3'e geçme kararı kullanıcıya aittir.
+Aşama kapanış kararları (Aşama 3 dahil) ve sonraki aşamaya geçiş kullanıcıya aittir.
 
 ## 15. Mevcut geliştirme durumu
+
+**Aşama 3 — Canlı kamera altyapısı (`IN_PROGRESS`).** Eklenenler: `FrameSource` (kamera/video ortak kare okuma), `FramePacket` (kare + metadata), `FpsMeter`, OpenCV
+canlı pencere (overlay), `scripts/run_camera.py`, hata yönetimi ve `tests/test_camera_*.py` otomatik testleri. Gerçek kamera donanım doğrulaması bekleniyor
+(`READY_FOR_MANUAL_VERIFICATION`). Aşama 4 başlatılmamıştır.
 
 **Aşama 2 — Veri seti analizi (`COMPLETED`).** Aşama 1'de tamamlananlar: klasör iskeleti, `.venv` (Python 3.11), temel bağımlılıklar,
 `scripts/check_mps.py`, `scripts/check_environment.py`, `unittest` tabanlı temel testler, `.gitignore`, pre-commit hook,
 VS Code ayarları, bu dokümantasyon. Aşama 2'de eklenenler: güvenli ZIP çıkarma, veri seti envanteri, etiket doğrulama, sınıf dağılımı,
 tekrar/yakın kopya analizi, görsel doğrulama örnekleri, aday sınıf eşleme taslağı, Türkçe denetim raporu ve ilgili testler.
-22/22 nihai kullanıcı kararı uygulanmış; onaylı Construction-PPE kapsamı 990 görüntüye indirilmiştir. **Aşama 3 başlatılmamıştır.**
-**Geliştirilmeyenler:** kamera uygulaması, insan tespiti/takibi, yüz tespiti/tanıma, KKD tespiti, model eğitimi,
+22/22 nihai kullanıcı kararı uygulanmış; onaylı Construction-PPE kapsamı 990 görüntüye indirilmiştir.
+**Geliştirilmeyenler:** insan tespiti/takibi, yüz tespiti/tanıma, KKD tespiti, model eğitimi,
 veri seti birleştirme/yeniden bölme/etiket dönüştürme, arayüz, olay kaydı.

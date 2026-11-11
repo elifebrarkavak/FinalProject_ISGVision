@@ -5,7 +5,7 @@
 stages:
   1: {title: "Proje ortamının hazırlanması", status: completed}
   2: {title: "Veri setlerinin analizi ve doğrulanması", status: completed}
-  3: {title: "Canlı kamera altyapısı", status: planned}
+  3: {title: "Canlı kamera altyapısı", status: in_progress}
   4: {title: "Çoklu insan tespiti ve takibi", status: planned}
   5: {title: "Çoklu yüz tespiti", status: planned}
   6: {title: "Çalışan kayıt sistemi", status: planned}

@@ -7,7 +7,7 @@ numaraları bu tabloya göre yazılır ve otomatik olarak denetlenir (`scripts/r
 |---|---|---|---|---|
 | 1 | Proje ortamının hazırlanması | Tamamlandı | Python 3.11 ortamı, bağımlılıklar, klasör iskeleti, testler, Git kuralları | — |
 | 2 | Veri setlerinin analizi ve doğrulanması | `COMPLETED` | Envanter, etiket ve sınıf doğrulama, sızıntı analizi, lisans, kullanım politikası, bölme manifesti, değerlendirme planı, son görsel inceleme | Model eğitimi, veri birleştirme, ham veri değişikliği |
-| 3 | Canlı kamera altyapısı | Planlandı | OpenCV ile kamera erişimi, video akışı, FPS hesaplama, kamera hatalarının yönetimi, çoklu kişi analizi için görüntü akışı altyapısı. **Kamera altyapısının teknik işlev testleri** (FPS, gecikme, yeniden bağlanma, kare kaybı) | Yok: YOLO eğitimi, veri seti birleştirme, model doğruluğu değerlendirmesi |
+| 3 | Canlı kamera altyapısı | `IN_PROGRESS` | OpenCV ile kamera erişimi, video akışı, FPS hesaplama, kamera hatalarının yönetimi, çoklu kişi analizi için görüntü akışı altyapısı. **Kamera altyapısının teknik işlev testleri** (FPS, gecikme, yeniden bağlanma, kare kaybı) | Yok: YOLO eğitimi, veri seti birleştirme, model doğruluğu değerlendirmesi |
 | 4 | Çoklu insan tespiti ve takibi | Planlandı | Kare başına çoklu insan tespiti, takip ID'leri (ByteTrack / BoT-SORT) | KKD modeli eğitimi |
 | 5 | Çoklu yüz tespiti | Planlandı | Karedeki tüm görünür yüzlerin tespiti ve kişi izleriyle ilişkilendirilmesi | Kimlik tanıma |
 | 6 | Çalışan kayıt sistemi | Planlandı | En fazla 10 çalışanın KVKK uyumlu kaydı (`data/employees/`, Git dışı) | — |

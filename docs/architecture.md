@@ -1,14 +1,14 @@
 # Planlanan Mimari
 
-> **Durum: Aşama 2 sonu.** Aşağıdaki modüllerin hiçbiri henüz uygulanmamıştır. Yalnızca boş paket iskeletleri vardır
-> (Aşama 2'nin veri denetim kodu `dataset_audit` altındadır). Bu doküman planlanan görev dağılımını ve ilişkileri açıklar; her
+> **Durum: Aşama 3 sürüyor (`IN_PROGRESS`).** Yalnızca `camera` modülü uygulanmıştır (bkz. [camera_module.md](camera_module.md)); diğer modüllerin hiçbiri
+> henüz uygulanmamıştır, yalnızca boş paket iskeletleri vardır (Aşama 2'nin veri denetim kodu `dataset_audit` altındadır). Bu doküman planlanan görev dağılımını ve ilişkileri açıklar; her
 > modül, aşağıdaki tabloda belirtilen aşamada geliştirilip güncellenecektir. Aşama sırası: [project_plan.md](project_plan.md).
 
 ## Modüller (`src/isg_vision/`)
 
 | Modül | Planlanan görev | Aşama | Durum |
 |---|---|---|---|
-| `camera` | Kamera/video kareleri okuma, FPS, kamera hata yönetimi. Yapay zekâ modüllerinden bağımsızdır. | 3 | Planlandı |
+| `camera` | Kamera/video kareleri okuma (`FrameSource`, `FramePacket`), FPS, canlı pencere, kamera hata yönetimi. Yapay zekâ modüllerinden bağımsızdır. | 3 | Yazıldı (`IN_PROGRESS`; gerçek kamera doğrulaması bekleniyor) |
 | `human_detection` | Kare başına birden fazla insan kutusu tespiti (YOLO, önceden eğitilmiş). | 4 | Planlandı |
 | `tracking` | Tespit edilen her kişiye geçici takip ID'si atama (ByteTrack / BoT-SORT). | 4 | Planlandı |
 | `face_detection` | Karedeki tüm görünür yüzleri tespit etme (MediaPipe veya SCRFD). | 5 | Planlandı |
