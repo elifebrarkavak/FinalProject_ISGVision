@@ -1,13 +1,16 @@
 # Aşama 4A — Çoklu İnsan Tespiti: Sonuç Raporu
 
-**Tarih:** 2026-11-12 · **Durum:** `READY_FOR_MANUAL_VERIFICATION` (Aşama 4 genel durumu `COMPLETED` **değildir**; 4B takip başlatılmamıştır)
-**Teknik belge:** [docs/person_detection.md](../../docs/person_detection.md)
+**Tarih:** 2026-11-12 · **Durum: `COMPLETED`** (yalnızca kapsam içi prototip geliştirme ve doğrulama; resmî kapanış 2026-11-12, kullanıcının gerçek MacBook doğrulamalarıyla)
+**Aşama 4 genel durumu: `IN_PROGRESS`** (4B takip `PLANNED`, başlatılmadı) · **Teknik belge:** [docs/person_detection.md](../../docs/person_detection.md)
+**Durum geçmişi:** ilk teslim `READY_FOR_MANUAL_VERIFICATION` (Claude ortamında kamera izni olmadığından gerçek kamera testleri yapılamamıştı) → kullanıcı bu testlerin büyük bölümünü kendi MacBook'unda yaptı (§19) → `COMPLETED`.
 
-> **Özet.** Hazır `yolo11n.pt` ile Aşama 3 kare akışındaki her karede aynı anda birden fazla insan tespit edilir (yalnızca `person`); kutu, güven skoru ve kişi sayısı canlı gösterilir; FPS ve çıkarım gecikmesi ölçülür.
-> Gerçek model çıkarımı CPU ve MPS'te çalıştırılarak doğrulandı. **Yapılamayanlar:** MacBook kamerasıyla canlı test (Claude ortamında kamera izni yok), yüksek açılı gerçek kamera testi ve doğruluk ölçümü (etiketli bağımsız test kümesi yok).
-> Bu nedenle `COMPLETED` değil, `READY_FOR_MANUAL_VERIFICATION` kullanıldı.
+> **Özet.** Hazır `yolo11n.pt` ile kamera paketinin kare akışındaki her karede aynı anda birden fazla insan tespit edilir (yalnızca `person`); kutu, güven skoru ve kişi sayısı canlı gösterilir; FPS ve çıkarım gecikmesi ölçülür.
+> Gerçek model çıkarımı CPU ve MPS'te çalıştırılarak doğrulandı; kullanıcı canlı MacBook kamerasında üç kişiyi aynı anda tespit ettiğini (`PERSONS: 3`), penceresiz canlı hızın CPU ve MPS'te 30,0 FPS olduğunu ve Q/Esc/kırmızı düğme/Ctrl+C ile çıkışın çalıştığını doğruladı.
+>
+> **Kapanışın sınırı.** `COMPLETED`, yalnızca bu aşamanın kapsam içi prototip geliştirme ve doğrulamasını kapsar. **Kapatılmış sayılmayanlar** (§20–§21): `conf=0.35` karşılaştırma testi **henüz yapılmadı** (OT-4A-001, `PENDING_USER_VERIFICATION`); bağımsız doğruluk değerlendirmesi (OT-4A-002) —
+> **Precision/Recall/F1/mAP ölçülmedi ve %85 hedefinin karşılandığı iddia edilmez**; gerçek IP kamera doğrulaması (OT-4A-003, `DEFERRED_TO_SYSTEM_INTEGRATION`); ilk oturumdaki en yüksek 7 tespit gözlemi (OBS-4A-001 / OT-4A-004); yorgan yanlış pozitifi (FP-4A-001, bilinen sınırlama).
 
-**Kanıt türleri bu raporda ayrı tutulmuştur:** *[Ölçüldü]* = Claude'un bu oturumda çalıştırıp sonucunu gördüğü; *[Mock]* = sahte YOLO ile test; *[Gerçek model]* = gerçek `yolo11n.pt` çıkarımı; *[Bekliyor]* = kullanıcı doğrulaması gerekir, yapılmış sayılmaz.
+**Kanıt türleri bu raporda ayrı tutulmuştur:** *[Ölçüldü]* = Claude'un çalıştırıp sonucunu gördüğü; *[Mock]* = sahte YOLO ile test; *[Gerçek model]* = gerçek `yolo11n.pt` çıkarımı (Claude); *[Kullanıcı]* = kullanıcının kendi MacBook'unda gerçek terminal çıktısından/gözleminden bildirdiği, Claude'un yeniden üretemediği/bağımsız doğrulayamadığı sonuç; *[Türetilmiş]* = bildirilen sayılardan yapılan aritmetik; *[Bekliyor]* = yapılmamış, kullanıcı görevi.
 
 ---
 
@@ -101,7 +104,7 @@ CLI sırası: model yükle (başarısızsa kamera hiç açılmaz) → kaynak aç
 
 Üst şerit: `PERSONS: n`, `SOURCE`, `RESOLUTION` (gerçek), `FPS` (ölçülen uçtan uca), `INFERENCE` (son 30 karenin ortalaması), `DEVICE`; kutu başına `PERSON 0.94` etiketi; alt şerit `Q / Esc / Close to exit`. İnsan yoksa `PERSONS: 0`. Çizim girdinin **kopyası** üzerindedir (testle doğrulandı); tüm kutular aynı renk (kimlik izlenimi verilmez).
 **Doğrulama:** (a) piksel/metin testleri [Mock/birim]; (b) bu çizim fonksiyonuyla gerçek tespitlerden üretilen bir kareyi **gözle inceledim** (`bus.jpg`: 4 kutu, etiketler, şeritler doğru; otobüs kutulanmadı); (c) gerçek OpenCV penceresi Terminal panelinde (grafik oturumu) gerçek model + MPS ile sentetik videoyla açıldı, 90 kare işlendi, `exit=0`, kırmızı düğme uyarısı çıkmadı;
-(d) `ISG_GUI_TESTS=1` ile gerçek pencerede kırmızı düğme tıklaması `pencere kapatıldı` ile döngüyü bitirdi ve kamerayı serbest bıraktı. **Canlı pencerenin ekrandaki görünümünü kullanıcı gözle doğrulamadı** *[Bekliyor]*. Q/Esc/Ctrl+C davranışı korunmuştur (birim testleri + (d)); gerçek klavye basışı kullanıcı doğrulaması bekler.
+(d) `ISG_GUI_TESTS=1` ile gerçek pencerede kırmızı düğme tıklaması `pencere kapatıldı` ile döngüyü bitirdi ve kamerayı serbest bıraktı. (e) **Kullanıcı gerçek MacBook kamerasında pencereyi gözle doğruladı:** üç kişi kadraja girince `PERSONS: 3` göründü *[Kullanıcı]*; Q, Esc, kırmızı düğme ve Ctrl+C ile çıkışın gerçek kamerada sorunsuz çalıştığını bildirdi *[Kullanıcı]* (§19, Test 1 ve 6).
 
 ## 9. CLI komutları
 
@@ -133,7 +136,7 @@ Kamera izni olmadan çalıştırıldığında *[Ölçüldü]*: `not authorized t
 * Ölçüm tanımları: **yakalama FPS'i** (modelsiz video okuma: 2521–3121 FPS; *dosya çözme hızıdır, kamera hızı değil*), **çıkarım gecikmesi** (yalnızca model çağrısı), **uçtan uca FPS** (okuma+çıkarım döngüsü; pencere/çizim yok), **kare→sonuç gecikmesi** (`FramePacket.timestamp` → tespit bitişi). Hepsi ayrı raporlanır; kaynağın bildirdiği FPS hiçbir yerde kullanılmadı.
 * Bu koşulda MPS, çıkarımda CPU'dan yaklaşık 2 kat hızlı. CPU'da tek karelik sıçramalar (≈60 ms) ve biraz yavaş ilk geçiş (46,6 FPS) görüldü; ısıl/güç durumu ve arka plan süreçleri **kontrol edilmedi**.
 * **Pencereli tek gözlem:** MPS, sentetik video, pencere açık (video kaynak hızına — 30 FPS — uydurulduğundan FPS tavanlıdır): 90 kare, çıkarım ort 12,9 ms (p95 17,0), FPS 29,6. Karşılaştırma değil, tek koşudur.
-* **Canlı kamerada CPU/MPS ölçümü yapılmadı** *[Bekliyor]*. 30 FPS zorunluluğu konmadı; kameranın ~30 FPS vermesi durumunda bu makinede model (penceresiz ölçümlere göre) darboğaz görünmüyor, ancak bu **canlı kamerada doğrulanmadı**.
+* **Bu bölümdeki tablo sentetik videodur.** Canlı kamera CPU/MPS ölçümleri kullanıcı tarafından yapılmıştır ve §19'da ayrı raporlanır; ikisi karıştırılmamalı, sentetik sonuçlar canlı performansın tahmini olarak kullanılmamalıdır (canlı MPS çıkarımı 13,4 ms medyanla sentetikteki 9,1 ms'den yüksektir; nedeni ayrıştırılmadı). 30 FPS zorunluluğu konmadı.
 * MPS'te yeni girdi şekline ilk çıkarım belirgin yavaştı (bir probda 211 ms; sonraki iki çağrı 18,0 ve 14,7 ms) → ısınma gerçek kare boyutunda yapılır.
 
 ## 11. Gerçek model çıkarım testleri *[Gerçek model]*
@@ -156,19 +159,22 @@ girdi görüntüsü değişmez; çıkarım süresi ölçülüyor; CPU↔MPS sonu
 |---|---|---|
 | **A — insan yok** | `bus.jpg`'nin insansız kesiti (bina + otobüs tepesi; gerçek görüntü), düz gri, rastgele gürültü → **0 kişi**, hata yok, `PERSONS: 0` çizimi sorunsuz | ✔ *[Gerçek model]* |
 | **B — tek insan** | 4 kesit (`bus` sağdaki yaya 0,84; `bus` siyah ceketli yaya 0,87; `zidane` sol 0,92; `zidane` sağ 0,89) → her birinde **1 kişi**, geçerli kutu ve güven | ✔ *[Gerçek model]* |
-| **C — çoklu insan** | `bus.jpg` → **4 kişi** (bağımsız kutular, sayı doğru); `zidane.jpg` → **2 kişi**. Kontrollü test görüntüsü (video değil) | ✔ görüntü düzeyinde; **gerçek ≥3 kişilik izinli video yok** *[Bekliyor]* |
-| **D — kamera açısı** | Göz hizasına yakın iki görüntü (açı metadata'sı yok, görsel tahmin). Hafif/yüksek açı için uygun görüntü yok → **`PENDING_REAL_CAMERA_VALIDATION`** | ⏳ *[Bekliyor]* |
-| **E — MacBook kamerası** | Claude ortamında kamera izni yok (`not authorized to capture video (status 0)`, bir deneme yapıldı, izin aşılmadı). **Yapılmış sayılmaz** | ⏳ *[Bekliyor]* — komutlar §17 |
+| **C — çoklu insan** | `bus.jpg` → **4 kişi** (bağımsız kutular, sayı doğru); `zidane.jpg` → **2 kişi** (kontrollü test görüntüsü). **Canlı kamerada üç kişi aynı anda `PERSONS: 3` olarak görüldü** (§19 Test 1) | ✔ görüntü düzeyinde *[Gerçek model]* + canlı sahne *[Kullanıcı]*; kayıt yapılmadığından tekrar oynatılabilir çok kişili video yok |
+| **D — kamera açısı** | Göz hizasına yakın iki görüntü (açı metadata'sı yok, görsel tahmin). **MacBook ≈2 m yüksekliğe yerleştirilerek yüksek açı ön testi yapıldı** (§19 Test 5). Gerçek duvar montajlı kamera: `DEFERRED_TO_SYSTEM_INTEGRATION` | ✔ ön test *[Kullanıcı]*; ⏳ gerçek kamera ertelendi (OT-4A-003) |
+| **E — MacBook kamerası** | Claude ortamında kamera izni yok (`not authorized to capture video (status 0)`; Claude testi yapamadı, izin aşılmadı). **Kullanıcı canlı kamera testlerini kendi MacBook'unda yaptı** (§19) | ✔ *[Kullanıcı]* |
 
 **Gizlenmeyen gözlemler.** (1) Bir kesitte (`bus` sol-orta) conf 0,25'te ikinci bir düşük güvenli (0,273) kutu çıktı — kesilmiş bir komşu gövde parçası; etiket olmadığı için "yanlış pozitif" demek de, değil demek de mümkün değil. (2) Sentetik video karesinde 6 ön plan kişisi + bulanık arka plan kalabalığı bulunuyor; model kare başına ortalama 6,52 (en çok 8) tespit verdi,
-bazı kutular 0,31–0,37 güvenli ve bulanık arka plandaki kişiler/kenarda kırpılmış kişi üzerinde. Gerçek sayı etiketlenmediği için **doğru/yanlış söylenemez ve bu sayılar doğruluk olarak raporlanmaz**. (3) Bu örneklerde görünür bir **kaçırma** gözlenmedi, ancak iki görüntü ve birkaç kesit genelleme sağlamaz.
+bazı kutular 0,31–0,37 güvenli ve bulanık arka plandaki kişiler/kenarda kırpılmış kişi üzerinde. Gerçek sayı etiketlenmediği için **doğru/yanlış söylenemez ve bu sayılar doğruluk olarak raporlanmaz**. (3) Bu örneklerde görünür bir **kaçırma** gözlenmedi, ancak iki görüntü ve birkaç kesit genelleme sağlamaz. (4) Gerçek kamerada ek gözlemler: yorgan yanlış pozitifi **FP-4A-001** ve en yüksek 7 tespit **OBS-4A-001** (§20).
 
 ## 13. Kamera açısı değerlendirmesi
 
-Hedef kurulum: duvara 2–3 m yükseklikte monte tek kamera. Kod, açıyı/çözünürlüğü sabit varsaymaz (kare boyutu gerçek kareden okunur; `--imgsz`/`--conf` ayarlanabilir). **Yüksek açılı gerçek kamera testi yapılmadı**; model COCO ile eğitilmiştir ve bu açıdaki performansı bilinmemektedir.
-Durum: `PENDING_REAL_CAMERA_VALIDATION`. Bu açıda küçük/uzak/üstten görünen kişiler için `imgsz` artırılması ve `conf` ayarı gerekebilir (denenmedi).
+Hedef kurulum: duvara 2–3 m yükseklikte monte tek (IP) kamera. Kod, açıyı/çözünürlüğü sabit varsaymaz (kare boyutu gerçek kareden okunur; `--imgsz`/`--conf` ayarlanabilir).
+**Ön test (kullanıcı, MacBook ≈2 m yükseklikte, MPS, pencereli):** sistem kullanıcıyı bu konumdan başarıyla tespit etti; görüntünün köşesindeki bir yorgan kısa süreli insan sanıldı (**FP-4A-001**, §20) *[Kullanıcı]*. 331 kare, 18,4 FPS; bu FPS kamera yüksekliğine **atfedilmez** (kontrollü deney yok, §19).
+Bu bir **ön testtir ve gerçek IP kamera doğrulaması değildir**: IP kamera henüz satın alınmadı, marka/model, RTSP bağlantısı, montaj ve nihai test alanı belirlenmedi.
+Durum: ön test ✔ *[Kullanıcı]*; gerçek kamera `DEFERRED_TO_SYSTEM_INTEGRATION` (OT-4A-003). Önceki `PENDING_REAL_CAMERA_VALIDATION` etiketi bu ön test için geçerliliğini yitirmiş, gerçek kamera kısmı için yukarıdaki durumla değiştirilmiştir.
+Bu açıda `imgsz`/`conf` ayarı gerekebilir; `conf 0.35` karşılaştırması **henüz yapılmadı** (OT-4A-001).
 
-## 14. Otomatik test sonuçları *[Ölçüldü]*
+## 14. Otomatik test sonuçları *[Ölçüldü]* (geliştirme sonu; kapanış yeniden çalıştırması §22'de)
 
 | Çalıştırma | Sonuç |
 |---|---|
@@ -196,35 +202,152 @@ overlay'in girdiyi değiştirmemesi, hatalı CLI argümanları, penceresiz çal�
 
 ## 16. Bilinen hatalar ve sınırlamalar
 
-1. **Doğruluk ölçülmedi.** Etiketli bağımsız insan test kümesi yok → Precision/Recall/F1/mAP raporlanmadı; güven skorları doğruluk olarak sunulmadı. %85 hedefinin hangi metrik için olduğu belirsiz.
-2. Performans: tek makine, tek oturum, **sentetik** video, pencere maliyeti yok (tek pencereli gözlem hariç); canlı kamerada ölçülmedi; ısıl/güç kontrol edilmedi.
-3. Model COCO ile eğitilmiş; yüksek açılı/şantiye/KKD'li kişiler için doğrulanmadı.
-4. Düşük güvenli (0,27–0,37) kutuların doğru/yanlış olduğu bilinmiyor (§12).
-5. Lisans AGPL-3.0 (§3).
-6. Aşama 3 backlog: B3-1 ve B3-5 kapsanmadı; B3-2 (kare kaybı) ölçülmedi; B3-3 için yalnızca **kayıtlı videoda** kare→sonuç gecikmesi ölçüldü (canlı kamera yok); B3-4 (canlı kamerada ileri FPS) yapılmadı. **Hiçbiri tamamlanmış sayılmaz.**
-7. Çalışan modeli yalnızca `person` sınıfıyla sınırlı; yüz/KKD yok (bilinçli kapsam dışı).
-8. Ultralytics bağımlılıkları kendiliğinden kurmaya (ağ) çalışabilir; 4B'de ByteTrack için gereken paketler (`lap`/`scipy` kurulu değil) bilinçli kurulmalı ve `YOLO_OFFLINE` ile birlikte ele alınmalıdır.
+1. **Doğruluk ölçülmedi.** Etiketli bağımsız insan test kümesi yok → Precision/Recall/F1/mAP raporlanmadı; güven skorları doğruluk olarak sunulmadı; **%85 hedefinin karşılandığı iddia edilmez.** Canlı kamera testleri işlevselliği ve işlem performansını doğrular, istatistiksel doğruluğu değil (OT-4A-002).
+2. Performans: sentetik video ölçümleri (§10) pencere maliyeti içermez ve canlı performansın tahmini değildir; canlı kamera ölçümleri (§19) kullanıcı tarafından yapılmış tek oturumlardır; ısıl/güç kontrol edilmedi. Pencereli FPS (18,4–23,3) penceresiz FPS'ten (30,0) düşüktür; nedeni ayrıştırılmadı (OBS-4A-002).
+3. Model COCO ile eğitilmiş; yüksek açı için yalnızca MacBook ≈2 m ön testi var; gerçek duvar kamerası, şantiye/KKD'li kişiler için doğrulanmadı.
+4. Düşük güvenli (0,27–0,37) sentetik/kesit kutularının doğru/yanlış olduğu bilinmiyor (§12).
+5. **FP-4A-001:** yorgan/kumaş kısa süreli insan olarak tespit edildi (§20) — bilinen sınırlama; tek gözlem, genel başarısızlık sonucu çıkarılmaz; ByteTrack'in çözeceği iddia edilmez.
+6. **OBS-4A-001:** en yüksek 7 tespit sayısı açıklanamıyor/doğrulanmadı (§20).
+7. Gerçek IP kamera yok; RTSP kaynağı geliştirilmedi ve doğrulanmadı (OT-4A-003).
+8. Lisans AGPL-3.0 (§3).
+9. Aşama 3 backlog: B3-1, B3-2 (kare kaybı) ve B3-5 kapsanmadı. B3-3 için kare→sonuç/kare→görüntü gecikmesi kayıtlı videoda ve (kullanıcı) canlı kamerada ölçüldü; sensör/sürücü tamponlaması kapsam dışı; nihai ölçüm Aşama 12'de. B3-4 için modelli 300 karelik penceresiz canlı koşular 30,0 FPS verdi (kullanıcı); uzun süreli, bağımsız zaman referanslı doğrulama yapılmadı. **Hiçbiri tamamlanmış sayılmaz.**
+10. Model yalnızca `person` sınıfıyla sınırlı; yüz/KKD yok (bilinçli kapsam dışı).
+11. Ultralytics bağımlılıkları kendiliğinden kurmaya (ağ) çalışabilir; 4B'de ByteTrack için gereken paketler (`lap`/`scipy` kurulu değil) bilinçli kurulmalı ve `YOLO_OFFLINE` ile birlikte ele alınmalıdır.
 
-## 17. Eksik kalan manuel doğrulamalar *[Bekliyor — yapılmış sayılmaz]*
+## 17. Manuel doğrulamaların durumu
 
-Claude'un ortamında macOS kamera izni yoktur; bu testleri **siz** izinli terminalde çalıştırmalısınız:
+İlk teslimdeki manuel doğrulama listesinin güncel durumu (ayrıntı §19–§21):
 
-```bash
-.venv/bin/python scripts/run_person_detection.py --source camera --camera-index 0 --device mps
-.venv/bin/python scripts/run_person_detection.py --source camera --camera-index 0 --device cpu
-.venv/bin/python scripts/run_person_detection.py --source camera --camera-index 0 --no-display --max-frames 300 --device mps   # canlı hız özeti
-```
-
-Kontrol listesi: (1) pencere açılıyor ve kutu + `PERSON 0.xx` + `PERSONS: n` + FPS + INFERENCE görünüyor; (2) tek kişi, ardından ≥3 kişi (izinli) ile sayı doğru; kimse yokken `PERSONS: 0`; (3) `Q`, `Esc`, kırmızı düğme ve `Ctrl+C` ile çıkış (`exit=0`/`130`), kamera ışığı sönüyor;
-(4) çıkış özetindeki canlı FPS/çıkarım/gecikme değerlerini not edin (CPU ve MPS ayrı); (5) mümkünse göz hizası ve daha yüksek açıdan deneyin (`PENDING_REAL_CAMERA_VALIDATION`); (6) gerçek yanlış pozitif/kaçırma görürseniz not edin ve `--conf`/`--imgsz` değiştirerek deneyin.
-Etiketli bağımsız test kümesi hazırlanınca: `scripts/evaluate_person_detection.py` (altyapı hazır; veri özellikleri docs/person_detection.md §10).
+| Madde | Durum |
+|---|---|
+| Pencere açılıyor, kutu + güven + `PERSONS: n` + FPS + INFERENCE görünüyor | ✔ *[Kullanıcı]* (Test 1, 2, 5) |
+| Tek kişi / çok kişi (üç kişi) / kimse yokken sayı | ✔ *[Kullanıcı]* (Test 1, 2; Test 3–4'te 1 kişi) |
+| Q, Esc, kırmızı düğme, Ctrl+C ile çıkış | ✔ *[Kullanıcı]* (Test 6); **çıkış kodları paylaşılmadı → gerçek kamerada ölçülmüş sayılmaz** |
+| Canlı FPS/çıkarım/gecikme, CPU ve MPS ayrı | ✔ *[Kullanıcı]* (Test 3, 4) |
+| Daha yüksek açıdan deneme | ✔ ön test, MacBook ≈2 m *[Kullanıcı]* (Test 5); gerçek duvar kamerası → `DEFERRED_TO_SYSTEM_INTEGRATION` |
+| Yanlış pozitif/kaçırma gözlemi | ✔ FP-4A-001 ve OBS-4A-001 kaydedildi (§20); `conf` karşılaştırması → **OT-4A-001, yapılmadı** |
+| Etiketli bağımsız test kümesi ile Precision/Recall/F1/mAP | ⏳ açık görev (OT-4A-002); altyapı hazır |
+| Kayıtlı (tekrar oynatılabilir) gerçek ≥3 kişilik izinli video | Yapılmadı (canlı sahnede üç kişi doğrulandı, görüntü kaydedilmedi) |
 
 ## 18. Aşama 4B için hazır olan bileşenler
 
 * `DetectionResult.detections`: kare başına `bbox_xyxy` (piksel), `confidence`, `frame_index`, `timestamp` — takipçi girdisi; takip kimliği alanı bilinçli olarak yok.
 * `run_detection(..., on_result=...)` kancası; `FramePacket.timestamp` (monotonic) zaman tabanlı takip için.
 * Ölçüm altyapısı (`LatencyStats`, benchmark, CPU/MPS karşılaştırması) takip eklenince gecikme artışını ölçmek için yeniden kullanılabilir.
+* **Hazırlık notu:** 4B başlatma kararı kullanıcıya aittir; 4B yanlış pozitifleri (FP-4A-001) takip bağlamında yeniden değerlendirmelidir (etkisi ölçülmeden bilinmez). OT-4A-001'in sonucu 4B'de kullanılacak `conf` kararını etkileyebilir; varsayılan 0,25 değişmedi.
 * **4B kararları (henüz verilmedi):** takipçi seçimi (Ultralytics ByteTrack/BoT-SORT vs. kendi uygulaması), ek bağımlılıklar (`lap`/`scipy`), düşük güvenli kutuların takipte kullanımı (ByteTrack bunları kullanır; mevcut varsayılan `conf` 0,25).
+
+## 19. Kullanıcı tarafından gerçekleştirilen manuel doğrulamalar (2026-11-12) *[Kullanıcı]*
+
+Bu bölümdeki tüm sayı ve gözlemler **kullanıcının kendi MacBook Pro M4'ünde, gerçek terminal çıktılarından ve kendi gözleminden** aktarılmıştır. Claude'un ortamında kamera izni olmadığından bunlar yeniden üretilmedi ve bağımsız doğrulanmadı;
+Claude'un kendi çalıştırdığı otomatik testlerden (§11, §14, §22) ve sentetik video benchmark'ından (§10) **ayrıdır**. Ortak koşullar: `camera:0`, 1280×720, `yolo11n.pt`, `conf 0.25` (varsayılan), görüntü kaydedilmedi (video kanıtı yok).
+
+**Pencereli oturumlar** (pencere açık: çizim + `imshow` + `waitKey` dâhil; hepsi MPS; komut `run_person_detection.py --source camera --camera-index 0 --device mps`):
+
+| Test | Sahne | Kare | Süre | Uçtan uca FPS | Çıkarım ort / medyan / p95 (ms) | Kare→görüntü medyan | Kişi/kare ort | En çok | ≥1 kişi olan kare | Çıkış |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Üç kişi kameranın önüne geçti | 800 | 34,3 sn | 23,3 | 15,5 / 14,8 / 21,0 | 30,8 ms | 2,32 | **7** (OBS-4A-001) | bildirilmedi | Q/Esc |
+| 2 | Kamera boş → kullanıcı girdi → köşede başka kişi | 636 | 28,6 sn | 22,2 | 14,7 / 13,5 / 20,8 | 28,7 ms | 1,31 | 3 | 549/636 (**0 tespit: 87 kare**) | Q/Esc |
+| 5 | MacBook ≈2 m yükseklikte (ön test) | 331 | 17,9 sn | 18,4 | 16,8 / 17,1 / 21,5 | 33,6 ms | 1,17 | 3 | 327/331 | Q/Esc |
+
+**Penceresiz oturumlar** (`--no-display --max-frames 300`; yalnızca okuma + çıkarım; program `--max-frames` sınırında normal sonlandı):
+
+| Test | Cihaz | Kare | Süre | Uçtan uca FPS | Çıkarım ort / medyan / p95 (ms) | Kare okuma ort / medyan (ms) | Kare→sonuç ort / medyan (ms) | Kişi/kare | En çok |
+|---|---|---|---|---|---|---|---|---|---|
+| 3 | MPS | 300 | 10,0 sn | **30,0** | 13,8 / 13,4 / 16,8 | 19,6 / 19,8 | 13,9 / 13,4 | 1,00 (300/300 karede ≥1 kişi) | 1 |
+| 4 | CPU | 300 | 10,0 sn | **30,0** | 18,6 / 18,5 / 19,1 | 14,8 / 14,9 | 18,6 / 18,5 | 1,00 | 1 |
+
+**Kullanıcı gözlemleri.**
+* **Test 1:** üç kişi kameranın önüne geçtiğinde ekranda `PERSONS: 3` gösterildi; üç kişinin aynı anda algılandığı gözle doğrulandı.
+* **Test 2:** ekran sonuçları gözlenen sahneyle uyumluydu (boş kadraj → kullanıcı → köşede ikinci kişi). 636 karenin 87'sinde hiç insan tespit edilmedi. **Bu 87 kare, modelin sıfır insan tespiti ürettiği karelerdir; her karenin bağımsız etiketlendiği bir doğruluk testi yapılmadı. Precision/recall veya doğruluk oranı olarak değerlendirilmez.**
+* **Test 5:** sistem kullanıcıyı ≈2 m yükseklikteki kamera konumundan tespit etti; köşedeki bir yorgan kısa süreli insan sanıldı (**FP-4A-001**, §20).
+* **Test 6 — çıkış yöntemleri (gerçek kamera):** Q tuşu ✔, Esc tuşu ✔, macOS kırmızı pencere kapatma düğmesi ✔, terminalde Ctrl+C ✔; oturumlar kullanıcı gözlemiyle sorunsuz kapandı. **Çıkış kodları paylaşılmadı; Ctrl+C dâhil hiçbir çıkış için gerçek kamerada belirli bir kod ölçüldüğü iddia edilmez** (130 yalnızca birim testleriyle doğrulanmıştır *[Mock]*).
+
+**CPU/MPS canlı performans değerlendirmesi.**
+* *[Kullanıcı]* Penceresiz canlı hız iki cihazda da 30,0 FPS. *[Türetilmiş]* Medyan çıkarım MPS 13,4 ms, CPU 18,5 ms → MPS çıkarımda ≈1,38 kat hızlı (18,5 / 13,4). Uçtan uca FPS aynıdır; çünkü her iki cihaz da kamera akışının hızına yetişir.
+* *[Türetilmiş]* Kare okuma + çıkarım ≈33,4 ms her iki cihazda (MPS: 19,6 + 13,8; CPU: 14,8 + 18,6) ≈ 30 FPS kare aralığı: döngü kamera hızındadır, okuma süresi büyük ölçüde kameranın sonraki kareyi beklemesidir.
+* MPS'nin ileride eklenecek modüllerle (takip, yüz vb.) avantaj sağlayabileceği öngörülebilir; ancak bu **henüz ölçülmemiştir** ve bir hız iyileştirmesi garanti edilmez.
+* Canlı MPS çıkarım medyanı (13,4 ms) sentetik video benchmark'ından (9,1 ms; §10) yüksek, CPU'da fark yok (18,5 / 18,8 ms); CPU/MPS oranı sentetikte ≈2,07, canlıda ≈1,38. MPS farkının nedeni ayrıştırılmadı → sentetik sonuçlar canlı performansın tahmini değildir.
+* Pencereli FPS (18,4–23,3) penceresiz 30,0'dan düşük (kare→görüntü medyanı 28,7–33,6 ms; penceresiz kare→sonuç 13,4 / 18,5 ms). Pencere maliyeti ayrı ölçülmedi; sahne ve kişi sayısı oturumlar arasında kontrollü değil → **neden ayrıştırılmadı** (OBS-4A-002). **Test 5'teki düşük FPS kamera yüksekliğine atfedilmez.**
+* Sınırlar: her satır tek oturum; ısıl/güç kontrolü yok; benzersiz kare sayımı ve bağımsız zaman referansı yok; zaman ölçümü `FramePacket.timestamp` ile okuma bitişinden başlar (sensör/sürücü tamponlaması kapsam dışı).
+
+## 20. Bilinen sınırlama ve açık gözlemler
+
+**FP-4A-001 — Blanket/Fabric Misclassified as Person** (bilinen sınırlama; izlenecek yanlış pozitif)
+
+| Alan | Değer |
+|---|---|
+| Nesne | Yorgan / kumaş |
+| Koşul | Yaklaşık 2 metre yüksekliğe yerleştirilmiş MacBook kamerası (Test 5), görüntünün köşesindeki yorgan |
+| Model | YOLO11n (`yolo11n.pt`) |
+| Confidence threshold | 0.25 |
+| Sonuç | Kısa süreli yanlış insan tespiti |
+| Güven skorunun kesin değeri | Bilinmiyor (eşik gereği ≥ 0,25 olmalıdır — *[Türetilmiş]*) |
+| Hatanın oluştuğu kare sayısı | Bilinmiyor |
+| Video kanıtı | Kaydedilmedi (varsayılan olarak görüntü kaydedilmez) |
+| Önem | İzlenmesi ve sonraki aşamalarda değerlendirilmesi gereken yanlış pozitif |
+| Yorum sınırı | **Tek gözlemdir; genel model başarısızlığı sonucu çıkarılmaz.** ByteTrack'in yanlış pozitifleri otomatik çözeceği **iddia edilmez** (etkisi 4B'de ölçülmeden bilinmez). Kamera açısının FPS düşüşüne neden olduğu söylenmez (kontrollü deney yok) |
+| İlgili görev | OT-4A-001 (`conf 0.35`), OT-4A-002 (bağımsız değerlendirme) |
+
+**OBS-4A-001 — Investigation / Unverified Peak Detection Count.** Test 1'de (800 kare, kare başına ortalama 2,32 kişi) en yüksek tespit sayısı **7** olarak raporlandı; aynı oturumda üç kişi kadraja girmişti. Bu 7 tespitin hangi karelerde ve hangi görüntü içeriğiyle oluştuğu **bilinmiyor**
+(görüntü kaydedilmedi; CLI özeti yalnızca en yüksek sayıyı yazar, hangi karede olduğunu yazmaz — 4A kapsamında kod değiştirilmedi). **Kesin yanlış pozitif ya da kesin doğru tespit olarak sınıflandırılmaz.** Test 2 ve 5'te en yüksek sayı 3'tür. Durum: açık araştırma (OT-4A-004). Doğrulama yolu: aynı koşulları yeniden üretip canlı `PERSONS` sayacını izlemek veya tepe anını, yalnızca kullanıcının açık onayıyla, kaydetmek.
+
+**OBS-4A-002 — Pencereli/penceresiz FPS farkı ve canlı/sentetik çıkarım farkı.** Bkz. §19; nedenler ayrıştırılmadı, neden iddiası yoktur. Gerekirse Aşama 12'deki canlı sistem testlerinde ölçülür.
+
+## 21. Açık görevler ve ertelenenler
+
+Makine tarafından okunur sürüm: `configs/project_stages.yaml` (`stage4a_open_items`, `stage4a_known_limitations`). **Hiçbiri tamamlanmış sayılmaz.**
+
+| ID | Görev | Durum | Not |
+|---|---|---|---|
+| **OT-4A-001** | `PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35` | **`PENDING_USER_VERIFICATION`** | **Henüz yapılmadı; kullanıcı daha sonra çalıştıracak.** Aşağıda |
+| OT-4A-002 | Bağımsız etiketli değerlendirme kümesi ve resmî ölçümler (Precision, Recall, F1, mAP@0.5, mAP@0.5:0.95) | Açık | Altyapı hazır (`scripts/evaluate_person_detection.py`); veri kümesi yok. Zamanlama kullanıcı kararı (öneri: 4B takip ölçümleriyle birlikte veya Aşama 12 nihai değerlendirme) |
+| OT-4A-003 | Gerçek IP kamera doğrulaması: kamera satın alma/montaj, RTSP/bağlantı doğrulaması (RTSP kaynak desteği geliştirilmedi), nihai açı, gecikme, görüntü kalitesi, nihai test alanı | **`DEFERRED_TO_SYSTEM_INTEGRATION`** | IP kamera satın alınmadı; marka/model, RTSP, test alanı (şantiye olması zorunlu değil) belirlenmedi; montaj yapılmadı. Hedef: sonraki entegrasyon ve sistem değerlendirme aşamaları (öneri: Aşama 11–12). **Bu yüzden Aşama 4A açık tutulmadı; MacBook testleri IP kamera doğrulaması olarak sunulmaz** |
+| OT-4A-004 | OBS-4A-001 araştırması (en yüksek 7 tespit) | Açık araştırma | §20 |
+
+#### OT-4A-001 — `PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35` (`PENDING_USER_VERIFICATION`)
+
+**Bu test henüz gerçekleştirilmemiştir; hiçbir sonucu yoktur ve başarılıymış gibi okunmamalıdır.** Yorganın insan sanılması (FP-4A-001) nedeniyle güven eşiğini 0,25'ten 0,35'e çıkararak ek bir karşılaştırma yapılacaktır.
+Aşama 4A kapanışından **sonra da** uygulanabilecek bir iyileştirme/doğrulama görevidir. **Varsayılan `conf` 0,25 olarak kalır** (kod ve yapılandırma değiştirilmedi; kapanış kontrolünde doğrulandı, §22); 0,35'in daha iyi olduğu ölçülmüş sonuç bulunmadan iddia edilmez.
+
+```bash
+.venv/bin/python scripts/run_person_detection.py --source camera --camera-index 0 --device mps --conf 0.35
+```
+
+Amaç — aynı yüksek kamera konumunda: (1) kullanıcı 0,35'te hâlâ doğru tespit ediliyor mu; (2) yorgan hâlâ insan olarak algılanıyor mu; (3) köşeden/kısmen görünen gerçek insanlar algılanmaya devam ediyor mu; (4) 0,25 ile 0,35 arasındaki fark nedir; (5) gerçek insanlar kaçırılıyor mu?
+Prosedür: kamerayı mümkün olduğunca aynı konumda tutun; aynı yorganı ve benzer aydınlatmayı kullanın; önce `conf 0.25` (mevcut) sonuçlarını referans alın, sonra `conf 0.35` ile gözlem yapın; her iki durumda kutuların gerçek insanları kapsayıp kapsamadığını karşılaştırın; yanlış pozitif veya kaçırılan insan gözlemlerini kaydedin.
+
+Kayıt şablonu (kullanıcı dolduracak; boş = yapılmadı):
+
+| Gözlem | `conf 0.25` (referans) | `conf 0.35` |
+|---|---|---|
+| Kullanıcı tespit edildi mi? | | |
+| Yorgan insan sanıldı mı? (süre/sıklık) | | |
+| Köşede/kısmen görünen gerçek insan tespit edildi mi? | | |
+| Kaçırılan gerçek insan var mı? | | |
+| Diğer yanlış pozitifler | | |
+| Çıkış özeti (FPS, çıkarım ms, en yüksek kişi sayısı) | | |
+
+## 22. Kapanış doğrulaması (2026-11-12, bu görevde Claude tarafından çalıştırıldı) *[Ölçüldü]*
+
+Bu görevde **yalnızca belge ve yapılandırma** güncellendi; kaynak kod, test ve betik değişmedi. Aşağıdaki sonuçlar gerçek çalıştırma çıktılarıdır.
+
+| Kontrol | Sonuç |
+|---|---|
+| `unittest discover -s tests` (depo kökünden) | **596 test, OK, 5 atlandı** (atlananlar yalnızca isteğe bağlı gerçek-pencere testleri: Aşama 3'ten 3, Aşama 4A'dan 2) |
+| Aynı komut başka çalışma dizininden (`-t` ile) | 596 test, OK, 5 atlandı |
+| `ISG_GUI_TESTS=1 ...` (Terminal paneli, grafik oturumu) | **596 test, OK, 0 atlandı** |
+| `run_stage2c_checks.py` (Aşama 2 bütünlük) | **12/12** (T2D.2 aşama-numarası tutarlılığı dâhil) |
+| `check_environment.py` | Başarılı (kritik hata 0) |
+| Aşama referans tutarlılığı (`stage_reference_problems`) | Sorun yok. Yaml: Aşama 3 `completed`, Aşama 4 `in_progress`; alt aşamalar 4A `completed`, 4B `planned`; açık görevler OT-4A-001 `pending_user_verification`, OT-4A-002 `open`, OT-4A-003 `deferred_to_system_integration`, OT-4A-004 `open_investigation`; FP-4A-001 `known_limitation` |
+| Kod/veri değişmezliği (`git diff HEAD`) | `src/`, `scripts/`, `tests/`, `data/`, `models/`, `src/isg_vision/camera/`, `reports/dataset_audit/`, `reports/camera/` altında **fark yok**. Değişen dosyalar yalnızca: `README.md`, `configs/project_stages.yaml`, `docs/architecture.md`, `docs/person_detection.md`, `docs/project_plan.md`, `reports/detection/STAGE_4A_REPORT.md` |
+| YOLO ağırlığı Git dışı | `git check-ignore`: `.gitignore:75 *.pt`; `git ls-files` içinde `.pt` dosyası **0**; dosya 5 613 764 bayt yerinde |
+| `conf` varsayılanı | **0.25 değişmedi** (`DetectionConfig().conf = 0.25`; CLI `--conf` varsayılanı `0.25`). `0.35` hiçbir yerde varsayılan yapılmadı |
+| Aşama 4B başlatılmadı | `src/isg_vision/tracking/__init__.py` yer tutucu (`"Henüz uygulanmadı"`) olarak değişmedi; takip/Track ID kodu yok (`track_id` yalnızca `results.py` açıklamasında "yoktur" notu ve yokluğunu doğrulayan testte geçer) |
+
+**Not (Aşama 2 denetimi):** `run_stage2c_checks.py` her çalıştığında kendi çıktısı `reports/dataset_audit/stage2c_integrity_checks.json` içindeki yalnızca `date` satırını günceller (sonuç aynı); mevcut denetim yaklaşımına uygun olarak bu gereksiz fark geri alındı (`git checkout`), dosya değişmemiş durumda.
+
+**Bu kapanışta yapılmayanlar:** kullanıcının MacBook sonuçları (§19) Claude tarafından yeniden üretilmedi (kamera izni yok); `conf=0.35` testi **çalıştırılmadı**; gerçek IP kamera testi yapılmadı; doğruluk ölçümü yapılmadı; commit/push yapılmadı; Aşama 4B başlatılmadı.
 
 ---
 
@@ -238,21 +361,26 @@ Etiketli bağımsız test kümesi hazırlanınca: `scripts/evaluate_person_detec
 | 4 | Gerçek modelle insan tespiti çalışıyor | ✔ | §11–12, CPU ve MPS |
 | 5 | Yalnızca `person` sınıfı işleniyor | ✔ | ham çıktıda `bus` var, sonuçta yok *[Gerçek model]* |
 | 6 | Tek insan destekleniyor | ✔ | §12-B |
-| 7 | Birden fazla insan destekleniyor | ✔ | §12-C (görüntü düzeyinde); gerçek ≥3 kişilik video **bekliyor** |
+| 7 | Birden fazla insan destekleniyor | ✔ | §12-C (görüntü düzeyinde *[Gerçek model]*) + canlı kamerada üç kişi `PERSONS: 3` *[Kullanıcı]* |
 | 8 | İnsan bulunmayan kareler yönetiliyor | ✔ | §12-A |
-| 9 | Bounding box ve confidence gösteriliyor | ✔ | çizim testleri + gözle incelenen kare + gerçek pencere koşusu |
+| 9 | Bounding box ve confidence gösteriliyor | ✔ | çizim testleri + gözle incelenen kare + gerçek pencere koşusu; canlı kamerada kullanıcı gözlemi *[Kullanıcı]* |
 | 10 | Toplam kişi sayısı gösteriliyor | ✔ | `PERSONS: n` (testler, gerçek model) |
 | 11 | FramePacket entegrasyonu tamamlandı | ✔ | `run_detection`, `FrameSource.frames()` tüketir |
-| 12 | Kamera ve video kaynakları destekleniyor | ◐ | Video: gerçek koşu ✔. Kamera: sahte kaynak + kod yolu ✔; **gerçek kamera yapılmadı** *[Bekliyor]* |
-| 13 | FPS ve çıkarım gecikmesi ölçülüyor | ✔ | §10 (kayıtlı video); canlı kamerada ölçülmedi |
-| 14 | MPS ve CPU davranışları test edildi / engeller belgelendi | ✔ | §10, §5; kamera izni engeli §12-E |
+| 12 | Kamera ve video kaynakları destekleniyor | ✔ | Video: gerçek koşu ✔. Kamera: sahte kaynak + kod yolu ✔; **gerçek MacBook kamerası kullanıcı tarafından doğrulandı** *[Kullanıcı]* (§19). IP/RTSP kaynağı kapsam dışı (OT-4A-003) |
+| 13 | FPS ve çıkarım gecikmesi ölçülüyor | ✔ | §10 (kayıtlı video, sentetik) ve canlı MacBook kamerası (§19, CPU ve MPS ayrı) *[Kullanıcı]* |
+| 14 | MPS ve CPU davranışları test edildi / engeller belgelendi | ✔ | §10, §5, §19 (canlı CPU/MPS); Claude ortamındaki kamera izni engeli §12-E |
 | 15 | Kamera hataları güvenli yönetiliyor | ✔ | testler + gerçek izin hatası (çıkış 1, mesaj, kaynak serbest) |
-| 16 | Kullanıcı çıkışlarında kaynaklar serbest bırakılıyor | ✔ | Q/Esc/pencere/Ctrl+C testleri; gerçek pencerede kırmızı düğme |
+| 16 | Kullanıcı çıkışlarında kaynaklar serbest bırakılıyor | ✔ | Q/Esc/pencere/Ctrl+C testleri; gerçek pencerede kırmızı düğme; gerçek kamerada dört çıkış yöntemi sorunsuz *[Kullanıcı]* (çıkış kodları paylaşılmadı) |
 | 17 | Yeni otomatik testler başarılı | ✔ | 256 yeni test geçiyor |
 | 18 | Önceki aşamaların testleri başarılı | ✔ | 340 test korunuyor, 596/596 |
 | 19 | Aşama 2 veri bütünlüğü korunuyor | ✔ | 12/12; `data/` ve raporlar değişmedi |
-| 20 | Model performansı hakkında doğrulanmamış iddia yok | ✔ | doğruluk raporlanmadı; hız yalnızca ölçülen koşulda, sınırlarıyla |
+| 20 | Model performansı hakkında doğrulanmamış iddia yok | ✔ | doğruluk raporlanmadı, %85 hedefi karşılandı denmedi; hız yalnızca ölçülen koşulda, sınırlarıyla; nedeni ayrıştırılmayan farklar iddiasız bırakıldı |
 | 21 | Dokümantasyon ve rapor oluşturuldu | ✔ | `docs/person_detection.md`, bu rapor, README/plan/mimari/yaml |
 | 22 | Aşama 4B'ye geçilmedi | ✔ | takip/Track ID kodu yok; yaml: `4B: planned` |
+| 23 | Manuel testler kaynaklarına göre sınıflandı | ✔ | *[Kullanıcı]* / *[Ölçüldü]* / *[Türetilmiş]* ayrımı (§19, başlık) |
+| 24 | Açık görevler tanımlı ve izlenebilir | ✔ | OT-4A-001…004, FP-4A-001, OBS-4A-001/002; yaml `stage4a_open_items` |
+| 25 | `conf` varsayılanı değişmedi; 0.35 testi yapılmış gösterilmedi | ✔ | `DEFAULT_CONF = 0.25`; OT-4A-001 `PENDING_USER_VERIFICATION` (§22) |
+| 26 | Gerçek IP kamera satın alınmış gibi davranılmadı | ✔ | OT-4A-003 `DEFERRED_TO_SYSTEM_INTEGRATION`; MacBook testi IP kamera doğrulaması olarak sunulmadı |
 
-**Karar:** Zorunlu manuel doğrulamalar (gerçek kamera, yüksek açı, gerçek çok kişili sahne) yapılamadığı için Aşama 4A `COMPLETED` **ilan edilmedi**; durum **`READY_FOR_MANUAL_VERIFICATION`**. Aşama 4 genel durumu `in_progress`'tir. Commit/push yapılmadı. Aşama 4B başlatılmadı.
+**Karar:** Mevcut Aşama 4A yazılım ve prototip kabul kriterleri karşılanmaktadır; kullanıcının MacBook'ta yaptığı manuel doğrulamalarla birlikte Aşama 4A, **yalnızca kapsam içi prototip geliştirme ve doğrulama olarak `COMPLETED`** yapıldı.
+**Aşama 4 genel durumu `IN_PROGRESS`'tir; Aşama 4B `PLANNED`'dır ve başlatılmadı.** Gerçek IP kamera satın alınmadığı için Aşama 4A açık tutulmadı. Açık kalanlar (§21): `conf=0.35` testi **henüz yapılmadı** ve kullanıcı tarafından daha sonra çalıştırılacak; bağımsız doğruluk ölçümü; gerçek IP kamera; OBS-4A-001. Commit/push yapılmadı.

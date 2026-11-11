@@ -35,11 +35,23 @@ stage3_deferred_backlog:
   B3-5: {title: "Fiziksel bağlantı kopması testi", target_stages: [12]}
 
 # Aşama 4 alt aşamaları (kullanıcı kararı, 2026-11-12): 4A çoklu insan tespiti, 4B çoklu insan takibi. Aşama 4 genel durumu, 4B tamamlanana kadar COMPLETED OLMAZ.
-# 4A: kod, otomatik testler ve gerçek model doğrulamaları tamam; MacBook kamerasıyla canlı test ve yüksek açılı gerçek kamera testi kullanıcı doğrulaması bekliyor.
+# 4A: COMPLETED (2026-11-12) — yalnızca kapsam içi prototip geliştirme ve doğrulama: kod, otomatik testler, gerçek model doğrulamaları ve kullanıcının MacBook kamerasıyla yaptığı manuel testler tamam.
+# Kapanışta açık kalanlar aşağıdaki stage4a_open_items / stage4a_known_limitations içindedir (tamamlanmış sayılmaz). Aşama 4B başlatılmamıştır.
 # Ayrıntı: reports/detection/STAGE_4A_REPORT.md, docs/person_detection.md
 stage4_substages:
-  4A: {title: "Çoklu insan tespiti", status: ready_for_manual_verification}
+  4A: {title: "Çoklu insan tespiti", status: completed}
   4B: {title: "Çoklu insan takibi", status: planned}
+
+# Aşama 4A kapanışında (2026-11-12) AÇIK kalan görevler. Hiçbiri yapılmamıştır; tamamlanmış sayılmaz.
+stage4a_open_items:
+  OT-4A-001: {title: "PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35: yüksek kamera konumunda conf 0.25 / 0.35 karşılaştırması (varsayılan conf 0.25 değişmedi)", status: pending_user_verification}
+  OT-4A-002: {title: "Bağımsız etiketli değerlendirme kümesi ve resmî doğruluk ölçümleri (Precision, Recall, F1, mAP)", status: open}
+  OT-4A-003: {title: "Gerçek IP kamera doğrulaması (kurulum, RTSP, nihai açı, gecikme, görüntü kalitesi)", status: deferred_to_system_integration, target_stages: [11, 12]}
+  OT-4A-004: {title: "OBS-4A-001: ilk canlı oturumdaki en yüksek 7 tespit sayısının araştırılması (doğrulanmamış gözlem)", status: open_investigation}
+
+# Bilinen sınırlamalar / gözlemler (Aşama 4A kapanışı).
+stage4a_known_limitations:
+  FP-4A-001: {title: "Yorgan/kumaş kısa süreli insan olarak tespit edildi (conf 0.25, MacBook ≈2 m yükseklikte; tek kullanıcı gözlemi)", status: known_limitation}
 
 # Aşama 3 kapsamı DIŞINDA kalanlar (kullanıcı talimatı)
 stage3_excludes: ["YOLO eğitimi", "veri seti birleştirme", "model doğruluğu değerlendirmesi"]
