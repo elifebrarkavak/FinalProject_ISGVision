@@ -42,16 +42,16 @@ stage4_substages:
   4A: {title: "Çoklu insan tespiti", status: completed}
   4B: {title: "Çoklu insan takibi", status: planned}
 
-# Aşama 4A kapanışında (2026-11-12) AÇIK kalan görevler. Hiçbiri yapılmamıştır; tamamlanmış sayılmaz.
+# Aşama 4A kapanışında (2026-11-12) AÇIK kalan görevler. OT-4A-001 kapanıştan sonra kullanıcı tarafından test edildi ama sorunu çözmedi; diğerleri yapılmamıştır. Hiçbiri tamamlanmış sayılmaz.
 stage4a_open_items:
-  OT-4A-001: {title: "PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35: yüksek kamera konumunda conf 0.25 / 0.35 karşılaştırması (varsayılan conf 0.25 değişmedi)", status: pending_user_verification}
+  OT-4A-001: {title: "PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35: kullanıcı tarafından gerçekleştirildi (kapanış sonrası); yorgan conf 0.35'te de kısa süreliğine insan sanıldı (süre gözle daha kısa, ölçülmedi); FP-4A-001 çözülmedi; gerçek insan tespitinin başarısı ölçülmedi; varsayılan conf 0.25 değişmedi", status: test_performed}
   OT-4A-002: {title: "Bağımsız etiketli değerlendirme kümesi ve resmî doğruluk ölçümleri (Precision, Recall, F1, mAP)", status: open}
   OT-4A-003: {title: "Gerçek IP kamera doğrulaması (kurulum, RTSP, nihai açı, gecikme, görüntü kalitesi)", status: deferred_to_system_integration, target_stages: [11, 12]}
   OT-4A-004: {title: "OBS-4A-001: ilk canlı oturumdaki en yüksek 7 tespit sayısının araştırılması (doğrulanmamış gözlem)", status: open_investigation}
 
 # Bilinen sınırlamalar / gözlemler (Aşama 4A kapanışı).
 stage4a_known_limitations:
-  FP-4A-001: {title: "Yorgan/kumaş kısa süreli insan olarak tespit edildi (conf 0.25, MacBook ≈2 m yükseklikte; tek kullanıcı gözlemi)", status: known_limitation}
+  FP-4A-001: {title: "Yorgan/kumaş kısa süreli insan olarak tespit edildi (conf 0.25, MacBook ≈2 m yükseklikte; conf 0.35'te de kısa süreliğine görüldü, süre gözle daha kısa ama ölçülmedi; çözülmedi; tek kullanıcı gözlemi)", status: open_known_limitation}
 
 # Aşama 3 kapsamı DIŞINDA kalanlar (kullanıcı talimatı)
 stage3_excludes: ["YOLO eğitimi", "veri seti birleştirme", "model doğruluğu değerlendirmesi"]
