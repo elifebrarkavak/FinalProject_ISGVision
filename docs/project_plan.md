@@ -7,7 +7,7 @@ numaraları bu tabloya göre yazılır ve otomatik olarak denetlenir (`scripts/r
 |---|---|---|---|---|
 | 1 | Proje ortamının hazırlanması | Tamamlandı | Python 3.11 ortamı, bağımlılıklar, klasör iskeleti, testler, Git kuralları | — |
 | 2 | Veri setlerinin analizi ve doğrulanması | `COMPLETED` | Envanter, etiket ve sınıf doğrulama, sızıntı analizi, lisans, kullanım politikası, bölme manifesti, değerlendirme planı, son görsel inceleme | Model eğitimi, veri birleştirme, ham veri değişikliği |
-| 3 | Canlı kamera altyapısı | `IN_PROGRESS` | OpenCV ile kamera erişimi, video akışı, FPS hesaplama, kamera hatalarının yönetimi, çoklu kişi analizi için görüntü akışı altyapısı. **Kamera altyapısının teknik işlev testleri** (FPS, gecikme, yeniden bağlanma, kare kaybı) | Yok: YOLO eğitimi, veri seti birleştirme, model doğruluğu değerlendirmesi |
+| 3 | Canlı kamera altyapısı | `COMPLETED` | OpenCV ile kamera erişimi, video akışı, FPS hesaplama, kamera hatalarının yönetimi, çoklu kişi analizi için görüntü akışı altyapısı. **Teknik işlev testleri:** FPS ölçümü ve hata yönetimi tamamlandı; gecikme ölçümü, yeniden bağlanma ve kare kaybı ölçümü kapanışta **ertelendi** (backlog B3-1…B3-5, aşağıda) | Yok: YOLO eğitimi, veri seti birleştirme, model doğruluğu değerlendirmesi |
 | 4 | Çoklu insan tespiti ve takibi | Planlandı | Kare başına çoklu insan tespiti, takip ID'leri (ByteTrack / BoT-SORT) | KKD modeli eğitimi |
 | 5 | Çoklu yüz tespiti | Planlandı | Karedeki tüm görünür yüzlerin tespiti ve kişi izleriyle ilişkilendirilmesi | Kimlik tanıma |
 | 6 | Çalışan kayıt sistemi | Planlandı | En fazla 10 çalışanın KVKK uyumlu kaydı (`data/employees/`, Git dışı) | — |
@@ -22,7 +22,7 @@ numaraları bu tabloya göre yazılır ve otomatik olarak denetlenir (`scripts/r
 
 | Değerlendirme | Aşama |
 |---|---|
-| Kamera teknik işlev testleri (FPS, gecikme, hata yönetimi) | 3 (ve sonraki aşamalarda tekrar) |
+| Kamera teknik işlev testleri (FPS, gecikme, hata yönetimi) | 3 (FPS ölçümü ve hata yönetimi tamamlandı); gecikme, kare kaybı ve yeniden bağlanma: 4 ve 12 (backlog) |
 | İnsan tespiti/takibi ölçümleri | 4 |
 | Yüz tespiti / kimlik tanıma ölçümleri | 5 / 7 |
 | KKD modeli geliştirme ölçümü (val) ve bağımsız saha testi | 8 (ilk model), 10 (geliştirilmiş model) |
@@ -31,3 +31,17 @@ numaraları bu tabloya göre yazılır ve otomatik olarak denetlenir (`scripts/r
 
 Model doğruluğuna ilişkin bilimsel değerlendirmeler, ilgili modeller eğitildikten sonra yapılır. Aşama 3'te yalnızca kamera
 altyapısının teknik işlevi test edilir.
+
+## Aşama 3'te ertelenen maddeler (backlog)
+
+Aşama 3, kullanıcı onayıyla (2026-11-11) aşağıdaki maddeler **yapılmadan** `COMPLETED` olarak kapatılmıştır. Bu maddeler tamamlanmış sayılmaz; ilgili aşamanın
+başında kapsama alınıp alınmayacağı kullanıcı kararıyla yeniden gözden geçirilir. Ayrıntı: `reports/camera/STAGE_3_REPORT.md` (bölüm K.2). Makine tarafından okunur
+sürüm: `configs/project_stages.yaml` (`stage3_deferred_backlog`).
+
+| ID | Madde | Planlanan değerlendirme aşaması | Gerekçe |
+|---|---|---|---|
+| B3-1 | Otomatik yeniden bağlanma | 12 | Canlı sistemin dayanıklılığı uçtan uca sistem testlerinin konusudur. Bugün bağlantı koparsa uygulama kontrollü biçimde durur (`SourceDisconnectedError`) |
+| B3-2 | Kare kaybı ölçümü | 4, sonra 12 | Takip sürekliliği kare kaybına duyarlıdır; ilk ölçüm takipçi akışa bağlanınca, nihai ölçüm uçtan uca testlerde |
+| B3-3 | Gecikme (yakalama → sonuç) ölçümü | 4, sonra 12 | Anlamlı gecikme, model döngüdeyken ölçülür; nihai ölçüm Aşama 12'deki canlı kamera sistem testlerindedir |
+| B3-4 | Gerçek kamera FPS'inin ileri doğrulaması | 4, sonra 12 | Aşama 3'te yalnızca modelsiz FPS ölçüldü; model döngüdeyken, uzun süreli ve bağımsız zaman referansıyla doğrulanmalı |
+| B3-5 | Fiziksel bağlantı kopması testi | 12 | B3-1 ile birlikte; mevcut "kontrollü durma" davranışı istenirse daha önce de denenebilir |

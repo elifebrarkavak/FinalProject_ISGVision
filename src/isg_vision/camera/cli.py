@@ -138,6 +138,7 @@ def run(
         _print_opened(source, display)
         if window is not None:
             window.open()
+            _warn_close_button(window)
         result = run_preview(source, window, max_frames=max_frames)
     except KeyboardInterrupt:  # kaynak açılırken veya pencere oluşturulurken Ctrl+C
         print("\n[BİLGİ] Ctrl+C ile durduruldu.")
@@ -195,7 +196,13 @@ def _print_opened(source: FrameSource, display: bool) -> None:
               f" | toplam kare: {total if total else 'bilinmiyor'}")
     _warn_resolution(source)
     if display:
-        print("[BİLGİ] Çıkmak için pencerede Q veya Esc tuşuna basın (ya da terminalde Ctrl+C).")
+        print("[BİLGİ] Çıkmak için pencerede Q veya Esc tuşuna basın, pencerenin kapatma düğmesine tıklayın (ya da terminalde Ctrl+C).")
+
+
+def _warn_close_button(window: Any) -> None:
+    """macOS'ta kapatma düğmesi etkinleştirilemediyse kullanıcıyı uyarır (``None`` = konu geçerli değil)."""
+    if getattr(window, "close_button_enabled", None) is False:
+        print("[UYARI] Pencerenin kırmızı kapatma düğmesi etkinleştirilemedi; pencereyi Q/Esc tuşuyla veya terminalde Ctrl+C ile kapatın.")
 
 
 def _warn_resolution(source: FrameSource) -> None:

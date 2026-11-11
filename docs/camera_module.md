@@ -1,7 +1,8 @@
 # Kamera Modülü (Aşama 3 — Canlı kamera altyapısı)
 
-> **Durum: `IN_PROGRESS`.** Otomatik testler geçmektedir. Gerçek kamera donanım doğrulaması macOS kamera izni gerektirdiği
-> için kullanıcı tarafından yapılmalıdır (`READY_FOR_MANUAL_VERIFICATION`; bkz. [Gerçek kamera doğrulaması](#9-gerçek-kamera-doğrulaması)).
+> **Durum: `COMPLETED` (2026-11-11, kullanıcı onayıyla).** Otomatik testler geçmektedir; gerçek kamera doğrulamaları (kamera açılışı, 1280×720 görüntü,
+> Q, Esc ve kırmızı pencere kapatma düğmesiyle çıkış) kullanıcı tarafından MacBook Pro M4 üzerinde yapılmıştır (bkz. [Gerçek kamera doğrulaması](#9-gerçek-kamera-doğrulaması)).
+> Yeniden bağlanma, kare kaybı, gecikme ölçümü, ileri FPS doğrulaması ve fiziksel bağlantı kopması testi **ertelenmiştir, yapılmamıştır** (bkz. [Bilinen sınırlamalar](#13-bilinen-sınırlamalar)).
 > Aşama 3'te YOLO eğitimi, insan tespiti, yüz tespiti/tanıma, takip ve veri birleştirme **yapılmaz**; modül hiçbir yapay zekâ
 > modeline bağımlı değildir. Aşama sırası: [project_plan.md](project_plan.md).
 
@@ -22,6 +23,7 @@ src/isg_vision/camera/
 ├── config.py     # SourceConfig: doğrulanmış kaynak yapılandırması (cv2 import etmez)
 ├── capture.py    # FrameSource: cv2.VideoCapture üzerinde kamera + video için ortak okuma
 ├── fps.py        # FpsMeter: kayan pencere FPS ölçümü (bağımsız, OpenCV'ye bağımlı değil)
+├── macos_window.py  # macOS: OpenCV penceresinin kırmızı kapatma düğmesini etkinleştirir (ctypes + Objective-C)
 ├── display.py    # overlay çizimi + PreviewWindow (OpenCV penceresi)
 ├── preview.py    # run_preview: kaynak -> FPS -> overlay -> pencere döngüsü
 └── cli.py        # komut satırı arayüzü (main)
@@ -130,6 +132,14 @@ gibi yapay zekâ çıktıları bu aşamada **gösterilmez**.
 * **Ölçülen FPS** — uygulamanın gerçekten saniyede işlediği kare sayısı (`FpsMeter`). `time.monotonic` ile, son 30 karenin kayan
   penceresi üzerinden hesaplanır (tek kare aralığına göre dalgalanmaz). Oturum özeti ortalama FPS'i (`average_fps`) da yazar.
 
+**Kameralarda kaynak FPS'e güvenmeyin.** Gerçek MacBook kamerasında sürücü `CAP_PROP_FPS = 15,0` bildirirken ölçülen hız ~30 FPS çıkmıştır
+(tanı oturumu: 300 kare / 9,97 sn = 29,98 FPS, medyan kare aralığı 33,3 ms, en büyük aralık 41,6 ms, birebir aynı ardışık kare 0; ayrıca uygulamanın kendi
+oturumunda 529 kare / 17,9 sn = 29,5 FPS). Bu nedenle kamera için **kaynak FPS yalnızca bilgidir; performans/zaman hesaplarında ölçülen FPS ve
+`FramePacket.timestamp` kullanılır.** Video dosyalarında kaynak FPS dosyadan gelir ve oynatma hızını belirler. Ölçülen FPS hesabında (`FpsMeter`) hata
+görülmemiştir (bağımsız ham okuma 29,98 FPS ile uygulama oturumundaki 29,5 FPS tutarlıdır; iki ölçüm ayrı oturumlardadır). Sınır: "birebir aynı kare = 0"
+yalnızca tam kopya kareleri eler; her karenin bağımsız bir pozlama olduğunu kesin olarak kanıtlamaz. Bu bulgu tek bir tanı oturumuna dayanır; ileri doğrulama
+ertelenmiştir (B3-4).
+
 Video oynatma pencereliyken kaynağın FPS değerine göre **hızlandırmadan** yapılır (kaynak FPS bilinmiyorsa 30). İşlem yavaşsa kare atlanmaz,
 oynatma yavaşlar ve ölçülen FPS bunu olduğu gibi gösterir. `--no-display` modunda bekleme yoktur; ölçülen FPS yalnızca okuma hızıdır.
 
@@ -157,17 +167,45 @@ Not: Bu geliştirme sırasında Claude masaüstü uygulamasının Terminal panel
 
 ## 9. Gerçek kamera doğrulaması
 
-Gerçek kamera/Q-Esc doğrulaması manuel yapılır. Terminal.app'te:
+Aşağıdaki sonuçlar **kullanıcı tarafından** MacBook Pro M4 üzerinde, izinli bir terminalde yapılmış ve bildirilmiştir (Claude'un ortamında kamera izni yoktur; bu rakamlar yeniden üretilmemiştir).
+
+| Doğrulama | Sonuç (kullanıcı beyanı) |
+|---|---|
+| Kamera `camera:0` ile açıldı, canlı görüntü gösterildi | Başarılı; gerçek çözünürlük 1280×720 |
+| Uygulama oturumu | 529 kare, 17,9 sn, ölçülen ortalama 29,5 FPS, kaynak FPS (bildirilen) 15,0 |
+| Q ile çıkış | Başarılı, `exit=0` |
+| Esc ile çıkış | Başarılı, `exit=0` |
+| Kırmızı pencere kapatma düğmesi | Başarılı: `Bitiş nedeni: pencere kapatıldı`, `exit=0` |
+| FPS tanı testi (ham `cv2.VideoCapture`, 10 sn) | `CAP_PROP_FPS` 15,0; 300 kare / 9,97 sn = 29,98 FPS; birebir aynı ardışık kare 0; kare aralığı medyan 33,3 ms, en büyük 41,6 ms |
+
+Bildirimde yer almadığı için **doğrulanmış sayılmayanlar:** `camera:0`'ın hangi fiziksel kamera olduğu (yerleşik / iPhone Süreklilik Kamerası), çıkışta kamera ışığının sönmesi,
+istenen–gerçek çözünürlük uyarısının çıkmaması.
+
+### 9.1 macOS: kırmızı pencere kapatma düğmesi çalışmıyordu (düzeltildi ve kullanıcı tarafından doğrulandı)
+
+* **Hata:** `ISG Vision - Camera` penceresinin kırmızı düğmesine tıklamak pencereyi kapatmıyordu.
+* **Kök neden (gerçek Cocoa penceresinde ölçüldü, OpenCV 5.0.0 / macOS arm64):** OpenCV pencereyi `NSWindow.styleMask = 0xd` (Titled | Miniaturizable |
+  Resizable) ile oluşturur; `Closable` biti (`0x2`) **yok**. Bu yüzden kırmızı düğme devre dışıdır (`NSButton.isEnabled = NO`) ve tıklama hiçbir şey
+  yapmaz. `WINDOW_AUTOSIZE`, `WINDOW_NORMAL` ve `WINDOW_GUI_NORMAL` için aynı sonuç alındı. Sorun, kapanmanın *algılanmaması* değildi:
+  pencere hiç kapanmadığı için `cv2.getWindowProperty(WND_PROP_VISIBLE)` doğru olarak `1.0` döndürüyordu.
+* **Düzeltme:** `macos_window.enable_close_button` pencere oluşturulduktan hemen sonra `Closable` bitini ekler (`PreviewWindow.open()` çağırır).
+  Bundan sonra düğme etkindir; tıklayınca pencere kapanır, `getWindowProperty` `0.0` döndürür ve mevcut `closed_by_user` mantığı döngüyü sonlandırır:
+  kamera/video serbest bırakılır, pencere yok edilir, çıkış kodu 0 ve `Bitiş nedeni: pencere kapatıldı`.
+* **Güvenlik/yedek davranış:** macOS dışında, ana iş parçacığı dışında veya herhangi bir hata olursa hiçbir şey yapılmaz (`False`); bu durumda
+  CLI `[UYARI]` yazar ve pencere Q/Esc/Ctrl+C ile kapatılabilir. `pyobjc` gerekmez.
+* **Doğrulama:** gerçek Cocoa penceresinde tıklama `NSButton.performClick:` ile taklit edilerek otomatik doğrulandı; kullanıcı düzeltmeden sonra gerçek fare tıklamasıyla da
+  doğruladı (yukarıdaki tablo). Ayrıntı: `reports/camera/STAGE_3_REPORT.md`, bölüm M.
+
+Doğrulamayı yinelemek için Terminal.app'te:
 
 ```bash
 cd /Users/ebrmac/Desktop/bitirme
 .venv/bin/python scripts/run_camera.py --source camera --camera-index 0 --no-display --max-frames 60   # penceresiz; izin ve FPS
-.venv/bin/python scripts/run_camera.py --source camera                                                  # pencere; Q / Esc ile çıkın
+.venv/bin/python scripts/run_camera.py --source camera; echo "exit=$?"                                  # pencere; Q / Esc / kırmızı düğme ile çıkın
 ```
 
-Kontrol listesi: kamera açılıyor mu · görüntü geliyor mu · `FPS` ve `RESOLUTION` gösteriliyor mu · gerçek çözünürlük konsolda doğru
-raporlanıyor mu · `Q`/`Esc`/pencere kapatma ile çıkılıyor mu · çıktıdaki `Kaynak açıldı` / `Bitiş nedeni` satırları ve çıkış kodu 0 mı ·
-çıkıştan sonra kamera ışığı sönüyor mu (kaynak serbest bırakıldı).
+Kontrol listesi: kamera açılıyor mu · görüntü geliyor mu · `FPS` ve `RESOLUTION` gösteriliyor mu · gerçek çözünürlük konsolda doğru raporlanıyor mu ·
+`Q`/`Esc`/pencere kapatma ile çıkılıyor mu · `Kaynak açıldı` / `Bitiş nedeni` satırları ve çıkış kodu 0 mı · çıkıştan sonra kamera ışığı sönüyor mu.
 
 ## 10. Yaygın hatalar ve çözümleri
 
@@ -182,6 +220,7 @@ raporlanıyor mu · `Q`/`Esc`/pencere kapatma ile çıkılıyor mu · çıktıda
 | `Video dosyası bulunamadı / bir dosya değil / boş` | Yol hatalı | Yolu kontrol edin |
 | `Video dosyası açılamadı` | Bozuk dosya veya desteklenmeyen codec | Dosyayı MP4 (H.264) olarak yeniden dışa aktarın |
 | `[UYARI] Video beklenenden erken bitti` | Dosya kesik/bozuk (kare sayısı bildirilenden çok az) | Dosyayı kontrol edin; çökme olmaz, kontrollü biter |
+| Kırmızı kapatma düğmesine tıklayınca pencere kapanmıyor (macOS) | OpenCV pencereyi kapatma düğmesi devre dışı oluşturur (bölüm 9.1) | Güncel sürümde otomatik düzeltilir; `[UYARI] ... kapatma düğmesi etkinleştirilemedi` görürseniz Q/Esc/Ctrl+C kullanın |
 | `OpenCV görüntü penceresi oluşturulamadı` | Grafik oturumu yok (ör. SSH) | Terminal.app/VS Code'da çalıştırın veya `--no-display` kullanın |
 
 ## 11. Otomatik testler
@@ -189,7 +228,10 @@ raporlanıyor mu · `Q`/`Esc`/pencere kapatma ile çıkılıyor mu · çıktıda
 ```bash
 .venv/bin/python -m unittest discover -s tests            # tüm testler (Aşama 1, 2 ve 3)
 .venv/bin/python -m unittest tests.test_camera_capture tests.test_camera_fps \
-    tests.test_camera_display tests.test_camera_errors tests.test_camera_cli   # yalnızca kamera testleri
+    tests.test_camera_display tests.test_camera_errors tests.test_camera_cli \
+    tests.test_camera_window_close                                              # yalnızca kamera testleri
+ISG_GUI_TESTS=1 .venv/bin/python -m unittest discover -s tests -p "test_camera_window_close.py" -v
+# ^ isteğe bağlı: GERÇEK Cocoa penceresi açar (macOS + grafik oturumu gerekir); varsayılan çalıştırmada atlanır
 ```
 
 Testler gerçek kamera açmaz, izin istemez, ağ kullanmaz, model indirmez, `data/` ve `models/` altına dokunmaz. `cv2.VideoCapture`
@@ -217,8 +259,29 @@ with FrameSource(SourceConfig.camera(0)) as source:        # veya SourceConfig.v
 ## 13. Bilinen sınırlamalar
 
 * OpenCV, "izin yok", "kamera yok" ve "başka uygulama kullanıyor" durumlarını ayırt edemez; hata mesajı olası nedenleri listeler.
-* Kamera bağlantısı koparsa uygulama **durur** (`SourceDisconnectedError`); otomatik yeniden bağlanma uygulanmamıştır.
-* Kare kaybı ve gecikme için `FramePacket.timestamp` altyapısı vardır, ancak ayrı bir ölçüm aracı yazılmamıştır.
+* Kamera bağlantısı koparsa uygulama **durur** (`SourceDisconnectedError`); otomatik yeniden bağlanma **uygulanmamıştır** (B3-1).
+* Kare kaybı ve gecikme için `FramePacket.timestamp` ve `frame_index` altyapısı vardır, ancak ayrı bir ölçüm aracı **yazılmamıştır** (B3-2, B3-3).
+* `FpsMeter` tamamlanan `read()` çağrılarını sayar; kaç **benzersiz** kare geldiğini ayırt etmez. Gerçek kamerada kaynağın bildirdiği FPS (15,0) ile ölçülen FPS (~30)
+  farklı çıkmıştır; tanı testi (birebir aynı kare 0, medyan aralık 33,3 ms) ~30 FPS okuma hızını güçlü biçimde destekler, ancak tek oturumdur ve "aynı kare yok" tam bağımsız
+  pozlamayı kanıtlamaz (bölüm 6, B3-4). Kamera için kaynak FPS performans ölçüsü olarak kullanılmaz.
 * Video dosyasında "beklenenden erken bitti" tespiti, OpenCV'nin bildirdiği kare sayısına (yaklaşık olabilir) ve %2 toleransa dayanır.
-* Pencerenin kullanıcı tarafından kapatılması Cocoa'da `getWindowProperty` ile algılanır; gerçek tıklamayla doğrulama manueldir.
+* Pencerenin kullanıcı tarafından kapatılması Cocoa'da `getWindowProperty` ile algılanır; kırmızı düğme OpenCV'de varsayılan olarak devre dışı olduğundan
+  `macos_window` ile etkinleştirilir (bölüm 9.1). Düzeltme gerçek pencerede taklit tıklamayla, kullanıcı tarafından gerçek fare tıklamasıyla doğrulandı. Yalnızca macOS arm64'te (M4) denendi.
+* `macos_window` OpenCV'nin iç pencere stilini Objective-C çalışma zamanıyla değiştirir; OpenCV/macOS sürümleri arasında davranış değişirse hata durumunda
+  sessizce devre dışı kalır (CLI uyarır).
 * Görüntü ve yüzler varsayılan olarak diske kaydedilmez; video kaydetme özelliği yoktur.
+
+### Ertelenen geliştirme maddeleri (backlog) — Aşama 3 kapanışında yapılmadı
+
+Bu maddeler **tamamlanmış sayılmaz**. Aşama 3, kullanıcı onayıyla bunlar yapılmadan `COMPLETED` olarak kapatılmıştır. Planlanan değerlendirme aşamaları
+kullanıcı kararına tabidir ve ilgili aşamanın başında gözden geçirilir.
+
+| ID | Madde | Planlanan aşama | Not |
+|---|---|---|---|
+| B3-1 | Otomatik yeniden bağlanma | 12 | Bugün bağlantı koparsa kontrollü durur |
+| B3-2 | Kare kaybı ölçümü | 4, sonra 12 | `frame_index` / `timestamp` altyapısı hazır |
+| B3-3 | Gecikme ölçümü | 4, sonra 12 | Model döngüdeyken anlamlıdır |
+| B3-4 | Gerçek kamera FPS'inin ileri doğrulaması | 4, sonra 12 | Uzun süreli, bağımsız zaman referanslı, model döngüdeyken |
+| B3-5 | Fiziksel bağlantı kopması testi | 12 | B3-1 ile birlikte |
+
+Tablonun tam hâli: `docs/project_plan.md` ("Aşama 3'te ertelenen maddeler") ve `reports/camera/STAGE_3_REPORT.md` (bölüm K.2).

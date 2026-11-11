@@ -1,7 +1,9 @@
 # ISG_VISION — Yapay Zekâ Destekli Çoklu Çalışan Tanıma ve İSG Denetim Sistemi
 
-> **Mevcut durum: Aşama 3 — Canlı kamera altyapısı `IN_PROGRESS`.** Kamera/video okuma, FPS ve canlı pencere kodu yazıldı ve otomatik testlerden geçti;
-> gerçek kamera donanım doğrulaması kullanıcı tarafından (macOS kamera izniyle) yapılacaktır (`READY_FOR_MANUAL_VERIFICATION`). Ayrıntı: [docs/camera_module.md](docs/camera_module.md).
+> **Mevcut durum: Aşama 3 — Canlı kamera altyapısı `COMPLETED` (2026-11-11, kullanıcı onayıyla kapatıldı).** Kamera/video okuma, ölçülen FPS, canlı pencere
+> (Q, Esc ve kırmızı kapatma düğmesiyle çıkış), CLI ve hata yönetimi tamamlandı. Gerçek kamera doğrulamaları (`camera:0`, 1280×720; Q, Esc ve pencere kapatma ile çıkış `exit=0`; FPS tanısı)
+> kullanıcı tarafından MacBook Pro M4 üzerinde yapıldı. Yeniden bağlanma, kare kaybı, gecikme ölçümü, ileri FPS doğrulaması ve fiziksel bağlantı kopması testi **ertelendi** (backlog B3-1…B3-5; yapılmadı).
+> Ayrıntı: [docs/camera_module.md](docs/camera_module.md), [reports/camera/STAGE_3_REPORT.md](reports/camera/STAGE_3_REPORT.md).
 > Aşama 1 (geliştirme ortamı) ve Aşama 2 (veri seti analizi, `COMPLETED`: `reports/dataset_audit/STAGE_2_CLOSURE_REPORT.md`) tamamlanmıştır.
 > Tespit, takip, yüz tanıma ve KKD denetimi özellikleri, veri birleştirme ve model eğitimi **henüz geliştirilmemiştir**; Aşama 4 başlatılmamıştır.
 
@@ -217,11 +219,11 @@ Kullanıcı görsel kararları: 13 `approved`, 4 `needs_reannotation`, 5 `quaran
 
 ## 13.2 Aşama 3 — Canlı kamera altyapısı (komutlar)
 
-Durum: `IN_PROGRESS`. Amaç: MacBook kamerasından veya video dosyasından kare okuyan, FPS ölçen ve durum bilgisini OpenCV penceresinde gösteren,
+Durum: `COMPLETED`. Amaç: MacBook kamerasından veya video dosyasından kare okuyan, FPS ölçen ve durum bilgisini OpenCV penceresinde gösteren,
 sonraki aşamalardaki modüllerin (insan tespiti, takip, yüz, KKD) aynı kare akışını kullanabileceği modüler altyapı. Bu aşamada **hiçbir yapay zekâ
 modeli çalıştırılmaz**, görüntü kaydedilmez. Tam teknik doküman: [docs/camera_module.md](docs/camera_module.md).
 
-Kod: `src/isg_vision/camera/` (`config.py`, `frame.py`, `capture.py`, `fps.py`, `display.py`, `preview.py`, `cli.py`, `errors.py`), başlatıcı: `scripts/run_camera.py`.
+Kod: `src/isg_vision/camera/` (`config.py`, `frame.py`, `capture.py`, `fps.py`, `macos_window.py`, `display.py`, `preview.py`, `cli.py`, `errors.py`), başlatıcı: `scripts/run_camera.py`.
 
 ```bash
 .venv/bin/python scripts/run_camera.py --source camera                                   # varsayılan kamera, 1280x720 istenir
@@ -245,7 +247,7 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 
 1. **Proje ortamının hazırlanması** — tamamlandı
 2. **Veri setlerinin analizi ve doğrulanması** — `COMPLETED` (22/22 kullanıcı kararı uygulandı; 990 görüntü = 794 train + 196 validation)
-3. **Canlı kamera altyapısı** — `IN_PROGRESS`: OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
+3. **Canlı kamera altyapısı** — `COMPLETED`: OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
 4. **Çoklu insan tespiti ve takibi**
 5. **Çoklu yüz tespiti**
 6. **Çalışan kayıt sistemi**
@@ -260,9 +262,12 @@ Aşama kapanış kararları (Aşama 3 dahil) ve sonraki aşamaya geçiş kullan�
 
 ## 15. Mevcut geliştirme durumu
 
-**Aşama 3 — Canlı kamera altyapısı (`IN_PROGRESS`).** Eklenenler: `FrameSource` (kamera/video ortak kare okuma), `FramePacket` (kare + metadata), `FpsMeter`, OpenCV
-canlı pencere (overlay), `scripts/run_camera.py`, hata yönetimi ve `tests/test_camera_*.py` otomatik testleri. Gerçek kamera donanım doğrulaması bekleniyor
-(`READY_FOR_MANUAL_VERIFICATION`). Aşama 4 başlatılmamıştır.
+**Aşama 3 — Canlı kamera altyapısı (`COMPLETED`, 2026-11-11, kullanıcı onayıyla).** Eklenenler: `FrameSource` (kamera/video ortak kare okuma), `FramePacket` (kare + metadata), `FpsMeter`, OpenCV
+canlı pencere (overlay), `scripts/run_camera.py`, hata yönetimi, macOS pencere kapatma düzeltmesi (`macos_window.py`) ve `tests/test_camera_*.py` otomatik testleri. Kullanıcı gerçek kamerada doğruladı:
+`camera:0` açılıyor, 1280×720 görüntü, Q / Esc / kırmızı pencere kapatma düğmesiyle çıkış (`exit=0`). **FPS notu:** kameranın bildirdiği `CAP_PROP_FPS=15,0` gerçek kare hızını yansıtmıyor; ölçülen
+hız ~30 FPS'tir (tanı: 300 kare / 9,97 sn = 29,98 FPS, birebir aynı ardışık kare 0, medyan kare aralığı 33,3 ms). Kameranın bildirdiği değer performans ölçüsü olarak kullanılmaz; ölçülen FPS kullanılır.
+Bu bulgu 300 karelik tek bir tanı oturumuna dayanır; ileri doğrulama ertelendi. **Ertelenen (yapılmadı):** B3-1 otomatik yeniden bağlanma, B3-2 kare kaybı ölçümü, B3-3 gecikme ölçümü,
+B3-4 ileri FPS doğrulaması, B3-5 fiziksel bağlantı kopması testi (planlanan aşamalar: `docs/project_plan.md`). Aşama 4 başlatılmamıştır; başlatma kararı kullanıcıya aittir.
 
 **Aşama 2 — Veri seti analizi (`COMPLETED`).** Aşama 1'de tamamlananlar: klasör iskeleti, `.venv` (Python 3.11), temel bağımlılıklar,
 `scripts/check_mps.py`, `scripts/check_environment.py`, `unittest` tabanlı temel testler, `.gitignore`, pre-commit hook,

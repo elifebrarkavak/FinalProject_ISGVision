@@ -11,6 +11,7 @@ Modül import edildiğinde pencere açılmaz; pencere ``PreviewWindow.open()`` v
 
 from __future__ import annotations
 
+import sys
 import unicodedata
 from dataclasses import dataclass
 
@@ -18,6 +19,7 @@ import cv2
 import numpy as np
 
 from .errors import DisplayError
+from .macos_window import enable_close_button
 
 WINDOW_NAME = "ISG Vision - Camera"
 EXIT_KEYS = (27, ord("q"), ord("Q"))  # Esc, q, Q
@@ -113,9 +115,22 @@ class PreviewWindow:
         self.name = name
         self._created = False
         self._shown = False
+        self._close_button_enabled: bool | None = None
+
+    @property
+    def close_button_enabled(self) -> bool | None:
+        """macOS'ta kırmızı kapatma düğmesinin etkinleştirilip etkinleştirilemediği.
+
+        ``None``: macOS değil veya pencere henüz açılmadı (konu geçerli değil); ``True``: düğme etkin; ``False``: macOS'ta
+        etkinleştirilemedi (pencere yine Q/Esc/Ctrl+C ile kapatılabilir).
+        """
+        return self._close_button_enabled
 
     def open(self) -> None:
         """Pencereyi oluşturur.
+
+        macOS'ta OpenCV pencereyi kapatma düğmesi **devre dışı** oluşturur; bu yüzden pencere oluşturulduktan hemen sonra düğme
+        etkinleştirilir (ayrıntı: ``macos_window``). Etkinleştirme başarısız olursa pencere yine çalışır.
 
         Raises:
             DisplayError: OpenCV pencere oluşturamadı (ör. grafik oturumu yok, GUI desteği olmayan OpenCV).
@@ -130,6 +145,8 @@ class PreviewWindow:
                 "(Terminal.app, VS Code) çalıştırın veya penceresiz çalışmak için --no-display kullanın."
             ) from exc
         self._created = True
+        if sys.platform == "darwin":
+            self._close_button_enabled = enable_close_button(self.name)
 
     def show(self, image: np.ndarray, delay_ms: int = 1) -> int:
         """Görüntüyü gösterir, en fazla ``delay_ms`` kadar tuş bekler ve tuş kodunu döndürür (tuş yoksa ``-1``)."""
@@ -158,6 +175,7 @@ class PreviewWindow:
             return
         self._created = False
         self._shown = False
+        self._close_button_enabled = None
         try:
             cv2.destroyWindow(self.name)
             for _ in range(3):  # macOS'ta pencerenin gerçekten kapanması için olay döngüsünü işlet

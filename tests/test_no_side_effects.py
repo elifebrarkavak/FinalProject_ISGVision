@@ -25,6 +25,7 @@ MODULES = (
     "isg_vision.camera.config",
     "isg_vision.camera.capture",
     "isg_vision.camera.fps",
+    "isg_vision.camera.macos_window",
     "isg_vision.camera.display",
     "isg_vision.camera.preview",
     "isg_vision.camera.cli",
