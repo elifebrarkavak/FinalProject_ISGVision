@@ -1,6 +1,6 @@
 # ISG_VISION — Yapay Zekâ Destekli Çoklu Çalışan Tanıma ve İSG Denetim Sistemi
 
-> **Mevcut durum: Aşama 2 — Veri seti analizi ve doğrulama; Aşama 2C nihai kontrolü tamamlandı, kapanış kullanıcı onayını bekliyor (`reports/dataset_audit/STAGE_2_FINAL_REPORT.md`).**
+> **Mevcut durum: Aşama 2 — Veri seti analizi ve doğrulama `COMPLETED` (`reports/dataset_audit/STAGE_2_CLOSURE_REPORT.md`). Aşama 3 başlatılmadı.**
 > Aşama 1 (geliştirme ortamı) tamamlanmıştır. Tespit, takip, yüz tanıma ve KKD denetimi özellikleri, veri birleştirme ve model eğitimi
 > **henüz geliştirilmemiştir**.
 
@@ -211,7 +211,8 @@ python scripts/generate_stage2b_reports.py   # final_dataset_decisions.md, manua
 
 Politika: `configs/dataset_usage_policy.yaml` (onaylı kapsam yalnızca Construction-PPE; Mendeley/Roboflow `pending_license_verification`).
 Kararlar ve kanıtlar: `configs/review/stage2b_decisions.yaml`, `reports/dataset_audit/final_dataset_decisions.md`. Atıf kayıtları: `docs/dataset_attributions.md`.
-Politika hiçbir veri üzerinde çalıştırılmamıştır (filtreleme/birleştirme/bölme uygulanmadı).
+Politika ham veriyi değiştirmeden manifeste uygulanmıştır: 990 kullanılabilir Construction-PPE görüntüsü (794 train, 196 validation).
+Kullanıcı görsel kararları: 13 `approved`, 4 `needs_reannotation`, 5 `quarantine`. Mendeley ve Roboflow beklemededir.
 
 ## 14. Geliştirme aşamaları
 
@@ -219,7 +220,7 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 (makine tarafından okunur sürüm: `configs/project_stages.yaml`). Her aşamanın ayrıntılı kapsamı o aşamanın başında belirlenir.
 
 1. **Proje ortamının hazırlanması** — tamamlandı
-2. **Veri setlerinin analizi ve doğrulanması** ← mevcut aşama (`READY_FOR_USER_APPROVAL`: kullanıcı onayı ve 22 görüntülük görsel inceleme kararları bekleniyor)
+2. **Veri setlerinin analizi ve doğrulanması** — `COMPLETED` (22/22 kullanıcı kararı uygulandı; 990 görüntü = 794 train + 196 validation)
 3. **Canlı kamera altyapısı** — OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
 4. **Çoklu insan tespiti ve takibi**
 5. **Çoklu yüz tespiti**
@@ -235,9 +236,10 @@ Aşama 3'e geçme kararı kullanıcıya aittir.
 
 ## 15. Mevcut geliştirme durumu
 
-**Aşama 2 — Veri seti analizi.** Aşama 1'de tamamlananlar: klasör iskeleti, `.venv` (Python 3.11), temel bağımlılıklar,
+**Aşama 2 — Veri seti analizi (`COMPLETED`).** Aşama 1'de tamamlananlar: klasör iskeleti, `.venv` (Python 3.11), temel bağımlılıklar,
 `scripts/check_mps.py`, `scripts/check_environment.py`, `unittest` tabanlı temel testler, `.gitignore`, pre-commit hook,
 VS Code ayarları, bu dokümantasyon. Aşama 2'de eklenenler: güvenli ZIP çıkarma, veri seti envanteri, etiket doğrulama, sınıf dağılımı,
 tekrar/yakın kopya analizi, görsel doğrulama örnekleri, aday sınıf eşleme taslağı, Türkçe denetim raporu ve ilgili testler.
+22/22 nihai kullanıcı kararı uygulanmış; onaylı Construction-PPE kapsamı 990 görüntüye indirilmiştir. **Aşama 3 başlatılmamıştır.**
 **Geliştirilmeyenler:** kamera uygulaması, insan tespiti/takibi, yüz tespiti/tanıma, KKD tespiti, model eğitimi,
 veri seti birleştirme/yeniden bölme/etiket dönüştürme, arayüz, olay kaydı.

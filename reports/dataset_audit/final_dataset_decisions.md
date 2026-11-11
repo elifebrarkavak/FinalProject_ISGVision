@@ -1,19 +1,20 @@
-# Nihai Veri Seti Kararları (Aşama 2B, Aşama 2C ile güncellendi)
+# Nihai Veri Seti Kararları (Aşama 2F — uygulanmış kullanıcı kararları)
 
-_Üretim tarihi 2026-11-11 (`scripts/generate_stage2b_reports.py`). Orijinal veri/etiket/bölünme DEĞİŞTİRİLMEMİŞTİR; hiçbir filtreleme/birleştirme çalıştırılmamıştır. Görsel kararlar model destekli, tek değerlendirici incelemesidir. Politika: `configs/dataset_usage_policy.yaml`._
+_Üretim tarihi 2026-11-11 (`scripts/generate_stage2b_reports.py`). Orijinal veri/etiket/bölünme DEĞİŞTİRİLMEMİŞTİR; hiçbir filtreleme/birleştirme çalıştırılmamıştır. Görsel kararlar kullanıcı tarafından 22/22 tamamlanmış ve politikaya uygulanmıştır. Politika: `configs/dataset_usage_policy.yaml`._
 
 ## 1. Sonuç
 
-- **Bugün onaylı eğitim kapsamı yalnızca Ultralytics Construction-PPE'dir:** 1000 görüntünün durumları {'approved': 999, 'needs_reannotation': 1}; nihai bölme {'train': 800, 'val': 199} (`construction_ppe_split_manifest.csv`); kullanılabilir görüntülerdeki hedef sınıf kutuları {'vest': 1815, 'helmet': 1576, 'no_helmet': 813, 'no_vest': 567}.
+- **Bugün onaylı eğitim kapsamı yalnızca Ultralytics Construction-PPE'dir:** 1000 görüntünün durumları {'approved': 990, 'needs_reannotation': 5, 'quarantine': 5}; nihai bölme {'train': 794, 'val': 196} (`construction_ppe_split_manifest.csv`); kullanılabilir görüntülerdeki hedef sınıf kutuları {'vest': 1789, 'helmet': 1560, 'no_helmet': 785, 'no_vest': 548}.
+- **Nihai görsel kararlar:** 22/22 tamamlandı; dağılım {'approved': 13, 'needs_reannotation': 4, 'quarantine': 5}. Dokuz görüntü kullanıcı kararıyla eğitim/validation kapsamından çıkarıldı.
 - **Mendeley PPE v6 ve Roboflow Site Safety v27 onaylı kümede DEĞİLDİR** (`pending_license_verification`): üst kaynak/lisans hakları doğrulanamadı. Hak doğrulanırsa alacakları durumlar ön karar olarak hesaplandı (`status_if_rights_verified`) ama bugün hiçbiri `approved` değildir.
 - Sorunlu üç sınıf (E05 Mendeley `Helmet`, E10 Roboflow `NO-Hardhat`, E12 Roboflow `NO-Safety Vest`) birleşik eğitim adaylarından DIŞLANDI; dönüşüm/yeniden boyutlandırma uygulanmadı.
-- 59 maddelik kontrol listesi: {'resolved_verified': 43, 'resolved_excluded': 13, 'external_verification_pending_source_excluded': 2, 'pending_external_verification': 1}. Açık kalanlar kullanıcı/harici doğrulama bekler ve onaylı kümeyi etkilemez.
+- 59 maddelik kontrol listesi: {'resolved_verified': 44, 'resolved_excluded': 13, 'external_verification_pending_source_excluded': 2}. Açık kalan F01/F02 yalnızca harici doğrulama bekler ve onaylı kümeyi etkilemez.
 
 ## 2. Kaynak düzeyi durum
 
 | Kaynak | Lisans doğrulama | Hak durumu | Kullanım | Görüntü durumları (bugün) |
 |---|---|---|---|---|
-| construction_ppe | verified_official | verified_publisher_original | approved_scope | {'approved': 999, 'needs_reannotation': 1} |
+| construction_ppe | verified_official | verified_publisher_original | approved_scope | {'approved': 990, 'needs_reannotation': 5, 'quarantine': 5} |
 | mendeley_ppe | partially_verified | rights_unverified | pending_license_verification | {'pending_license_verification': 2286} |
 | site_safety | verified_local_only | rights_unverified | pending_license_verification | {'pending_license_verification': 2799} |
 
@@ -129,10 +130,10 @@ _Not:_ karo düzeyi ORB, tam görüntü ORB'sinin kaçırdığı eşleşmeleri y
 
 | Durum | Madde |
 |---|---|
-| resolved_verified | 43 |
+| resolved_verified | 44 |
 | resolved_excluded | 13 |
 | external_verification_pending_source_excluded | 2 |
-| pending_external_verification | 1 |
+| pending_external_verification | 0 |
 | unresolved | 0 |
 | Toplam | 59 |
 
@@ -153,10 +154,10 @@ Ayrıntı: `manual_review_checklist.md` (59 madde, her biri için durum + eğiti
 
 | Ölçüt | Karşılandı mı | Kanıt |
 |---|---|---|
-| 1. Açık kalan maddeler listelenmiş | EVET | 3 madde remaining_manual_reviews.md içinde |
-| 2. Her maddeye karar/doğrulama ihtiyacı atanmış | EVET | durumlar: {'resolved_verified': 43, 'resolved_excluded': 13, 'external_verification_pending_source_excluded': 2, 'pending_external_verification': 1}; 'unresolved' yok |
+| 1. Açık kalan maddeler listelenmiş | EVET | 2 madde remaining_manual_reviews.md içinde |
+| 2. Her maddeye karar/doğrulama ihtiyacı atanmış | EVET | durumlar: {'resolved_verified': 44, 'resolved_excluded': 13, 'external_verification_pending_source_excluded': 2}; 'unresolved' yok |
 | 3. Açık riskler onaylı veri kullanımını etkilemiyor | EVET | onaylı durumda olup hakları doğrulanmamış kaynak görüntüsü: 0 |
-| 4. Uygun olmayan örnekler belirlenmiş | EVET | 4327 karantina/yeniden etiketleme adayı (quarantine_candidates.csv) |
+| 4. Uygun olmayan örnekler belirlenmiş | EVET | 4336 karantina/yeniden etiketleme adayı (quarantine_candidates.csv) |
 | 5. Kullanılabilir kaynaklar açıkça tanımlı | EVET | configs/dataset_usage_policy.yaml: onaylı kapsam = construction_ppe; diğerleri pending_license_verification |
 | 6. Veri sızıntısını önleme planı hazır | EVET | kaynak grup manifestosu + bölme politikası (leakage) |
 | 7. Lisans ve atıf kayıtları oluşturulmuş | EVET | license_verification_report.md + docs/dataset_attributions.md |
@@ -164,5 +165,5 @@ Ayrıntı: `manual_review_checklist.md` (59 madde, her biri için durum + eğiti
 
 ## 12. Kapanış değerlendirmesi
 
-Aşama 2C nihai değerlendirmesi `STAGE_2_FINAL_REPORT.md` içindedir. Roboflow lisansı (F01) ve Mendeley üst kaynak hakları (F02) `external_verification_pending_source_excluded` durumundadır: harici doğrulama hâlâ bekliyor, ancak kaynaklar onaylı kapsam dışında tutulduğu için kullanım riski kontrol altındadır (sorun ÇÖZÜLMEDİ). Kapanış kararı (G01) kullanıcıya aittir.
+Aşama 2F kapanış değerlendirmesi `STAGE_2_FINAL_REPORT.md` ve `STAGE_2_CLOSURE_REPORT.md` içindedir. Roboflow lisansı (F01) ve Mendeley üst kaynak hakları (F02) `external_verification_pending_source_excluded` durumundadır: harici doğrulama hâlâ bekliyor, ancak kaynaklar onaylı kapsam dışında tutulduğu için kullanım riski kontrol altındadır (sorun ÇÖZÜLMEDİ). G01 kullanıcı onayıyla kapatılmış ve Aşama 2 `COMPLETED` olmuştur; Aşama 3 başlatılmamıştır.
 

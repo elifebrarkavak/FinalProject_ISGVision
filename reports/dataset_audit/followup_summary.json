@@ -10,9 +10,8 @@
   "remaining_D": 11,
   "unresolved_technical_C": 2,
   "stage2b_status": {
-    "resolved_verified": 43,
+    "resolved_verified": 44,
     "resolved_excluded": 13,
-    "external_verification_pending_source_excluded": 2,
-    "pending_external_verification": 1
+    "external_verification_pending_source_excluded": 2
   }
 }

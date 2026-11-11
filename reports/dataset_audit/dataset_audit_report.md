@@ -328,15 +328,15 @@ Aşağıdaki değerlendirme teknik denetime ve görsel ÖN gözleme dayanır; ku
 
 ## 17. Aşama 2B sonuçları (veri kullanım politikası) — tarihsel özet
 
-Aşama 2 eksik giderme sonrası kalan 11 karar maddesi ve 2 lisans konusu ele alındı; sonuçlar `final_dataset_decisions.md` içindedir. **Önceki bulgular korunmuştur**. 2B'deki sayılar ve kapanış ifadesi §18 (Aşama 2C) ile GÜNCELLENMİŞTİR: 2B'de onaylı kapsam 1000 görüntü / vest 1816 kutu ve F01/F02 `pending_external_verification` idi; Construction-PPE için %70/15/15 bölme önizlemesi vardı (artık geçersiz).
+Aşama 2 eksik giderme sonrası kalan 11 karar maddesi ve 2 lisans konusu ele alındı; sonuçlar `final_dataset_decisions.md` içindedir. **Önceki bulgular korunmuştur**. 2B'deki sayılar ve kapanış ifadesi §18 (Aşama 2F) ile GÜNCELLENMİŞTİR: 2B'de onaylı kapsam 1000 görüntü / vest 1816 kutu ve F01/F02 `pending_external_verification` idi; Construction-PPE için %70/15/15 bölme önizlemesi vardı (artık geçersiz).
 
 - **Sınıf kararları:** Mendeley `Helmet` (E05), Roboflow `NO-Hardhat` (E10) ve `NO-Safety Vest` (E12) birleşik eğitim adaylarından dışlandı; görüntü seviyesinde karantina/yeniden etiketleme listeleri üretildi.
 - **Veri sızıntısı:** kaynak-grup bazlı bölme politikası ve manifest (`source_group_manifest.csv`); Roboflow val/test bağımsız değerlendirme için kullanılamaz.
 
-## 18. Aşama 2C sonuçları (nihai kontrol, güncel)
+## 18. Aşama 2F sonuçları (nihai kullanıcı kararları, güncel)
 
-- **Onaylı kapsam:** yalnızca Construction-PPE. 1000 görüntünün durumu {'approved': 999, 'needs_reannotation': 1}; nihai bölme {'train': 800, 'val': 199} (`construction_ppe_split_manifest.csv`); kullanılabilir görüntülerde hedef kutular {'vest': 1815, 'helmet': 1576, 'no_helmet': 813, 'no_vest': 567}. Mendeley ve Roboflow beklemede (`pending_license_verification`, `hold_reasons`), ham verileri ve analiz kayıtları korunuyor.
+- **Onaylı kapsam:** yalnızca Construction-PPE. 1000 görüntünün durumu {'approved': 990, 'needs_reannotation': 5, 'quarantine': 5}; nihai bölme {'train': 794, 'val': 196} (`construction_ppe_split_manifest.csv`); kullanılabilir görüntülerde hedef kutular {'vest': 1789, 'helmet': 1560, 'no_helmet': 785, 'no_vest': 548}. Mendeley ve Roboflow beklemede (`pending_license_verification`, `hold_reasons`), ham verileri ve analiz kayıtları korunuyor.
 - **Sızıntı kararı:** Construction-PPE'deki bölümler arası tek birim (aynı taban karenin 3 üretken varyantı) train'e alındı; yayıncı bölünmesi korundu.
-- **Eksik anotasyon riski:** 63 görüntü işaretlendi; 1 görüntü görsel olarak doğrulanan eksik etiket nedeniyle `needs_reannotation`.
-- **Kontrol listesi (59):** {'resolved_verified': 43, 'resolved_excluded': 13, 'external_verification_pending_source_excluded': 2, 'pending_external_verification': 1}. F01/F02: `external_verification_pending_source_excluded` (sorun çözülmedi; kaynak dışlandı).
-- **Kapanış:** `STAGE_2_FINAL_REPORT.md`; bağımsız test stratejisi `docs/evaluation_plan.md`.
+- **Eksik anotasyon riski:** 63 görüntü işaretlendi; toplam 10 görüntü kullanım dışı: 9 kullanıcı kararı ve önceden dışlanan `ultralytics-ppe-nov2026-690`.
+- **Kontrol listesi (59):** {'resolved_verified': 44, 'resolved_excluded': 13, 'external_verification_pending_source_excluded': 2}. F01/F02: `external_verification_pending_source_excluded` (sorun çözülmedi; kaynak dışlandı).
+- **Kapanış:** 22 kullanıcı kararı tamamlandı; Aşama 2 `COMPLETED`. Ayrıntı: `STAGE_2_CLOSURE_REPORT.md`; bağımsız test stratejisi `docs/evaluation_plan.md`.

@@ -179,8 +179,8 @@ def main() -> int:
         contradictions.append("remaining_manual_reviews.md F01/F02 için yeni durumu içermiyor")
     if f"'approved': {len(approved_rows)}" not in final_md:
         contradictions.append("final_dataset_decisions.md onaylı görüntü sayısı güncel değil")
-    if "## 18. Aşama 2C" not in (out / "dataset_audit_report.md").read_text(encoding="utf-8"):
-        contradictions.append("dataset_audit_report.md 2C özetini içermiyor (2B sayıları güncel sanılabilir)")
+    if "## 18. Aşama 2F" not in (out / "dataset_audit_report.md").read_text(encoding="utf-8"):
+        contradictions.append("dataset_audit_report.md 2F nihai özetini içermiyor (tarihsel 2B sayıları güncel sanılabilir)")
     if not (PROJECT_ROOT / "docs" / "evaluation_plan.md").is_file():
         contradictions.append("docs/evaluation_plan.md yok")
     if policy["policy_version"] < 2:

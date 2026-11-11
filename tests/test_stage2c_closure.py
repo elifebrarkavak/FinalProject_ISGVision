@@ -312,6 +312,8 @@ class DocumentationTest(unittest.TestCase):
             self.assertIn(needle, text)
         self.assertIn("hiçbir performans sonucu yoktur", text)
         self.assertIn("Ölçülmedi (model yok)", text)
+        self.assertIn("en az **%85 başarı**", text)
+        self.assertIn("`not_measured`", text)
 
     def test_attribution_has_ready_text_and_change_procedure(self) -> None:
         text = (ROOT / "docs" / "dataset_attributions.md").read_text(encoding="utf-8")

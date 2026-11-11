@@ -1,7 +1,7 @@
-# Son Görsel İnceleme Rehberi (Aşama 2D)
+# Son Görsel İnceleme Rehberi ve Nihai Durum (Aşama 2F)
 
-_22 görüntü (train 18, val 4). Model destekli öneriler hazırlandı; bu öneriler **kullanıcı kararı değildir**. Siz `user_decision`
-sütununu doldurana kadar bu 22 görüntü kullanıcı tarafından doğrulanmış sayılmaz. Ham veri ve etiket dosyaları değiştirilmedi._
+_22 görüntünün (train 18, val 4) tamamı kullanıcı tarafından karara bağlandı. Nihai dağılım: 13 `approved`,
+4 `needs_reannotation`, 5 `quarantine`. Dokuz dışlama manifeste uygulanmıştır; ham veri ve etiket dosyaları değiştirilmedi._
 
 ## 1. Dosyalar
 
@@ -9,7 +9,7 @@ sütununu doldurana kadar bu 22 görüntü kullanıcı tarafından doğrulanmı�
 |---|---|
 | `contact_sheet.pdf` | 22 sayfa (A4 yatay, 300 dpi), her görüntü için bir sayfa |
 | `pages/RNN_<dosya>.jpg` | PDF ile aynı sayfalar, ayrı görsel dosyalar |
-| `review_decisions.csv` | Görüntü başına model önerisi, gerekçe ve **boş** kullanıcı karar/not alanları |
+| `review_decisions.csv` | Görüntü başına model önerisi, gerekçe ve uygulanmış kullanıcı karar/not alanları |
 | `review_guide.md` | Bu rehber |
 
 Model önerilerinin kaynağı: `configs/review/stage2d_visual_review.yaml`.
@@ -57,6 +57,8 @@ Yayıncı notuna göre örtülü veya kadraj dışı bir bölge tek başına eks
 
 ## 5. Model önerilerinin özeti
 
+Bu tablo karar öncesindeki model önerilerini tarihsel olarak gösterir; nihai kullanıcı kararlarının yerine geçmez.
+
 | Öneri | Sayı | İnceleme no |
 |---|---|---|
 | approved_candidate | 13 | R01, R03, R06, R08, R09, R10, R11, R12, R14, R16, R17, R18, R22 (val: R22) |
@@ -78,16 +80,18 @@ Yayıncı notuna göre örtülü veya kadraj dışı bir bölge tek başına eks
 "Başka kişiye ait etiket" kontrolü: şüpheli kişinin bölgesine değen baş/gövde etiketlerinin hepsi doğru kişiye atanmış
 görünüyor (R08, R12, R17, R19 ve R21'de komşu etiketler P1/P2/P8'e ait). Etiketlerin yanlış kişiye kaydığı bir durum görülmedi.
 
-## 6. Kararınızı nasıl girersiniz?
+## 6. Kararların kaydedilme yöntemi (tamamlandı)
 
-1. `contact_sheet.pdf` dosyasını açın ve her sayfayı inceleyin.
+Kararlar aşağıdaki korumalı iş akışıyla kaydedildi:
+
+1. `contact_sheet.pdf` dosyasındaki her sayfa incelendi.
 2. `review_decisions.csv` dosyasında her satır için:
    - `user_decision` sütununa şu değerlerden birini yazın: `approved`, `needs_reannotation` veya `quarantine`.
      Model önerisi değerlerini (`approved_candidate`, `inconclusive`) **yazmayın**; doğrulama bunları reddeder.
    - `user_note` sütununa kısa bir not yazın. `needs_reannotation` ve `quarantine` için **zorunludur**
      (örn. "baş görünür, no_helmet eksik").
    - Diğer sütunları değiştirmeyin.
-3. Dosyayı UTF-8 CSV olarak kaydedin. Excel kullanıyorsanız "CSV UTF-8" biçimini seçin.
+3. Dosya UTF-8 CSV olarak kaydedildi; model önerileri ve diğer sütunlar değiştirilmedi.
 
 ## 7. Doğrulama ve uygulama
 

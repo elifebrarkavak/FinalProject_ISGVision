@@ -1,5 +1,9 @@
 image_path,dataset,current_split,reason_codes,classes_to_reannotate,boxes_to_reannotate
+data/raw/construction_ppe/images/train/source-48e807e0a9dac5ff23128d8ebe6406ab.jpg,construction_ppe,train,USER-VISUAL-REVIEW,eksik hedef etiket eklenecek (configs/review/stage2c_decisions.yaml),0
+data/raw/construction_ppe/images/train/source-76c5536c698f0876c67f76c14c3c2e96.jpg,construction_ppe,train,USER-VISUAL-REVIEW,eksik hedef etiket eklenecek (configs/review/stage2c_decisions.yaml),0
+data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-528.jpg,construction_ppe,train,USER-VISUAL-REVIEW,eksik hedef etiket eklenecek (configs/review/stage2c_decisions.yaml),0
 data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg,construction_ppe,train,CP-VISIBLE-TARGET-UNLABELED,eksik hedef etiket eklenecek (configs/review/stage2c_decisions.yaml),0
+data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-022.jpg,construction_ppe,val,USER-VISUAL-REVIEW,eksik hedef etiket eklenecek (configs/review/stage2c_decisions.yaml),0
 data/raw/mendeley_ppe/train/images/00001_jpg.rf.f49bb0d8cbf1e1a3569a27992f7ecbc3.jpg,mendeley_ppe,train,MD-HELMET-IMAGE,Helmet:2,2
 data/raw/mendeley_ppe/train/images/00003_jpg.rf.86f465c0df0776dc5412d42ca9dc0367.jpg,mendeley_ppe,train,MD-HELMET-IMAGE,Helmet:1,1
 data/raw/mendeley_ppe/train/images/00004_jpg.rf.c5f03df6ebfb83a0cfb88d10fce8162e.jpg,mendeley_ppe,train,MD-HELMET-IMAGE,Helmet:1,1

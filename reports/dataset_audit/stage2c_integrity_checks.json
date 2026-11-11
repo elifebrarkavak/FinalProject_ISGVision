@@ -57,16 +57,16 @@
           "no_vest": 567
         },
         "usable_images_total": {
-          "helmet": 1576,
-          "no_helmet": 813,
-          "no_vest": 567,
-          "vest": 1815
+          "helmet": 1560,
+          "no_helmet": 785,
+          "no_vest": 548,
+          "vest": 1789
         },
         "usage_policy_summary": {
-          "vest": 1815,
-          "helmet": 1576,
-          "no_helmet": 813,
-          "no_vest": 567
+          "vest": 1789,
+          "helmet": 1560,
+          "no_helmet": 785,
+          "no_vest": 548
         }
       }
     },
@@ -100,13 +100,22 @@
       "question": "Onaylı veri kapsamı doğru mu (yalnızca Construction-PPE; Mendeley/Roboflow'dan hiçbir görüntü onaylı/bölmeli değil; kullanım dışı görüntü bölmede yok)?",
       "passed": true,
       "detail": {
-        "approved_images": 999,
+        "approved_images": 990,
         "by_final_split": {
-          "train": 800,
-          "val": 199
+          "train": 794,
+          "val": 196
         },
         "excluded_in_scope": {
-          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "CP-VISIBLE-TARGET-UNLABELED"
+          "data/raw/construction_ppe/images/train/source-48e807e0a9dac5ff23128d8ebe6406ab.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/train/source-76c5536c698f0876c67f76c14c3c2e96.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/train/source-8ead761447ba33e51dc962d76ef2e676.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-001.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-516.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-528.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "CP-VISIBLE-TARGET-UNLABELED",
+          "data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-022.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-023.jpg": "USER-VISUAL-REVIEW",
+          "data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-048.jpg": "USER-VISUAL-REVIEW"
         },
         "mendeley_or_roboflow_in_approved_or_split": 0,
         "pending_by_dataset": {
@@ -188,9 +197,9 @@
           "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "needs_reannotation"
         },
         "flag_by_final_split": {
-          "train": 47,
-          "excluded": 1,
-          "val": 15
+          "train": 41,
+          "excluded": 10,
+          "val": 12
         },
         "roboflow_person_incomplete_marked_approved": 0
       }
@@ -285,14 +294,14 @@
         },
         "user_review_state": {
           "total": 22,
-          "user_decided": 0,
-          "pending_user": 22,
+          "user_decided": 22,
+          "pending_user": 0,
           "by_user_decision": {
-            "approved": 0,
-            "needs_reannotation": 0,
-            "quarantine": 0
+            "approved": 13,
+            "needs_reannotation": 4,
+            "quarantine": 5
           },
-          "complete": false
+          "complete": true
         },
         "note": "Kullanıcı kararı bekleyen satırlar bu denetimi başarısız yapmaz; kullanıcı doğrulaması SAYILMAZ (Aşama 8 öncesi kapı: check_visual_review.py --require-complete)."
       }

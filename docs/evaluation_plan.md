@@ -1,6 +1,6 @@
 # Değerlendirme Planı (Bağımsız Test Stratejisi)
 
-_Aşama 2C, 2026-11-11; aşama numaraları 2D'de 12 aşamalı plana göre düzeltildi (tek referans: `docs/project_plan.md`). Bu belge bir **plandır**. Bu tarih itibarıyla hiçbir model eğitilmedi, saha görüntüsü toplanmadı ve test kümesi
+_Aşama 2F, 2026-11-11; aşama numaraları 2D'de 12 aşamalı plana göre düzeltildi (tek referans: `docs/project_plan.md`). Bu belge bir **plandır**. Bu tarih itibarıyla hiçbir model eğitilmedi, saha görüntüsü toplanmadı ve test kümesi
 oluşturulmadı. Bu yüzden belgede **hiçbir performans sonucu yoktur**. Tablolardaki "—" değerleri ölçülmemiş anlamına gelir._
 
 İlgili dosyalar:
@@ -23,10 +23,10 @@ oluşturulmadı. Bu yüzden belgede **hiçbir performans sonucu yoktur**. Tablol
 
 | Bölüm | Kaynak | Görüntü | Kullanım | Kullanılmayacağı yer |
 |---|---|---|---|---|
-| **train** | Construction-PPE, `final_split = train` | 800 | Model ağırlıklarının öğrenilmesi | Ölçüm raporlama |
-| **val** | Construction-PPE, `final_split = val` (orijinal val'in 199 görüntülük alt kümesi) | 199 | Erken durdurma, hiperparametre ve güven eşiği seçimi, model karşılaştırma. Sonuçlar **"geliştirme ölçümü (dağılım içi, kısmen sentetik)"** olarak raporlanır | Nihai başarı iddiası |
+| **train** | Construction-PPE, `final_split = train` | 794 | Model ağırlıklarının öğrenilmesi | Ölçüm raporlama |
+| **val** | Construction-PPE, `final_split = val` (orijinal val'in 196 görüntülük alt kümesi) | 196 | Erken durdurma, hiperparametre ve güven eşiği seçimi, model karşılaştırma. Sonuçlar **"geliştirme ölçümü (dağılım içi, kısmen sentetik)"** olarak raporlanır | Nihai başarı iddiası |
 | **test (bağımsız saha testi)** | Hedef ortamdan yeni toplanacak gerçek görüntüler (§4) | hedef ≥ 300 (henüz yok) | Nihai, tek seferlik başarı ölçümü | Eğitim, eşik seçimi, hiperparametre ayarı, veri artırma kararları |
-| kullanım dışı | `ultralytics-ppe-nov2026-690.jpg` (`needs_reannotation`) | 1 | Yeniden etiketlenene kadar hiçbir bölümde yok | — |
+| kullanım dışı | 690 görüntüsü + kullanıcı kararıyla dışlanan 9 görüntü | 10 | Yeniden etiketleme/karantina kararı değişene kadar hiçbir bölümde yok | — |
 
 Kurallar:
 
@@ -138,6 +138,27 @@ Kalabalık sahnelerde ilişkilendirme hatası (doğru kutu, yanlış kişiye ata
 
 ## 7. Ölçütler
 
+### 7.1 En az %85 başarı hedefi
+
+Projenin akademik hedefi değerlendirmede en az **%85 başarı** göstermektir. Bu hedef henüz tek bir ölçüte bağlanmamıştır ve
+bugünkü performans durumu `not_measured` değerindedir. Model eğitilmediği için hedefe ulaşıldığı, yaklaşıldığı veya ulaşılacağı
+iddia edilemez.
+
+Türkçe rapor gösterimi: **Ölçülmedi (model yok)**; makine tarafından okunabilir durum kodu: `not_measured`.
+
+- **Accuracy**, doğru sınıflandırılan kişi/durum kararlarının tüm değerlendirilen kararlar içindeki oranıdır; nesne tespiti için
+  tek başına yeterli değildir ve ağır sınıf dengesizliğinde yanıltıcı olabilir.
+- **Precision**, üretilen pozitif tahminlerin ne kadarının doğru olduğunu; **recall**, gerçek hedef/ihlallerin ne kadarının
+  yakalandığını ölçer. Güvenlik açısından özellikle baretsiz ve yeleksiz kişi recall değerleri ayrıca raporlanır.
+- **mAP@0.5** ve **mAP@0.5:0.95**, YOLO nesne tespiti için sınıf ve kutu konumunu birlikte değerlendirir. %85 hedefinin hangi
+  mAP sürümüne veya kişi düzeyi ölçüte uygulanacağı, Aşama 8 deney protokolü dondurulmadan önce açıkça seçilecektir.
+- YOLO KKD tespiti ve çalışan kimlik tanıma ayrı görevlerdir. Kimlik tanıma için accuracy/precision/recall, bilinmeyen kişi
+  reddi ve kişi başına karışıklık; KKD tespiti için sınıf bazlı AP/precision/recall ayrı raporlanır.
+- Tek kameradaki çoklu kişiler için doğru kimliğin korunması ve baret/yelek durumunun **doğru kişiye atanması** ayrıca ölçülür.
+  `ASSOC` hataları, nesne doğru tespit edilse bile ayrı başarısızlık sayılır.
+- Construction-PPE'nin bir bölümü sentetiktir. %85 hedefi yalnızca kısmen sentetik validation sonucuyla doğrulanamaz; gerçek
+  saha performansı, eğitimden ve eşik seçiminden bağımsız dondurulmuş görüntü/oturumlarda ölçülmelidir.
+
 | Ölçüt | Tanım / ayar |
 |---|---|
 | Precision | TP / (TP + FP); IoU ≥ 0.5 ve aynı sınıf eşleşmesi; val'de seçilip dondurulan tek bir güven eşiğinde |
@@ -154,14 +175,14 @@ Raporlama kuralları:
 - Her tabloda veri kümesinin adı ve sürümü, model ve ağırlık sürümü, eşik ve tarih yazılır.
 - Val sonucu ile test sonucu aynı tabloda karıştırılmaz.
 - Val ölçümleri ayrıca annotation-risk işaretli görüntüler hariç tutularak bir kez daha hesaplanır (duyarlılık analizi):
-  val'de 15 görüntü işaretli, bkz. manifestteki `annotation_risk` sütunu.
+  güncel val bölümünde 12 görüntü işaretli, bkz. manifestteki `annotation_risk` sütunu.
 
 Ölçüm durumu (bugün):
 
 | Küme | mAP@0.5 | mAP@0.5:0.95 | Precision | Recall | Durum |
 |---|---|---|---|---|---|
-| val (Construction-PPE, 199) | — | — | — | — | Ölçülmedi (model yok) |
-| Bağımsız saha testi | — | — | — | — | Küme henüz oluşturulmadı |
+| val (Construction-PPE, 196) | — | — | — | — | `not_measured` (model yok) |
+| Bağımsız saha testi | — | — | — | — | `not_measured` (küme henüz oluşturulmadı) |
 
 ## 8. Hatalı tespitlerin raporlanması
 

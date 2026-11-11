@@ -1,15 +1,15 @@
-# Manuel İnceleme ve Onay Kontrol Listesi (Aşama 2C sonrası NİHAİ durum)
+# Manuel İnceleme ve Onay Kontrol Listesi (Aşama 2F sonrası NİHAİ durum)
 
-_Üretim tarihi 2026-11-11. 59 madde. Durumlar: `resolved_verified` (kanıtla doğrulandı), `resolved_excluded` (güvenli dışlama/karantina kararıyla eğitim açısından çözüldü), `pending_external_verification` (harici kaynak/kullanıcı doğrulaması gerekir), `external_verification_pending_source_excluded` (harici doğrulama bekliyor; kaynak onaylı kapsam dışında — sorun ÇÖZÜLMEDİ), `unresolved` (karar/teknik çözüm gerekir). `training_risk=contained_by_exclusion`: ilgili kaynak/sınıf onaylı eğitim kümesinden DIŞLANDI; bu, lisansın veya hakkın doğrulandığı anlamına GELMEZ._
+_Üretim tarihi 2026-11-11. 59 madde. Durumlar: `resolved_verified` (kanıtla doğrulandı), `resolved_excluded` (güvenli dışlama/karantina kararıyla eğitim açısından çözüldü), `pending_external_verification` (harici kaynak doğrulaması gerekir), `external_verification_pending_source_excluded` (harici doğrulama bekliyor; kaynak onaylı kapsam dışında — sorun ÇÖZÜLMEDİ), `unresolved` (karar/teknik çözüm gerekir). `training_risk=contained_by_exclusion`: ilgili kaynak/sınıf onaylı eğitim kümesinden DIŞLANDI; bu, lisansın veya hakkın doğrulandığı anlamına GELMEZ._
 
 ## Özet
 
 | Durum | Madde |
 |---|---|
-| resolved_verified | 43 |
+| resolved_verified | 44 |
 | resolved_excluded | 13 |
 | external_verification_pending_source_excluded | 2 |
-| pending_external_verification | 1 |
+| pending_external_verification | 0 |
 | unresolved | 0 |
 | **Toplam** | 59 |
 
@@ -34,7 +34,7 @@ Aşama 2 sonu sınıflaması (A/B/C/D): {'A': 7, 'B': 39, 'C': 2, 'D': 11} -> A�
 | B01 | B. Veri setleri arası semantik karşılaştırma | Üç `helmet` karşılığı aynı mı? | resolved_verified | n/a | Construction helmet ≈ Roboflow Hardhat (sıkı baret nesnesi); Mendeley Helmet FARKLI (baş+baret). | semantic_validation_report.md; compare_helmet.jpg |
 | B02 | B. Veri setleri arası semantik karşılaştırma | Üç `no_helmet` karşılığı aynı bölge mi? | resolved_verified | n/a | Construction no_helmet ≈ Mendeley NoHelmet (tüm baş); Roboflow NO-Hardhat heterojen (şerit/kısmi/hatalı). | semantic_validation_report.md; compare_no_helmet.jpg |
 | B03 | B. Veri setleri arası semantik karşılaştırma | Üç `vest` ve `no_vest` karşılığı aynı bölge mi? | resolved_verified | n/a | vest/no_vest: üç veri setinde de gövde bölgesi (uyumlu); Roboflow'da kısmi/gürültülü kutular, Mendeley'de alan kayması. | semantic_validation_report.md; compare_vest.jpg, compare_no_vest.jpg |
-| B04 | B. Veri setleri arası semantik karşılaştırma | Genel kontrol: `contact_sheet_*.jpg` (12 dosya) kutular nesne üzerinde mi? | resolved_verified | n/a | 12 contact sheet dosyasının TAMAMI açılarak incelendi (final_dataset_decisions.md §8). Kutuların görüntü içinde ve geçerli olduğu KODLA doğrulandı, anlamsal doğruluk crop/karşılaştırma sayfalarında görsel incelendi; ancak 12 adet tam görüntü contact_sheet dosyasına ayrıca göz atılmadı. İsteğe bağlı genel kontrol. | visual_samples/*/contact_sheet_*.jpg |
+| B04 | B. Veri setleri arası semantik karşılaştırma | Genel kontrol: `contact_sheet_*.jpg` (12 dosya) kutular nesne üzerinde mi? | resolved_verified | n/a | 12 contact sheet dosyasının TAMAMI açılarak incelendi (final_dataset_decisions.md §8). 12/12 contact sheet dosyası açılarak incelendi; kutuların görüntü sınırları ve sınıf anlamları önceki crop/karşılaştırma bulgularıyla tutarlı bulundu. | visual_samples/*/contact_sheet_*.jpg |
 | C01 | C. Şüpheli etiketler | CONFLICTING_OVERLAP `IMG_5024_mp4-2_jpg.rf.77ca6ff11b6d3b968a…` (Sınıf 7 (satır 17) ile sınıf 4 (satır 16) aynı bölgede, IoU=0.31) | resolved_excluded | n/a | 1.5x orijinal çözünürlükte incelendi; hangi kutunun doğru olduğu belirlenemedi -> görüntü quarantine (SI057). SI057=Needs Manual Review | label_review.csv; semantic_review/conflicts_site_safety/*.jpg |
 | C02 | C. Şüpheli etiketler | CONFLICTING_OVERLAP `construction-5-_mp4-75_jpg.rf.4df4bcaa92…` (Sınıf 7 (satır 20) ile sınıf 4 (satır 19) aynı bölgede, IoU=0.42) | resolved_verified | n/a | Valid Annotation (farklı kişiler). SI079=Valid Annotation | label_review.csv; semantic_review/conflicts_site_safety/*.jpg |
 | C03 | C. Şüpheli etiketler | CONFLICTING_OVERLAP `construction-897-_jpg.rf.c7afbfac58183e3…` (Sınıf 7 (satır 9) ile sınıf 4 (satır 16) aynı bölgede, IoU=0.45) | resolved_excluded | n/a | Aynı kişide çelişen Safety Vest/NO-Safety Vest -> görüntü needs_reannotation (SI081). SI081=Needs Manual Review | label_review.csv; semantic_review/conflicts_site_safety/*.jpg |
@@ -77,4 +77,4 @@ Aşama 2 sonu sınıflaması (A/B/C/D): {'A': 7, 'B': 39, 'C': 2, 'D': 11} -> A�
 | F02 | F. Lisans / kaynak | Mendeley v6 lisansı ve üst kaynaklar | external_verification_pending_source_excluded | contained_by_exclusion | 2C yeniden değerlendirme: Mendeley veri seti lisansı doğrulanmış, üst kaynak/görsel hakları hâlâ belgelenmemiş; yeni hak iddiası oluşturulmadı. Hak sorunu ÇÖZÜLMEDİ; kaynak onaylı kapsamdan çıkarıldığı için kullanım riski kontrol altında (rights_unverified). KISMEN çözüldü: Mendeley resmi sayfa+API 'CC BY 4.0' diyor ve yerel ZIP'in SHA-256'sı resmi API ile eşleşiyor. ÜST KAYNAKLARIN (GitHub/Kaggle/Roboflow) lisansları yayıncı tarafından listelenmediği ve Roboflow sayfaları 403 olduğu için DOĞRULANAMADI. | license_verification_report.md |
 | F03 | F. Lisans / kaynak | Ultralytics atıf metni bitirme raporunda mı? | resolved_verified | n/a | docs/dataset_attributions.md hazırlandı (resmi doküman + lisans kanıtlarıyla ilişkilendirildi); bitirme raporuna eklemek kullanıcıya ait basit bir eylemdir. Atıf metinleri hazır (license_verification_report.md); bitirme raporuna eklenip eklenmediği yalnızca KULLANICI tarafından bilinir. | license_verification_report.md |
 | F04 | F. Lisans / kaynak | Mendeley 640×640 farkı kabul edilebilir mi? | resolved_verified | n/a | Olgu doğrulandı: sayfa 640x640 diyor, gerçekte 905 farklı çözünürlük (yalnızca 472/2286 görüntü 640x640). Veri bütünlüğü sorunu değil; eğitimde yeniden boyutlandırma ile giderilir. Rapora olgu farkı olarak yazıldı. | dataset_inventory.csv; dataset_audit_report.md §4 |
-| G01 | Birleştirmeye geçiş kararı | A–F tamamlandı; sınıf eşleme ve kutu semantiği kararı yazıya döküldü mü? | pending_external_verification | n/a | Aşama 2'yi kapatma/Aşama 3'e (canlı kamera altyapısı) geçme kararı kullanıcıya aittir; teknik engel yok. Birleştirmeye geçiş kararı kullanıcıya aittir. Ön koşulların durumu remaining_manual_reviews.md içinde. | remaining_manual_reviews.md |
+| G01 | Birleştirmeye geçiş kararı | A–F tamamlandı; sınıf eşleme ve kutu semantiği kararı yazıya döküldü mü? | resolved_verified | n/a | Kullanıcı 2026-11-11 tarihinde 22 görsel kararını onayladı ve Aşama 2'nin kapatılmasını istedi. Sonraki aşama başlatılmamıştır. Birleştirmeye geçiş kararı kullanıcıya aittir. Ön koşulların durumu remaining_manual_reviews.md içinde. | remaining_manual_reviews.md |

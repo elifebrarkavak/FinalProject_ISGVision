@@ -205,6 +205,12 @@ class ReviewPackageOutputTest(unittest.TestCase):
             if user in ("needs_reannotation", "quarantine"):
                 self.assertEqual(r["final_split"], "", r["image_path"])
 
+    def test_final_user_decisions_are_complete(self) -> None:
+        counts = {decision: sum(r["user_decision"] == decision for r in self.rows) for decision in USER_DECISIONS}
+        self.assertEqual(counts, {"approved": 13, "needs_reannotation": 4, "quarantine": 5})
+        self.assertTrue(all(r["user_decision"] for r in self.rows))
+        self.assertTrue(all(r["user_note"].strip() for r in self.rows))
+
 
 if __name__ == "__main__":
     unittest.main()

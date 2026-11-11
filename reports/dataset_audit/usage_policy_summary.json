@@ -4,14 +4,17 @@
     "construction_ppe": {
       "images": 1000,
       "status_now": {
-        "approved": 999,
-        "needs_reannotation": 1
+        "approved": 990,
+        "needs_reannotation": 5,
+        "quarantine": 5
       },
       "status_if_rights_verified": {
-        "approved": 999,
-        "needs_reannotation": 1
+        "approved": 990,
+        "needs_reannotation": 5,
+        "quarantine": 5
       },
       "reason_counts": {
+        "USER-VISUAL-REVIEW": 9,
         "CP-VISIBLE-TARGET-UNLABELED": 1
       }
     },
@@ -52,31 +55,40 @@
     }
   },
   "approved_scope_target_boxes": {
-    "vest": 1815,
-    "helmet": 1576,
-    "no_helmet": 813,
-    "no_vest": 567
+    "vest": 1789,
+    "helmet": 1560,
+    "no_helmet": 785,
+    "no_vest": 548
   },
   "approved_scope_final_split_images": {
-    "train": 800,
-    "val": 199
+    "train": 794,
+    "val": 196
   },
   "approved_scope_target_boxes_by_final_split": {
     "train": {
-      "helmet": 1282,
-      "no_helmet": 635,
-      "vest": 1475,
-      "no_vest": 438
+      "helmet": 1272,
+      "no_helmet": 618,
+      "vest": 1456,
+      "no_vest": 428
     },
     "val": {
-      "helmet": 294,
-      "no_helmet": 178,
-      "vest": 340,
-      "no_vest": 129
+      "helmet": 288,
+      "no_helmet": 167,
+      "vest": 333,
+      "no_vest": 120
     }
   },
   "approved_scope_excluded_images": {
-    "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "CP-VISIBLE-TARGET-UNLABELED"
+    "data/raw/construction_ppe/images/train/source-48e807e0a9dac5ff23128d8ebe6406ab.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/train/source-76c5536c698f0876c67f76c14c3c2e96.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/train/source-8ead761447ba33e51dc962d76ef2e676.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-001.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-516.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-528.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/train/ultralytics-ppe-nov2026-690.jpg": "CP-VISIBLE-TARGET-UNLABELED",
+    "data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-022.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-023.jpg": "USER-VISUAL-REVIEW",
+    "data/raw/construction_ppe/images/val/ultralytics-ppe-nov2026-048.jpg": "USER-VISUAL-REVIEW"
   },
   "approved_scope_unit_fixes": {
     "construction_ppe": [
@@ -97,14 +109,14 @@
   "approved_scope_user_visual_review": {
     "construction_ppe": {
       "total": 22,
-      "user_decided": 0,
-      "pending_user": 22,
+      "user_decided": 22,
+      "pending_user": 0,
       "by_user_decision": {
-        "approved": 0,
-        "needs_reannotation": 0,
-        "quarantine": 0
+        "approved": 13,
+        "needs_reannotation": 4,
+        "quarantine": 5
       },
-      "complete": false
+      "complete": true
     }
   },
   "approved_scope_annotation_risk": {
@@ -112,9 +124,9 @@
     "flagged_persons": 68,
     "flagged_images_with_unexplained": 22,
     "by_final_split": {
-      "excluded": 1,
-      "train": 47,
-      "val": 15
+      "excluded": 10,
+      "train": 41,
+      "val": 12
     }
   },
   "split_preview_image_counts": {

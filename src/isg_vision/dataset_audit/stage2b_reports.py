@@ -1,4 +1,4 @@
-"""Aşama 2B raporları: nihai veri kararları, 59 maddelik kontrol listesinin nihai durumları, kalan işler, atıf dosyası.
+"""Aşama 2F raporları: nihai veri kararları, 59 maddelik kontrol listesinin nihai durumları, kalan işler, atıf dosyası.
 
 Sayılar yalnızca betik çıktılarından (usage_policy_summary.json, source_group_summary.json, CSV'ler) okunur.
 """
@@ -17,7 +17,7 @@ from isg_vision.dataset_audit.followup_reports import CAT_TR
 from isg_vision.dataset_audit.report import md_table
 from isg_vision.utils.paths import PROJECT_ROOT
 
-# Aşama 2C: 'external_verification_pending_source_excluded' = harici (lisans/hak) doğrulama HÂLÂ bekliyor, ancak ilgili kaynak onaylı
+# Aşama 2F: 'external_verification_pending_source_excluded' = harici (lisans/hak) doğrulama HÂLÂ bekliyor, ancak ilgili kaynak onaylı
 # veri kapsamından çıkarıldığı için kullanım riski kontrol altında. Lisans sorununun çözüldüğü anlamına GELMEZ.
 EXTERNAL_PENDING_EXCLUDED = "external_verification_pending_source_excluded"
 STATUSES = ("resolved_verified", "resolved_excluded", EXTERNAL_PENDING_EXCLUDED, "pending_external_verification", "unresolved")
@@ -46,7 +46,7 @@ ITEM_OVERRIDES: dict[str, tuple[str, str]] = {
     "F01": (EXTERNAL_PENDING_EXCLUDED, "2C yeniden değerlendirme: yeni doğrulama YAPILAMADI (Roboflow v27 resmi sayfası HTTP 403; lisans yalnızca yerel metadata); yeni lisans iddiası oluşturulmadı. Lisans sorunu ÇÖZÜLMEDİ; kaynak onaylı kapsamdan çıkarıldığı için kullanım riski kontrol altında (pending_license_verification)."),
     "F02": (EXTERNAL_PENDING_EXCLUDED, "2C yeniden değerlendirme: Mendeley veri seti lisansı doğrulanmış, üst kaynak/görsel hakları hâlâ belgelenmemiş; yeni hak iddiası oluşturulmadı. Hak sorunu ÇÖZÜLMEDİ; kaynak onaylı kapsamdan çıkarıldığı için kullanım riski kontrol altında (rights_unverified)."),
     "F03": ("resolved_verified", "docs/dataset_attributions.md hazırlandı (resmi doküman + lisans kanıtlarıyla ilişkilendirildi); bitirme raporuna eklemek kullanıcıya ait basit bir eylemdir."),
-    "G01": ("pending_external_verification", "Aşama 2'yi kapatma/Aşama 3'e (canlı kamera altyapısı) geçme kararı kullanıcıya aittir; teknik engel yok."),
+    "G01": ("resolved_verified", "Kullanıcı 2026-11-11 tarihinde 22 görsel kararını onayladı ve Aşama 2'nin kapatılmasını istedi. Sonraki aşama başlatılmamıştır."),
 }
 RISK_CONTAINED = {"E05", "E10", "E12", "F01", "F02", "D08", "D16"}
 
@@ -57,6 +57,8 @@ def item_statuses(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         i = dict(it)
         if i["id"] in ITEM_OVERRIDES:
             i["status"], i["status_note"] = ITEM_OVERRIDES[i["id"]]
+            if i["id"] == "B04":
+                i["result"] = "12/12 contact sheet dosyası açılarak incelendi; kutuların görüntü sınırları ve sınıf anlamları önceki crop/karşılaştırma bulgularıyla tutarlı bulundu."
         elif i["category"] in "AB":
             i["status"], i["status_note"] = "resolved_verified", ""
         elif i["category"] == "C":
@@ -70,9 +72,9 @@ def item_statuses(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def checklist_md(items: list[dict[str, Any]]) -> str:
     cnt = Counter(i["status"] for i in items)
-    L = ["# Manuel İnceleme ve Onay Kontrol Listesi (Aşama 2C sonrası NİHAİ durum)\n",
+    L = ["# Manuel İnceleme ve Onay Kontrol Listesi (Aşama 2F sonrası NİHAİ durum)\n",
          f"_Üretim tarihi {date.today().isoformat()}. {len(items)} madde. Durumlar: `resolved_verified` (kanıtla doğrulandı), `resolved_excluded` "
-         "(güvenli dışlama/karantina kararıyla eğitim açısından çözüldü), `pending_external_verification` (harici kaynak/kullanıcı doğrulaması gerekir), "
+         "(güvenli dışlama/karantina kararıyla eğitim açısından çözüldü), `pending_external_verification` (harici kaynak doğrulaması gerekir), "
          f"`{EXTERNAL_PENDING_EXCLUDED}` (harici doğrulama bekliyor; kaynak onaylı kapsam dışında — sorun ÇÖZÜLMEDİ), `unresolved` (karar/teknik çözüm gerekir). `training_risk=contained_by_exclusion`: ilgili kaynak/sınıf onaylı eğitim kümesinden DIŞLANDI; "
          "bu, lisansın veya hakkın doğrulandığı anlamına GELMEZ._\n",
          "## Özet\n", md_table(["Durum", "Madde"], [[s, cnt.get(s, 0)] for s in STATUSES] + [["**Toplam**", len(items)]]), ""]
@@ -87,8 +89,8 @@ def checklist_md(items: list[dict[str, Any]]) -> str:
 
 def remaining_md(items: list[dict[str, Any]]) -> str:
     rest = [i for i in items if i["status"] in OPEN_STATUSES]
-    L = ["# Kalan Açık Maddeler (Aşama 2C sonrası)\n",
-         f"_Üretim tarihi {date.today().isoformat()}. {len(items)} maddenin {len(items) - len(rest)}'i kapandı. Aşağıdaki maddeler kullanıcı/harici doğrulama bekler; "
+    L = ["# Kalan Açık Maddeler (Aşama 2F sonrası)\n",
+         f"_Üretim tarihi {date.today().isoformat()}. {len(items)} maddenin {len(items) - len(rest)}'i kapandı. Aşağıdaki maddeler yalnızca harici lisans/hak doğrulaması bekler; "
          "hiçbiri onaylı eğitim kümesini ETKİLEMEZ (ilgili kaynaklar dışlandı)._\n",
          md_table(["No", "Durum", "Gereken eylem", "İncelenecek dosya/bağlantı", "Önerilen güvenli varsayılan"], [
              ["F01", EXTERNAL_PENDING_EXCLUDED,
@@ -99,10 +101,7 @@ def remaining_md(items: list[dict[str, Any]]) -> str:
               "Mendeley görsellerinin üst kaynak/hak durumunu belgelemek mümkün değil; yazarlara ulaşmak veya kaynak görselleri bağımsız doğrulamak gerekir.",
               "https://data.mendeley.com/datasets/zkzghjvpn2/6 (yazarlar: Mei-Ling Huang, Ying Cheng)",
               "Mendeley `rights_unverified` olarak dışlı kalır; filigranlı stok görseller (alamy, depositphotos vb.) hiçbir koşulda kullanılmaz."],
-             ["G01", "pending_external_verification",
-              "Aşama 2'yi kapatma ve Aşama 3'e (canlı kamera altyapısı) geçme kararı (kullanıcı onayı).",
-              "reports/dataset_audit/STAGE_2_FINAL_REPORT.md",
-              "Önerilen: onaylı kapsamı yalnızca Construction-PPE ile sınırlı tutarak kapatmak."]]),
+             ]),
          f"\n`{EXTERNAL_PENDING_EXCLUDED}`: harici doğrulama hâlâ bekliyor; kaynak onaylı kapsam dışında tutulduğu için eğitim riski kontrol altında. "
          "Bu durum lisans/hak sorununun çözüldüğü anlamına GELMEZ ve kaynak bu durumdayken onaylı ilan edilemez.\n",
          "\n## Kapanan maddelerdeki devam eden riskler (bilgi)\n",
@@ -184,18 +183,21 @@ def final_decisions_md(*, usage: dict[str, Any], groups: dict[str, Any], decisio
     ud = usage["by_dataset"]
     L: list[str] = []
     add = L.append
-    add("# Nihai Veri Seti Kararları (Aşama 2B, Aşama 2C ile güncellendi)\n")
+    visual_review = usage["approved_scope_user_visual_review"]["construction_ppe"]
+    add("# Nihai Veri Seti Kararları (Aşama 2F — uygulanmış kullanıcı kararları)\n")
     add(f"_Üretim tarihi {date.today().isoformat()} (`scripts/generate_stage2b_reports.py`). Orijinal veri/etiket/bölünme DEĞİŞTİRİLMEMİŞTİR; hiçbir filtreleme/birleştirme "
-        "çalıştırılmamıştır. Görsel kararlar model destekli, tek değerlendirici incelemesidir. Politika: `configs/dataset_usage_policy.yaml`._\n")
+        "çalıştırılmamıştır. Görsel kararlar kullanıcı tarafından 22/22 tamamlanmış ve politikaya uygulanmıştır. Politika: `configs/dataset_usage_policy.yaml`._\n")
     add("## 1. Sonuç\n")
     add(f"- **Bugün onaylı eğitim kapsamı yalnızca Ultralytics Construction-PPE'dir:** {ud['construction_ppe']['images']} görüntünün durumları "
         f"{ud['construction_ppe']['status_now']}; nihai bölme {usage.get('approved_scope_final_split_images', {})} "
         f"(`construction_ppe_split_manifest.csv`); kullanılabilir görüntülerdeki hedef sınıf kutuları {usage['approved_scope_target_boxes']}.")
+    add(f"- **Nihai görsel kararlar:** {visual_review['user_decided']}/{visual_review['total']} tamamlandı; "
+        f"dağılım {visual_review['by_user_decision']}. Dokuz görüntü kullanıcı kararıyla eğitim/validation kapsamından çıkarıldı.")
     add(f"- **Mendeley PPE v6 ve Roboflow Site Safety v27 onaylı kümede DEĞİLDİR** (`pending_license_verification`): üst kaynak/lisans hakları doğrulanamadı. "
         "Hak doğrulanırsa alacakları durumlar ön karar olarak hesaplandı (`status_if_rights_verified`) ama bugün hiçbiri `approved` değildir.")
     add("- Sorunlu üç sınıf (E05 Mendeley `Helmet`, E10 Roboflow `NO-Hardhat`, E12 Roboflow `NO-Safety Vest`) birleşik eğitim adaylarından DIŞLANDI; "
         "dönüşüm/yeniden boyutlandırma uygulanmadı.")
-    add(f"- 59 maddelik kontrol listesi: {dict(cnt)}. Açık kalanlar kullanıcı/harici doğrulama bekler ve onaylı kümeyi etkilemez.\n")
+    add(f"- 59 maddelik kontrol listesi: {dict(cnt)}. Açık kalan F01/F02 yalnızca harici doğrulama bekler ve onaylı kümeyi etkilemez.\n")
 
     add("## 2. Kaynak düzeyi durum\n")
     rows = []
@@ -315,28 +317,28 @@ def final_decisions_md(*, usage: dict[str, Any], groups: dict[str, Any], decisio
     add(md_table(["Ölçüt", "Karşılandı mı", "Kanıt"], [[k, "EVET" if ok else "HAYIR", why] for k, (ok, why) in criteria.items()]))
     add("")
     add("## 12. Kapanış değerlendirmesi\n")
-    add(f"Aşama 2C nihai değerlendirmesi `STAGE_2_FINAL_REPORT.md` içindedir. Roboflow lisansı (F01) ve Mendeley üst kaynak hakları (F02) `{EXTERNAL_PENDING_EXCLUDED}` "
+    add(f"Aşama 2F kapanış değerlendirmesi `STAGE_2_FINAL_REPORT.md` ve `STAGE_2_CLOSURE_REPORT.md` içindedir. Roboflow lisansı (F01) ve Mendeley üst kaynak hakları (F02) `{EXTERNAL_PENDING_EXCLUDED}` "
         "durumundadır: harici doğrulama hâlâ bekliyor, ancak kaynaklar onaylı kapsam dışında tutulduğu için kullanım riski kontrol altındadır (sorun ÇÖZÜLMEDİ). "
-        "Kapanış kararı (G01) kullanıcıya aittir.\n")
+        "G01 kullanıcı onayıyla kapatılmış ve Aşama 2 `COMPLETED` olmuştur; Aşama 3 başlatılmamıştır.\n")
     return "\n".join(L) + "\n"
 
 
 def stage2b_addendum(usage: dict[str, Any], items: list[dict[str, Any]]) -> str:
-    """dataset_audit_report.md'ye eklenen 'Aşama 2B' (tarihsel) ve 'Aşama 2C' (güncel) özet bölümleri."""
+    """dataset_audit_report.md'ye eklenen 'Aşama 2B' (tarihsel) ve 'Aşama 2F' (güncel) özet bölümleri."""
     cnt = Counter(i["status"] for i in items)
     ud = usage["by_dataset"]["construction_ppe"]
     return ("\n## 17. Aşama 2B sonuçları (veri kullanım politikası) — tarihsel özet\n\n"
             "Aşama 2 eksik giderme sonrası kalan 11 karar maddesi ve 2 lisans konusu ele alındı; sonuçlar `final_dataset_decisions.md` içindedir. **Önceki bulgular korunmuştur**. "
-            "2B'deki sayılar ve kapanış ifadesi §18 (Aşama 2C) ile GÜNCELLENMİŞTİR: 2B'de onaylı kapsam 1000 görüntü / vest 1816 kutu ve F01/F02 "
+            "2B'deki sayılar ve kapanış ifadesi §18 (Aşama 2F) ile GÜNCELLENMİŞTİR: 2B'de onaylı kapsam 1000 görüntü / vest 1816 kutu ve F01/F02 "
             "`pending_external_verification` idi; Construction-PPE için %70/15/15 bölme önizlemesi vardı (artık geçersiz).\n\n"
             "- **Sınıf kararları:** Mendeley `Helmet` (E05), Roboflow `NO-Hardhat` (E10) ve `NO-Safety Vest` (E12) birleşik eğitim adaylarından dışlandı; "
             "görüntü seviyesinde karantina/yeniden etiketleme listeleri üretildi.\n"
             "- **Veri sızıntısı:** kaynak-grup bazlı bölme politikası ve manifest (`source_group_manifest.csv`); Roboflow val/test bağımsız değerlendirme için kullanılamaz.\n"
-            "\n## 18. Aşama 2C sonuçları (nihai kontrol, güncel)\n\n"
+            "\n## 18. Aşama 2F sonuçları (nihai kullanıcı kararları, güncel)\n\n"
             f"- **Onaylı kapsam:** yalnızca Construction-PPE. 1000 görüntünün durumu {ud['status_now']}; nihai bölme "
             f"{usage.get('approved_scope_final_split_images', {})} (`construction_ppe_split_manifest.csv`); kullanılabilir görüntülerde hedef kutular "
             f"{usage['approved_scope_target_boxes']}. Mendeley ve Roboflow beklemede (`pending_license_verification`, `hold_reasons`), ham verileri ve analiz kayıtları korunuyor.\n"
             "- **Sızıntı kararı:** Construction-PPE'deki bölümler arası tek birim (aynı taban karenin 3 üretken varyantı) train'e alındı; yayıncı bölünmesi korundu.\n"
-            f"- **Eksik anotasyon riski:** {usage.get('approved_scope_annotation_risk', {}).get('flagged_images', 0)} görüntü işaretlendi; 1 görüntü görsel olarak doğrulanan eksik etiket nedeniyle `needs_reannotation`.\n"
+            f"- **Eksik anotasyon riski:** {usage.get('approved_scope_annotation_risk', {}).get('flagged_images', 0)} görüntü işaretlendi; toplam 10 görüntü kullanım dışı: 9 kullanıcı kararı ve önceden dışlanan `ultralytics-ppe-nov2026-690`.\n"
             f"- **Kontrol listesi (59):** {dict(cnt)}. F01/F02: `{EXTERNAL_PENDING_EXCLUDED}` (sorun çözülmedi; kaynak dışlandı).\n"
-            "- **Kapanış:** `STAGE_2_FINAL_REPORT.md`; bağımsız test stratejisi `docs/evaluation_plan.md`.\n")
+            "- **Kapanış:** 22 kullanıcı kararı tamamlandı; Aşama 2 `COMPLETED`. Ayrıntı: `STAGE_2_CLOSURE_REPORT.md`; bağımsız test stratejisi `docs/evaluation_plan.md`.\n")
