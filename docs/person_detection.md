@@ -257,6 +257,7 @@ Varsayılan olarak görüntü/video **kaydedilmez**; yüz arşivlenmez; kimlik v
 * Model COCO ile eğitilmiştir; yüksek açılı kamera için yalnızca MacBook ile ≈2 m'lik bir **ön test** yapılmıştır (§14); gerçek duvar montajlı kamera ve çalışma alanı kıyafetleri için doğrulanmamıştır.
 * **FP-4A-001:** ≈2 m yükseklikten yapılan ön testte bir yorgan kısa süreli insan olarak algılandı (kullanıcı gözlemi; §14). `conf 0.35`'te de kısa süreliğine algılandı (süre gözle daha kısaydı, ölçülmedi; OT-4A-001) — **çözülmedi**. Tek gözlemdir; genel model başarısızlığı sonucu çıkarılmaz ve ByteTrack'in bunu çözeceği varsayılmaz.
 * **OBS-4A-001:** ilk canlı oturumda en yüksek tespit sayısı 7 raporlandı; bu tespitlerin hangi görüntülerde oluştuğu bilinmiyor, doğru/yanlış sınıflandırılmadı (§14).
+* **OBS-4A-004 (yeni ortam, 2026-11-12):** arka plandaki çok küçük görünen kişiler kutulanmadı; nedeni araştırılmadı (açık görev OT-4A-005; §14.4). Kameasız ön probda `imgsz 640`'ta 1280×720 görüntüde kişi yüksekliği ≈ 90–120 px'in altına inince algılama belirgin düştü (iyimser koşul; kullanıcının sahnesini kanıtlamaz).
 * Performans: canlı kamera ölçümleri tek oturumlardır (§9.1); pencereli FPS penceresiz FPS'ten düşüktür ve nedeni ayrıştırılmadı (OBS-4A-002); ısıl/güç kontrol edilmedi. Sentetik video sonuçları (§9) canlı performansın tahmini değildir.
 * Aşama 3 backlog durumu: B3-1 (yeniden bağlanma), B3-2 (kare kaybı) ve B3-5 (fiziksel bağlantı kopması) kapsanmadı. B3-3 (gecikme) için kare→sonuç/kare→görüntü gecikmesi kayıtlı videoda ve (kullanıcı) canlı kamerada ölçüldü; sensör/sürücü tamponlaması kapsam dışı, nihai ölçüm Aşama 12'de.
   B3-4 için modelli 300 karelik penceresiz canlı koşular 30,0 FPS verdi (kullanıcı); uzun süreli, bağımsız zaman referanslı doğrulama yapılmadı. **Hiçbiri tamamlanmış sayılmaz** (Aşama 3 backlog kayıtları değişmedi).
@@ -310,6 +311,7 @@ Makine tarafından okunur sürüm: `configs/project_stages.yaml` (`stage4a_open_
 | **OT-4A-001** | `PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35` | **`TEST_PERFORMED`** (kullanıcı, kapanış sonrası) | **Test yapıldı; sorun çözülmedi:** yorgan 0,35'te de kısa süreliğine insan sanıldı (süre gözle daha kısaydı, sayısal ölçülmedi); gerçek insan tespitinin başarısı ölçülmedi; FP-4A-001 açık; varsayılan `conf` 0,25 değişmedi. Aşağıda |
 | OT-4A-002 | Bağımsız, etiketli değerlendirme kümesi ve resmî ölçümler (Precision, Recall, F1, mAP@0.5, mAP@0.5:0.95) | Açık | Altyapı hazır (`evaluate_person_detection.py`); veri kümesi yok. Zamanlama kullanıcı kararı (öneri: 4B takip ölçümleriyle birlikte veya Aşama 12 nihai değerlendirme) |
 | OT-4A-003 | Gerçek IP kamera doğrulaması: kamera satın alma ve montaj, RTSP/bağlantı doğrulaması (RTSP kaynak desteği geliştirilmedi), nihai açı, gecikme, görüntü kalitesi, nihai test alanı | **`DEFERRED_TO_SYSTEM_INTEGRATION`** | IP kamera henüz satın alınmadı; marka/model, RTSP, test alanı belirlenmedi. Hedef: sonraki entegrasyon ve sistem değerlendirme aşamaları (öneri: Aşama 11–12). **MacBook testleri IP kamera doğrulaması olarak sunulmaz** |
+| OT-4A-005 | OBS-4A-004 araştırması: arka plandaki çok küçük kişilerin kutulanmaması (yeni ortamda gözlendi) | Açık araştırma | Plan §14.4; eşik/algoritma değişikliği yapılmadı. Doğruluk ölçümüyle (OT-4A-002) ve yanlış pozitif kararlarıyla (FP-4A-001, FP-4B-001) birlikte değerlendirilmelidir |
 | OT-4A-004 | OBS-4A-001 araştırması (en yüksek 7 tespit) | Açık araştırma | Aynı koşulları yeniden üretip sayacı izleyerek veya tepe karenin kaydıyla (yalnızca kullanıcının açık onayıyla) yapılabilir; kod değişikliği 4A kapsamında yapılmadı |
 
 #### OT-4A-001 — `PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35` (durum: `TEST_PERFORMED`, kullanıcı, kapanış sonrası)
@@ -357,6 +359,63 @@ Kayıt şablonu (kullanıcı bildirimlerine göre; "bildirilmedi" = bilgi yok, "
 | Çıkış özeti | 331 kare, 18,4 FPS, çıkarım 16,8 / 17,1 / 21,5 ms, en çok 3 | 379 kare, 25,3 FPS, çıkarım 14,0 / 12,8 / 19,2 ms, en çok 3 |
 
 Test tasarımı (yapılmadan önce yazılmıştı): amaç yukarıdaki 5 soruydu; prosedür — kamerayı mümkün olduğunca aynı konumda tutmak, aynı yorganı ve benzer aydınlatmayı kullanmak, `conf 0.25` davranışını referans almak, `conf 0.35` ile gözlem yapıp kutuların gerçek insanları kapsayıp kapsamadığını karşılaştırmak, yanlış pozitif/kaçırma gözlemlerini kaydetmek.
+
+### 14.4 Kapanış sonrası: yeni ortamda gerçek kamera gözlemi (kullanıcı, 2026-11-12) *[Kullanıcı]* — OBS-4A-003, OBS-4A-004
+
+**Bağlam ve sınır.** Aşama 4B'nin poster yanlış pozitifi tanı planının **T1** adımı (aynı sahnede 4A betiği, takipsiz; bkz. [person_tracking.md §21](person_tracking.md)) için yapıldı. **Test ortamı değiştiği için önceki poster aynı şartlarda yeniden kurulamadı: poster karşılaştırması (T1) TAMAMLANMIŞ SAYILMAZ.**
+Bu bölüm Aşama 4A'nın yeni ortamdaki bir gözlemini kaydeder; 4A `COMPLETED` durumunu, önceki sonuçları ve varsayılan ayarları değiştirmez. Hiçbir eşik veya algoritma değiştirilmedi.
+
+| Alan | Değer *[Kullanıcı]* |
+|---|---|
+| Betik / model / cihaz | `run_person_detection.py` (4A, takipsiz), YOLO11n, MPS |
+| Çözünürlük / kare / süre | 1280×720 / 1812 kare / 82,7 sn |
+| Uçtan uca FPS | **21,9** |
+| Çıkarım süresi | **ort. 15,9 ms** |
+| Kişi tespiti | kare başına **ort. 2,89**, **en çok 7** |
+| Çıkış | Q, sorunsuz |
+| Bildirilmeyenler | `conf`/`iou`/`imgsz` (varsayılan 0,25 / 0,7 / 640 kullanıldığı **varsayılıyor, doğrulanmadı**); pencereli olduğu (ekran görüntüleri alındığından öyle anlaşılıyor, açıkça belirtilmedi); medyan/p95 çıkarım; okuma ve gösterme süreleri; ışık, mesafe, kişilerin boyu; zaman içindeki gerçek kişi sayısı |
+
+**Ekran görüntüleri (kullanıcı gözlemi):**
+1. Ön plandaki iki gerçek kişi **0,85 ve 0,87** güvenle ayrı ayrı algılandı. **Arka plandaki çok küçük görünen kişiler kutulanmadı** (OBS-4A-004).
+2. Ön plandaki iki kişi **0,80 ve 0,66** güvenle algılandı. Telefonda gösterilen bir insan fotoğrafı **ayrı bir tespit oluşturmadı**.
+
+**Yorum sınırları (ne söylenmez):**
+* **Ortalama 2,89 ve en çok 7 yanlış pozitif olarak yorumlanmaz;** kullanıcı, test sırasında zaman zaman arka planda başka gerçek kişilerin de bulunduğunu bildirdi. Doğru olarak da sınıflandırılmaz: kare bazlı kayıt/etiket yoktur. Önceki oturumdaki "en yüksek 7" (OBS-4A-001) ile aynı sayı olması bilgi olarak not edilir; **iki gözlem arasında bir ilişki kurulmaz** (farklı ortam, farklı sahne; aynı sayı tesadüf olabilir).
+* **Telefondaki fotoğraf poster değildir:** farklı nesne (küçük, ışık yayan ekran ↔ büyük basılı pano), farklı ölçek. Tek bir karede ayrı tespit oluşmaması, (a) posterin neden insan sanıldığı, (b) telefon fotoğrafının zaman içinde hiç algılanmadığı hakkında sonuç vermez (aralıklı tespit tek karede görünmeyebilir). Poster sorunu **açık kalır** (FP-4B-001).
+* Tek oturum, tek gözlemci; doğruluk (Precision/Recall) ölçümü değildir (OT-4A-002).
+
+**Performans notu (OBS-4A-002 ile aynı aileden bir veri noktası):** (1812−1)/82,7 = 21,9 FPS *[Türetilmiş]*; kare periyodu 45,7 ms; çıkarım bunun %35'i; kalan ≈ 29,8 ms'nin dökümü bildirilmedi. Bu, pencereli FPS'in penceresiz 30'dan düşük olmasının **takip olmadan da** görüldüğünü gösterir (4A'nın önceki pencereli aralığı 18,4–25,3 FPS ile uyumlu). Farklı oturum ve ortam olduğundan 4B'nin pencereli 16,3 FPS'iyle doğrudan karşılaştırılmaz; nedeni **ayrıştırılmamıştır**. Bu makinede kameasız ölçülen `imshow+waitKey(1)` ≈ 15–17 ms'dir ([person_tracking.md §20.4](person_tracking.md)).
+
+#### OBS-4A-004 — Arka plandaki çok küçük kişilerin algılanmaması (OT-4A-005)
+
+**Gözlem:** ön planda iki kişi 0,85/0,87 ile algılanırken arka plandaki çok küçük görünen kişiler kutulanmadı. Kişilerin gerçek piksel boyutu, mesafesi ve görünürlüğü (bulanıklık, kısmi örtülme) bildirilmedi; algılanmamaları bir **hata olarak değil, araştırılacak gözlem olarak** kaydedilir (küçük/uzak kişilerin kaçırılması bu modelden ve girdi çözünürlüğünden beklenebilen bir davranış olabilir, ancak bu sahne için doğrulanmadı).
+**Olası etkenler (hiçbiri doğrulanmadı):** (H1) model girdi boyutu: YOLO görüntüyü `imgsz 640`'a küçültür (1280×720 → 640×360, ölçek 0,5; 70 px'lik kişi 35 px olur) ve nano model küçük nesnelerde zayıftır; (H2) `conf 0,25` altındaki zayıf tespitler atılıyor; (H3) bulanıklık/hareket/ışık; (H4) kısmi örtülme veya kadraj kenarı; (H5) kişilerin COCO'daki "person" dağılımından farklı görünümü.
+**Kameasız ön prob** *[Ölçüldü, sentetik, İYİMSER; kullanıcının sahnesi DEĞİL]* — `bus.jpg`'deki gerçek kişi kesitleri (3 kesit × 3 konum = 9 deneme) 1280×720 gri tuval üzerinde bilinen yüksekliklere (keskin, `INTER_AREA`) küçültülüp YOLO11n (MPS) ile algılandı; "bulundu" = `conf ≥ 0,25` ile algılama:
+
+| Kişi yüksekliği (px, 720'lik görüntüde) | `imgsz 640` | `imgsz 960` | `imgsz 1280` |
+|---|---|---|---|
+| 240 | 9/9 | 9/9 | 9/9 |
+| 160 | 9/9 | 9/9 | 9/9 |
+| 120 | 8/9 | 9/9 | 9/9 |
+| 90 | 4/9 | 9/9 | 9/9 |
+| 70 | 1/9 | 4/9 | 8/9 |
+| 55 | 4/9 | 4/9 | 7/9 |
+| 45 | 2/9 | 1/9 | 6/9 |
+| 35 | 4/9 | 4/9 | 4/9 |
+| 28 | 1/9 | 3/9 | 6/9 |
+| 22 | 0/9 | 3/9 | 4/9 |
+
+Küçük boyutlarda sonuçlar dalgalıdır (yalnızca 9 deneme; örn. `imgsz 640`'ta 55 → 45 → 35 → 28 px monoton değil), bu yüzden ölçü yalnızca kaba bir fikir verir. Ham gözlem: `imgsz 640`'ta 120 px'te 8/9, 90 px'te 4/9, 70 px'te 1/9; `imgsz 960`'ta 90 px'te 9/9, 70 px'te 4/9; `imgsz 1280`'de 70 px'te 8/9, 45 px'te 6/9. Kabaca: algılama `imgsz 640`'ta ≈ 90–120 px (görüntü yüksekliğinin ≈ %12–17'si) civarında, `960`'ta ≈ 70–90 px, `1280`'de ≈ 45–70 px altında belirgin düşüyor. Gerçek uzak kişiler bulanık/hareketli olacağından gerçek eşik **daha kötü** olabilir. Bu, H1'i **destekleyen** ama sahnenin nedenini **kanıtlamayan** bir ölçüdür.
+**Maliyet** (aynı sahne, penceresiz, beklemesiz çıkarım medyanı; canlıda boşta kalmayla uzar, bkz. person_tracking.md §20.3): MPS `imgsz 640` 7,7 → `960` 11,8 → `1280` 18,2 ms; CPU 19,0 → 36,8 → 64,3 ms. Yani `imgsz` artırmak küçük kişileri iyileştirebilir ama çıkarım süresini ≈ 1,5× / 2,4× (MPS) ve ≈ 1,9× / 3,4× (CPU) artırır.
+
+**Araştırma planı (OT-4A-005; kod/eşik değişikliği gerektirmez):**
+1. **Boyutu ölç:** sorunlu ekran görüntüsünde kaçırılan kişilerin yaklaşık piksel yüksekliğini (720'lik görüntüye göre) not edin.
+2. **Aynı sahne/klip, yalnızca tanı olarak:** `.venv/bin/python scripts/run_person_detection.py --source camera --camera-index 0 --device mps` varsayılanla; sonra `--imgsz 960`, `--imgsz 1280`; ve `--conf 0.10` (yalnızca tanı). Her koşuda küçük kişiler kutulanıyor mu, `PERSONS` değişimi, çıkarım süresi/FPS. (Tekrarlanabilirlik için 20–30 sn'lik bir klip önerilir; kayıt yalnızca izinle, yerelde, Git dışı.)
+3. **Kaba gerçek sayı:** klipte kareler boyunca kaç gerçek kişi (ön + arka) göründüğünü not edin; küçük kişilerin yakalanma oranı kaba hesaplanır (ölçülmüş Recall değildir).
+4. **Birlikte değerlendir:** `imgsz`/`conf` artırmak yanlış pozitifleri (poster, yorgan) da değiştirebilir; aynı klipte FP-4A-001/FP-4B-001 sahneleriyle birlikte ölçülmeden hiçbir ayar önerilmez.
+5. **Sistem gereksinimi:** hedef kamera 2–3 m duvar montajlı olacağından gereken en küçük algılanabilir kişi boyu ve kapsama mesafesi sistem gereksinimi olarak belirlenmelidir (OT-4A-002 etiketli değerlendirme ve nihai sistem testleriyle).
+
+**Takip (4B) açısından:** algılanmayan kişi için iz oluşmaz; takipçi bunu telafi edemez. Küçük kişilerin yakalanması tespit katmanının işidir.
 
 ## 15. Aşama 4B için hazır bileşenler
 

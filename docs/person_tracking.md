@@ -279,6 +279,23 @@ Sayısal ölçüm (her cihaz için): `.venv/bin/python scripts/run_person_tracki
 Pencereli çalıştırmada "Pencereye gösterme süresi" `imshow` maliyetini verir. 4A'daki pencereli FPS düşüşü (18,4–25,3) nedeni ayrıştırılmamıştı; 4B'de bunu da gözlemleyin.
 **Çıkış doğrulaması:** her çıkış yolundan sonra kameranın serbest kaldığını (yeşil ışık/menü çubuğu göstergesi) ve ikinci çalıştırmanın kamerayı açabildiğini kontrol edin.
 
+### 17.1 Kayıt şablonu — iki kişi, ID kararlılığı ve örtüşme (Manuel Test 1, 3, 4; yeni ortamda)
+
+Amaç: iki gerçek kişide Track ID'nin korunup korunmadığını ve örtüşmede ne olduğunu **gözleme dayalı** kaydetmek. Bu şablon testlerin yerine geçmez; yalnızca sonucun yorumlanabilir olmasını sağlar. Gözlem yapılmadan hiçbir sonuç doldurulmamalıdır.
+
+**Hazırlık (her koşu için ortak):** `.venv/bin/python scripts/run_person_tracking.py --source camera --camera-index 0 --device mps`; ortamı yazın (ışık, kameraya mesafe, arka planda poster/telefon/başka kişi var mı); iki kişiyi ayırt edecek bir işaret belirleyin (örn. A kırmızı, B siyah üst) ve **koşu başında ekran görüntüsüyle A=ID?, B=ID?** kaydedin.
+
+| Senaryo | Ne yapılır (≈ 20–30 sn) | Kaydedilecek |
+|---|---|---|
+| S1 İki kişi durağan | İkisi yan yana, kıpırtısız | A/B ID'leri; ID değişti mi, `ACTIVE` sürekli 2 mi |
+| S2 Yan yana yürüme | İkisi birlikte yavaşça sola-sağa | ID'ler korundu mu; `ACTIVE`/`DETECTIONS` |
+| S3 Önünden geçme | B, A'nın önünden yavaşça geçer (kısmi örtüşme) | Örtüşme sırasında `ACTIVE` ve `LOST`; örtüşme sonrası A/B ID'leri aynı mı |
+| S4 Yer değiştirme | Yavaş, sonra hızlı yer değiştirme | ID'ler korundu mu / **ID switch (A↔B numaraları değişti mi) kaç kez** |
+| S5 Kadrajdan çıkıp girme | Biri çıkar, 1–2 sn / 5 sn sonra geri girer | Geri girişte aynı ID mi yeni ID mi; hangi kenardan |
+
+**Her koşu sonunda (Q ile çıkıp) konsoldan şu satırları kopyalayın:** "İşlenen kare … uçtan uca FPS", "YOLO çıkarım süresi", "ByteTrack takip süresi", "Kare okuma süresi", "Çizim süresi", "Pencereye gösterme süresi", "Kare -> görüntü gecikmesi", "Tespit: kare başına ortalama / en çok … aktif iz en çok … kayıp iz en çok", "Görülen farklı Track ID" ve **iz özeti** tablosu (A ve B'nin ID'lerinin kaç kare aktif kaldığı; kısa, düşük güvenli ek izler var mı). Beklenmedik bir kutu (poster, telefon, çok küçük kişi) görürseniz ekran görüntüsüyle ID'sini ve güvenini not edin.
+Sonuç ifadeleri: "ID korundu / ID switch N kez / yeni ID aldı" gibi **gözleminizi** yazın; sayısal doğruluk ölçümü (IDF1/HOTA) değildir.
+
 ## 18. Aşama 5'e aktarılacak veri yapıları
 
 * `TrackingResult` / `TrackedPerson`: kare başına kişi kutuları (`bbox_xyxy`, piksel), `track_id`, `session_id`, `frame_index`, `timestamp`; yüz tespiti yüz kutularını kişi izlerine **kutu içerme/örtüşmeyle** ilişkilendirirken `(session_id, track_id)` anahtarını kullanmalıdır.
@@ -356,6 +373,7 @@ CPU kontrolü (33,3 ms aralık): çıkarım 19,1 → 18,9–19,1 ms, **değişme
 * Kamera-benzeri tempolu (33,3 ms) gerçek pencereli koşu *[Ölçüldü; kamera YOK]*: **iki cihaz da 30,0 FPS**; gösterme süresi MPS 15,6, CPU 14,1 ms; çıkarım MPS 12,8, CPU 17,6 ms. Yani toplam (çıkarım + takip + çizim + gösterme: MPS ≈ 29,5, CPU ≈ 32,4 ms) 33,3 ms'lik kare periyodunun altında kaldığında pencere FPS'i düşürmedi (CPU'da bütçe sınıra yakındı).
 * Kullanıcının canlı koşusunda ise çıkarım 17,7 ms (kameasız deneydeki 12,8 ms'nin ≈ 5 ms üstünde) ve toplam yaklaşık 35–36 ms *[yaklaşık, gösterme süresi bildirilmedi; yalnızca ölçülen ≈ 15–17 ms varsayılarak]*, yani periyodun sınırında/üstündedir. Gözlenen 61,3 ms periyodu (≈ 2 × 33,3 ms'ye yakın) bu toplamdan **beklenen ≈ 36 ms'den çok daha uzundur**.
 **Hipotezler (hiçbiri doğrulanmadı):** (H1) kare bütçesi aşılınca kamera kare teslimi iki periyoda kuantize oluyor; (H2) canlı pencereli çalışmada `imshow`/`waitKey` veya pencere yöneticisi maliyeti ölçülenden büyük; (H3) kamera/ISP yükü çıkarımı ve okumayı uzatıyor; (H4) sahne farkı (daha çok tespit) çıkarımı/NMS'yi uzatıyor. **Ayırt edici testler:** §21, T7 (özellikle `--imgsz 320` pencereli tanı koşusu: bütçe 25 ms altına inince FPS ≈ 30'a dönerse H1; dönmezse H2/H3 öne çıkar). 4A'nın pencereli 18,4–25,3 FPS gözlemi de aynı ailedendir ve **hâlâ ayrıştırılmamıştır**. Takibin eklediği yük (0,5 ms) bu farkı açıklayamaz.
+**Yeni veri noktası (takipsiz, yeni ortam, 4A betiği, MPS, 1812 kare; [person_detection.md §14.4](person_detection.md)) *[Kullanıcı]*:** 21,9 FPS, ort. çıkarım 15,9 ms → periyot 45,7 ms, çıkarım %35, kalan ≈ 29,8 ms *[Türetilmiş]*. Pencereli FPS düşüşü **takip olmadan da** görülüyor (ByteTrack nedeni değil). Farklı oturum/ortam olduğundan 4B'nin 16,3 FPS'iyle doğrudan karşılaştırılmaz; nedeni hâlâ ayrıştırılmadı (yalnızca ölçülen `imshow+waitKey(1)` ≈ 15–17 ms, bütçeyi kısıtlayan bilinen bir bileşen).
 
 ### 20.5 ByteTrack süresi: 0,2 ↔ 0,4 ↔ 0,5 ms
 ByteTrack her zaman CPU'da çalışır; cihaz seçiminden bağımsızdır. İki kişilik sahnede ölçeklenme tablomuz (§11) ≈ 0,15–0,2 ms verir: CPU koşusu (0,2) bununla uyumlu. MPS koşularındaki 0,4–0,5 ms için olası etkenler (hiçbiri doğrulanmadı): tespit sayısının daha yüksek olması (poster/çakışan kutular ek tespit ve onaysız iz demektir), boşta kalma payının yüksek olması (§20.3'te ByteTrack süresi de boşlukla 0,3 → 0,7 ms'ye çıktı), ortalama/medyan farkı. Tüm durumlarda ByteTrack, kare periyodunun %1,5'inden azdır; performans darboğazı değildir.
@@ -396,6 +414,9 @@ Her adımda ekran görüntüsü veya konsol çıktısı paylaşılır. Kamera g�
 | **T5** | Büyük kutu Kalman/ByteTrack kaynaklı mı? | Kare bazlı log (§22 araç notu) ile her izin kutusu ↔ eşleşen ham kutu IoU'su | IoU dağılımı, en düşük değerler, hangi karelerde | IoU ≈ 1 → YOLO kutusu (H2); belirgin düşük → Kalman/ByteTrack (H3). Araç eklenmeden: yalnızca T1 ile görsel ayrım |
 | **T6** | ID kaynağı: kararsız tespit mi parçalanma mı? | T4 klibinde 4A betiğinin `PERSONS` oynaklığı ile 4B iz özeti (ID sayısı, kısa/uzun iz) | Tespit sayısı sabitse ID sayısı | H4 ↔ H5 ayrımı (§21.2) |
 | **T7** | Pencereli FPS tanısı | (a) `... run_camera.py --source camera --no-display --max-frames 300` (ham kamera); (b) aynı sahnede `run_person_tracking.py` pencereli ve `--no-display` (MPS); konsolda "Kare okuma / Çizim / Pencereye gösterme / Kare→görüntü" satırlarını kaydet; (c) tanı: pencereli `--imgsz 320` (yalnızca tanı) | Satırlar; FPS | (a) ham kameranın tavanı; (b) gösterme süresi; (c) bütçe ≤ 25 ms'de FPS ≈ 30'a dönerse H1, dönmezse H2/H3 |
+
+**T1 durumu (2026-11-12): KISMEN yapıldı, TAMAMLANMADI.** Kullanıcı 4A betiğiyle **yeni bir ortamda** gerçek kamera testi yaptı ([person_detection.md §14.4](person_detection.md)): ön plandaki iki kişi 0,85/0,87 ve 0,80/0,66 ile ayrı algılandı; telefonda gösterilen insan fotoğrafı ayrı tespit oluşturmadı; arka plandaki çok küçük kişiler kutulanmadı. **Ortam değiştiği için önceki poster aynı şartlarda yeniden kurulamadı; bu nedenle poster ve çakışan büyük kutuların ham YOLO çıktısında olup olmadığı (H1, H2) hâlâ doğrulanmamıştır.**
+Telefondaki fotoğraf poster değildir (küçük ışık yayan ekran ↔ büyük basılı pano) ve tek karelik gözlem zaman içindeki yokluğu göstermez. T0, T2–T7 yapılmadı. Yeni ortamdaki 2,89 / en çok 7 kişi tespiti yanlış pozitif olarak yorumlanmaz (arka planda gerçek kişiler vardı).
 
 Manuel Test 1–6 ve 8 (üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı, Esc/kırmızı düğme/Ctrl+C) **ayrıca ve henüz yapılmamış olarak** §17'de bekler; bu tanı planı onların yerine geçmez.
 

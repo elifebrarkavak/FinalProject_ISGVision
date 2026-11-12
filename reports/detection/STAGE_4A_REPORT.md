@@ -406,6 +406,23 @@ Bu güncellemede **yalnızca belge, rapor ve açık görev kayıtları** değiş
 
 Kullanıcının `conf=0.35` sonuçları (yukarıda) Claude tarafından yeniden üretilmedi; commit/push yapılmadı.
 
+## 24. Kapanış sonrası gözlem — yeni ortamda gerçek kamera testi (2026-11-12) *[Kullanıcı]*
+
+4B poster tanı planının **T1** adımı için kullanıcı 4A betiğiyle (takipsiz) yeni bir gerçek kamera testi yaptı. **Test ortamı değiştiği için önceki poster aynı şartlarda yeniden kurulamadı; poster karşılaştırması (T1) tamamlanmış sayılmaz.** Aşama 4A `COMPLETED` durumu, önceki sonuçlar ve varsayılan ayarlar (`conf 0.25`) değişmedi; kaynak kod ve eşik değiştirilmedi. Ayrıntı ve yorum sınırları: [docs/person_detection.md §14.4](../../docs/person_detection.md). Güncel durum: **Aşama 4B `READY_FOR_MANUAL_VERIFICATION`**, Aşama 4 genel `IN_PROGRESS`.
+
+| Alan | Değer *[Kullanıcı]* |
+|---|---|
+| Model / cihaz / çözünürlük | YOLO11n, MPS, 1280×720 (`conf`/`iou`/`imgsz` bildirilmedi; varsayılan varsayılıyor, doğrulanmadı) |
+| Kare / süre / FPS | 1812 / 82,7 sn / **21,9** (türetilen: (1812−1)/82,7 = 21,9; periyot 45,7 ms) |
+| Çıkarım | ort. **15,9 ms** (periyodun %35'i; kalan ≈ 29,8 ms bildirilmedi) |
+| Kişi tespiti | kare başına ort. **2,89**, en çok **7** |
+| Çıkış | Q, sorunsuz |
+
+* **OBS-4A-003 (yeni ortam gözlemi):** ekran görüntüsü 1'de ön plandaki iki gerçek kişi **0,85 ve 0,87** ile ayrı algılandı; ekran görüntüsü 2'de **0,80 ve 0,66**; telefonda gösterilen insan fotoğrafı **ayrı tespit oluşturmadı** (tek kare; telefon fotoğrafı poster değildir, poster sorunu açık kalır — FP-4B-001). Zaman zaman arka planda gerçek kişiler de vardı: **ort. 2,89 ve en çok 7 yanlış pozitif olarak yorumlanmaz** (doğru olarak da sınıflandırılmaz; kare bazlı kayıt yok). "En çok 7", OBS-4A-001 ile aynı sayıdır; ilişki kurulmaz.
+* **OBS-4A-004 (araştırılacak):** arka plandaki çok küçük görünen kişiler **kutulanmadı**; nedeni araştırılmadı. Kameasız ön prob (iyimser, kullanıcı sahnesi değil): `imgsz 640`'ta 720 px yüksekliğinde kişi boyu ≈ 90–120 px'in altına inince algılama belirgin düştü; `imgsz` artırmak yardımcı oldu ama çıkarımı yavaşlatır (MPS 7,7 → 11,8 → 18,2 ms; CPU 19,0 → 36,8 → 64,3 ms; 640/960/1280). Plan: **OT-4A-005** (docs §14.4); ayar değişikliği yapılmadı.
+* **OBS-4A-002'ye veri noktası:** pencereli 21,9 FPS (takipsiz) — pencereli FPS düşüşünün takip olmadan da görüldüğünü gösterir; 4A'nın önceki 18,4–25,3 FPS aralığıyla uyumlu; nedeni ayrıştırılmamıştır.
+* **Doğruluk iddiası yoktur:** Precision/Recall ölçülmedi (OT-4A-002); %85 hedefi karşılandı denmez. Commit/push yapılmadı.
+
 ---
 
 ## Kabul kriterleri (tek tek)

@@ -53,6 +53,12 @@ stage4a_open_items:
   OT-4A-002: {title: "Bağımsız etiketli değerlendirme kümesi ve resmî doğruluk ölçümleri (Precision, Recall, F1, mAP)", status: open}
   OT-4A-003: {title: "Gerçek IP kamera doğrulaması (kurulum, RTSP, nihai açı, gecikme, görüntü kalitesi)", status: deferred_to_system_integration, target_stages: [11, 12]}
   OT-4A-004: {title: "OBS-4A-001: ilk canlı oturumdaki en yüksek 7 tespit sayısının araştırılması (doğrulanmamış gözlem)", status: open_investigation}
+  OT-4A-005: {title: "OBS-4A-004: yeni ortamda arka plandaki çok küçük görünen kişilerin kutulanmaması; boyut (imgsz 640/960/1280), conf ve görünürlük etkilerinin araştırılması (plan: docs/person_detection.md 14.4); eşik/algoritma değişikliği YAPILMADI; yanlış pozitif kararlarıyla (FP-4A-001, FP-4B-001) birlikte değerlendirilmeli", status: open_investigation}
+
+# Aşama 4A kapanış SONRASI gözlemler (kullanıcı, yeni test ortamı, 2026-11-12). 4A COMPLETED durumu ve varsayılan ayarlar değişmedi.
+stage4a_observations:
+  OBS-4A-003: {title: "Yeni ortamda 4A betiğiyle gerçek kamera testi (4B T1 kapsamında): YOLO11n MPS 1280x720, 1812 kare, 82,7 sn, 21,9 FPS, ort. çıkarım 15,9 ms, kare başına ort. 2,89 ve en çok 7 kişi; ön plandaki iki kişi 0,85/0,87 ve 0,80/0,66 ile ayrı algılandı; telefondaki insan fotoğrafı ayrı tespit oluşturmadı (tek kare). Ort. 2,89 / en çok 7 yanlış pozitif OLARAK YORUMLANMAZ (arka planda gerçek kişiler vardı). Önceki poster aynı şartlarda yeniden kurulamadığı için T1 poster karşılaştırması TAMAMLANMADI", status: recorded}
+  OBS-4A-004: {title: "Arka plandaki çok küçük görünen kişiler kutulanmadı (yeni ortam; boyut/mesafe bildirilmedi); nedeni araştırılmadı; kameasız ön prob imgsz 640'ta ~90-120 px altı kişi boyunda algılamanın düştüğünü gösterdi (iyimser koşul, kullanıcı sahnesi değil)", status: open_investigation}
 
 # Bilinen sınırlamalar / gözlemler (Aşama 4A kapanışı).
 stage4a_known_limitations:
@@ -64,7 +70,7 @@ stage4b_open_items:
   OT-4B-002: {title: "Yorgan yanlış pozitifi gözlemi (Manuel Test 7): yorgan Track ID alıyor mu, kaç kare/saniye sürüyor, --new-track-thresh 0.6 etkisi ve gerçek kişi üzerindeki bedeli; YAPILMADI; FP-4A-001 çözülmedi", status: pending_user_verification}
   OT-4B-003: {title: "Takip doğruluğu: etiketli/izinli değerlendirme videosuyla ID switch ve IDF1/HOTA/MOTA (ölçülmedi; etiketli takip verisi yok; %85 hedefi karşılandı denmez)", status: open}
   OT-4B-004: {title: "Canlı kamera performansı. YAPILAN (kullanıcı): pencereli MPS 16,3 FPS (YOLO 17,7 / ByteTrack 0,5 ms), penceresiz CPU 29,9 FPS (18,5 / 0,2 ms), penceresiz MPS 29,9 FPS (14,7 / 0,4 ms). EKSİK: okuma/çizim/gösterme/kare->sonuç satırları, pencereli CPU, ham kamera ölçümü aynı oturumda; backlog B3-3 ve B3-4 ile ilişkili", status: partially_performed}
-  OT-4B-005: {title: "Poster/çakışan büyük kutu tanısı: kaynak YOLO tespiti mi ByteTrack mi? Test planı T0-T7 hazır (docs/person_tracking.md bölüm 21, rapor bölüm 26); koşulmadı. Eşik/filtre çözümleri doğrulama yapılana kadar UYGULANMAZ", status: pending_user_verification}
+  OT-4B-005: {title: "Poster/çakışan büyük kutu tanısı: kaynak YOLO tespiti mi ByteTrack mi? Test planı T0-T7 hazır (docs/person_tracking.md bölüm 21, rapor bölüm 26). T1 yeni ortamda KISMEN yapıldı (OBS-4A-003) ama önceki poster aynı şartlarda kurulamadığı için poster karşılaştırması TAMAMLANMADI; T0, T2-T7 yapılmadı. Eşik/filtre çözümleri doğrulama yapılana kadar UYGULANMAZ", status: pending_user_verification}
 
 # Aşama 4B canlı gözlemler (kullanıcı, gerçek MacBook kamerası, 2026-11-12). Hiçbiri çözülmüş sayılmaz.
 stage4b_observations:
