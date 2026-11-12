@@ -1,16 +1,21 @@
 # ISG_VISION — Yapay Zekâ Destekli Çoklu Çalışan Tanıma ve İSG Denetim Sistemi
 
-> **Mevcut durum: Aşama 4A — Çoklu insan tespiti `COMPLETED` (2026-11-12; yalnızca kapsam içi prototip geliştirme ve doğrulama).** Hazır YOLO (`yolo11n.pt`) ile kare başına birden fazla insan tespiti (yalnızca `person`), canlı kutu/güven/kişi sayısı,
+> **Mevcut durum: Aşama 4B — Çoklu insan takibi `READY_FOR_MANUAL_VERIFICATION` (2026-11-12; `COMPLETED` DEĞİL).** 4A'nın YOLO insan tespitleri Ultralytics **ByteTrack** ile kareler arasında takip edilir; her aktif kişiye **geçici, oturum kapsamlı Track ID** atanır
+> (çalışan kimliği DEĞİLDİR). YOLO her karede yalnızca bir kez çalışır. **883 otomatik test** (4A'daki 596 korundu + 287 yeni) geçti; gerçek YOLO + gerçek ByteTrack zinciri CPU ve MPS'te çevrimdışı çalıştırıldı; ByteTrack ≈ 0,4 ms/kare (kayıtlı sentetik videoda ölçüldü).
+> **Gerçek MacBook kamerası (kullanıcı, 2026-11-12) yalnızca KISMEN test edildi:** pencereli MPS 16,3 FPS, penceresiz CPU/MPS 29,9 FPS, Q ile çıkış; **panodaki basılı fotoğraf insan sanılıp Track ID aldı (FP-4B-001), kaynak (YOLO/ByteTrack) ayrıştırılmadı; hiçbir eşik değiştirilmedi.** **Yapılmayanlar:** üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı, Esc/kırmızı düğme/Ctrl+C, yorgan testi; IDF1/HOTA (etiketli veri yok); "%85 hedefi karşılandı" iddiası yoktur. **Bilinen sınırlamalar:** kalıcı yanlış pozitif iz alır, ID'ler konuma yapışır (görünüm kullanılmaz), kadrajdan aynı kenardan dönen kişi yeni ID alır.
+> Ayrıntı: [docs/person_tracking.md](docs/person_tracking.md), [reports/tracking/STAGE_4B_REPORT.md](reports/tracking/STAGE_4B_REPORT.md).
+>
+> **Aşama 4A — Çoklu insan tespiti `COMPLETED` (2026-11-12; yalnızca kapsam içi prototip geliştirme ve doğrulama).** Hazır YOLO (`yolo11n.pt`) ile kare başına birden fazla insan tespiti (yalnızca `person`), canlı kutu/güven/kişi sayısı,
 > ölçülen FPS ve çıkarım gecikmesi, CPU/MPS karşılaştırması, otomatik testler ve kullanıcının gerçek MacBook kamerasıyla yaptığı manuel testler tamamlandı (üç kişi aynı anda `PERSONS: 3`; penceresiz canlı CPU/MPS 30,0 FPS; ≈2 m yükseklikte ön test).
 > **Açık kalanlar (tamamlanmış sayılmaz):** bağımsız doğruluk değerlendirmesi (Precision/Recall/mAP **ölçülmedi**; %85 hedefi karşılandı denmez), gerçek IP kamera doğrulaması `DEFERRED_TO_SYSTEM_INTEGRATION`,
-> yorgan yanlış pozitifi (FP-4A-001, açık) ve en yüksek 7 tespit gözlemi (OBS-4A-001). Kapanıştan sonra kullanıcı `conf=0.35` karşılaştırmasını yaptı (OT-4A-001, `TEST_PERFORMED`): yorgan 0,35'te de kısa süreliğine insan sanıldı (süre gözle daha kısa, ölçülmedi), **sorun çözülmedi**, gerçek insan tespitinin başarısı ölçülmedi; varsayılan `conf` 0,25 kalır. **Aşama 4 genel durumu `IN_PROGRESS`**: takip (Aşama 4B) `PLANNED`, başlatılmamıştır. Ayrıntı: [docs/person_detection.md](docs/person_detection.md), [reports/detection/STAGE_4A_REPORT.md](reports/detection/STAGE_4A_REPORT.md).
+> yorgan yanlış pozitifi (FP-4A-001, açık) ve en yüksek 7 tespit gözlemi (OBS-4A-001). Kapanıştan sonra kullanıcı `conf=0.35` karşılaştırmasını yaptı (OT-4A-001, `TEST_PERFORMED`): yorgan 0,35'te de kısa süreliğine insan sanıldı (süre gözle daha kısa, ölçülmedi), **sorun çözülmedi**, gerçek insan tespitinin başarısı ölçülmedi; varsayılan `conf` 0,25 kalır. **Aşama 4 genel durumu `IN_PROGRESS`**: takip (Aşama 4B) `READY_FOR_MANUAL_VERIFICATION` (gerçek kamera testleri kullanıcıda bekliyor). Ayrıntı: [docs/person_detection.md](docs/person_detection.md), [reports/detection/STAGE_4A_REPORT.md](reports/detection/STAGE_4A_REPORT.md).
 >
 > Aşama 3 — Canlı kamera altyapısı `COMPLETED` (2026-11-11, kullanıcı onayıyla kapatıldı). Kamera/video okuma, ölçülen FPS, canlı pencere
 > (Q, Esc ve kırmızı kapatma düğmesiyle çıkış), CLI ve hata yönetimi tamamlandı. Gerçek kamera doğrulamaları (`camera:0`, 1280×720; Q, Esc ve pencere kapatma ile çıkış `exit=0`; FPS tanısı)
 > kullanıcı tarafından MacBook Pro M4 üzerinde yapıldı. Yeniden bağlanma, kare kaybı, gecikme ölçümü, ileri FPS doğrulaması ve fiziksel bağlantı kopması testi **ertelendi** (backlog B3-1…B3-5; yapılmadı).
 > Ayrıntı: [docs/camera_module.md](docs/camera_module.md), [reports/camera/STAGE_3_REPORT.md](reports/camera/STAGE_3_REPORT.md).
 > Aşama 1 (geliştirme ortamı) ve Aşama 2 (veri seti analizi, `COMPLETED`: `reports/dataset_audit/STAGE_2_CLOSURE_REPORT.md`) tamamlanmıştır.
-> Takip, yüz tespiti/tanıma ve KKD denetimi özellikleri, veri birleştirme ve KKD model eğitimi **henüz geliştirilmemiştir**.
+> Yüz tespiti/tanıma ve KKD denetimi özellikleri, veri birleştirme ve KKD model eğitimi **henüz geliştirilmemiştir**.
 
 ## 1. Proje adı
 
@@ -49,7 +54,7 @@ sistem geliştirmektir.
 | Görüntü işleme | OpenCV | Evet |
 | Nesne tespiti | Ultralytics YOLO | Evet; `yolo11n.pt` Aşama 4A'da resmî kaynaktan indirildi (Git dışı) |
 | Yüz tespiti | MediaPipe (veya SCRFD) | MediaPipe kurulu, kullanılmadı |
-| Çoklu kişi takibi | ByteTrack / BoT-SORT | Hayır (Aşama 4B) |
+| Çoklu kişi takibi | Ultralytics ByteTrack (`lap==0.5.14`); BoT-SORT kullanılmadı | Evet (Aşama 4B; `lap` 4B'de kontrollü kuruldu) |
 | Yüz tanıma | ArcFace tabanlı önceden eğitilmiş model | Hayır (Aşama 7) |
 | Sürüm kontrolü | Git | Evet |
 
@@ -272,6 +277,32 @@ Kod: `src/isg_vision/human_detection/` (`config.py`, `results.py`, `person_detec
 * **Açık görevler:** `PENDING_MANUAL_TEST — CONFIDENCE_THRESHOLD_0_35` (OT-4A-001, `TEST_PERFORMED`: kullanıcı yaptı, **sorunu çözmedi**; gerçek insan tespitinin başarısı ölçülmedi; varsayılan `conf` 0,25 değişmedi); bağımsız doğruluk ölçümü (OT-4A-002); gerçek IP kamera (OT-4A-003, `DEFERRED_TO_SYSTEM_INTEGRATION`); 7 tespit gözlemi (OT-4A-004). Bilinen sınırlama: FP-4A-001 (yorgan insan sanıldı; `conf 0.35`'te de kısa süreliğine görüldü; açık).
 * Testler: `.venv/bin/python -m unittest discover -s tests` (gerçek kamera açmaz, ağ kullanmaz; gerçek model testleri ağırlık yoksa atlanır).
 
+## 13.4 Aşama 4B — Çoklu insan takibi (komutlar)
+
+Durum: `READY_FOR_MANUAL_VERIFICATION` (kullanıcının gerçek MacBook kamerası testleri bekliyor). Amaç: 4A'nın `DetectionResult`'larını Ultralytics **ByteTrack**'e vererek kameradaki/videodaki birden fazla insana **geçici Track ID** atamak, ID'yi kareler arasında korumaya çalışmak.
+**YOLO her karede yalnızca bir kez çalışır** (`YOLO.track()` kullanılmadı). **Track ID bir çalışan kimliği değildir** (oturum kapsamlı, geçici); yüz/kimlik tanıma, KKD yoktur; görüntü kaydedilmez; ağ kullanılmaz; paket otomatik kurulmaz. Tam teknik doküman: [docs/person_tracking.md](docs/person_tracking.md).
+
+Kod: `src/isg_vision/tracking/` (`config.py`, `results.py`, `bytetrack_adapter.py`, `metrics.py`, `visualization.py`, `pipeline.py`, `cli.py`, `benchmark.py`, `errors.py`), betikler: `run_person_tracking.py`, `benchmark_person_tracking.py`. Ek bağımlılık: `lap==0.5.14` (`requirements.txt`).
+
+```bash
+.venv/bin/python scripts/run_person_tracking.py --source camera --camera-index 0 --device mps
+.venv/bin/python scripts/run_person_tracking.py --source camera --camera-index 0 --device cpu
+.venv/bin/python scripts/run_person_tracking.py --source video --video-path /yol/video.mp4 --device mps
+.venv/bin/python scripts/run_person_tracking.py --source camera --camera-index 0 --device mps --no-display --max-frames 300
+.venv/bin/python scripts/run_person_tracking.py --source camera --camera-index 0 --device mps --conf 0.25
+.venv/bin/python scripts/run_person_tracking.py --help
+.venv/bin/python scripts/benchmark_person_tracking.py --video-path results/person_detection/sentetik_cok_kisili_1280x720.mp4 --scaling   # hız ölçümü (doğruluk DEĞİL)
+```
+
+* Pencere: her aktif kişi için kutu + `ID n`; `DETECTIONS`, `ACTIVE TRACKS`, `LOST TRACKS` (ayrı sayılar), FPS, YOLO çıkarım ve ByteTrack süreleri; çıkış `Q` / `Esc` / pencereyi kapatma / `Ctrl+C`. Bitişte **iz özeti** (ID başına ilk-son kare, süre, güven) yazılır: kısa/düşük güvenli izler yanlış pozitif adayıdır.
+* Eşikler (`--track-high-thresh`, `--track-low-thresh`, `--new-track-thresh`, `--track-buffer`, `--match-thresh`) Ultralytics varsayılanlarıdır, doğrulanmış aralıklarla açıktır; 4A `conf` varsayılanı (0,25) değişmedi. Varsayılanda ByteTrack'in düşük güvenli kurtarma aşaması **fiilen kapalıdır** (CLI başlangıçta açıklar).
+* `lap` kurulu değilse hiçbir şey kurulmaz; hata mesajı kurulum komutunu verir (`.venv/bin/python -m pip install lap==0.5.14`), kamera açılmaz.
+* **Ölçülen:** ByteTrack ≈ 0,4 ms/kare (CPU/MPS; 6–8 kişi), YOLO çıkarımının %2–4'ü; sentetik videoda CPU ≈ 49 / MPS ≈ 92 FPS (tespit+takip). **Ölçülmeyen:** canlı kamera performansı, IDF1/HOTA, gerçek yorgan davranışı.
+* **Bilinen sınırlamalar:** kalıcı yanlış pozitif Track ID alır (ByteTrack elemez); ID'ler konuma yapışır, görünüm kullanılmaz (hızlı yer değiştirmede ID switch); kadrajdan aynı kenardan dönen kişi yeni ID alır; basılı insan fotoğrafı (poster) insan sanılabilir.
+* **Gerçek kamera (kullanıcı, 2026-11-12), KISMEN:** pencereli MPS 2924 kare 16,3 FPS; penceresiz CPU ve MPS 29,9 FPS (YOLO 18,5 / 14,7 ms, ByteTrack 0,2 / 0,4 ms); Q ile çıkış. **Panodaki basılı fotoğraf insan sanılıp Track ID aldı (FP-4B-001); iki gerçek kişi varken dört aktif iz ve çakışan büyük kutular görüldü; kaynağı (YOLO mu ByteTrack mı) ayrıştırılmadı.** Üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı ve Esc/kırmızı düğme/Ctrl+C çıkışları **yapılmadı**. Hiçbir eşik değiştirilmedi; tanı planı: docs/person_tracking.md §21, çözüm adayları: §22.
+* **Açık görevler:** `OT-4B-001…005` (gerçek kamera manuel testleri [kısmen], yorgan gözlemi, takip doğruluğu, canlı performans [kısmen], poster/çakışan kutu tanısı), 4A'dan `FP-4A-001`, `OT-4A-002`, `OT-4A-003`, `OT-4A-004`. Manuel test planı: docs/person_tracking.md §17.
+* Testler: `.venv/bin/python -m unittest discover -s tests` — 883 test (gerçek kamera açmaz, ağ kullanmaz; gerçek model/ByteTrack testleri `lap`/ağırlık yoksa açıkça atlanır).
+
 ## 14. Geliştirme aşamaları
 
 Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [docs/project_plan.md](docs/project_plan.md)
@@ -280,7 +311,7 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 1. **Proje ortamının hazırlanması** — tamamlandı
 2. **Veri setlerinin analizi ve doğrulanması** — `COMPLETED` (22/22 kullanıcı kararı uygulandı; 990 görüntü = 794 train + 196 validation)
 3. **Canlı kamera altyapısı** — `COMPLETED`: OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
-4. **Çoklu insan tespiti ve takibi** — 4A tespit: `COMPLETED` (kapsam içi prototip); 4B takip: `PLANNED` (Aşama 4 genel durumu `IN_PROGRESS`; 4B bitene kadar `COMPLETED` olmaz)
+4. **Çoklu insan tespiti ve takibi** — 4A tespit: `COMPLETED` (kapsam içi prototip); 4B takip: `READY_FOR_MANUAL_VERIFICATION` (otomatik/kayıtlı-sentetik doğrulamalar tamam; gerçek kamera testleri kullanıcıda; Aşama 4 genel durumu `IN_PROGRESS`, 4B `COMPLETED` olana kadar `COMPLETED` olmaz)
 5. **Çoklu yüz tespiti**
 6. **Çalışan kayıt sistemi**
 7. **Çoklu çalışan kimlik tanıma**
@@ -294,10 +325,14 @@ Aşama kapanış kararları (Aşama 3 dahil) ve sonraki aşamaya geçiş kullan�
 
 ## 15. Mevcut geliştirme durumu
 
+**Aşama 4B — Çoklu insan takibi (`READY_FOR_MANUAL_VERIFICATION`, 2026-11-12).** Eklenenler: `PersonTracker` (4A `DetectionResult` → gerçek Ultralytics ByteTrack → `TrackingResult`; YOLO kare başına tek çağrı; geçici, oturum kapsamlı Track ID; kayıp tamponu ve aktif iz ayrımı; kaynak/çözünürlük değişiminde otomatik sıfırlama; kare sırası ve girdi doğrulaması),
+`TrackingConfig` (Ultralytics varsayılanları; YOLO `conf` ↔ ByteTrack eşik etkileşiminin çalışma anı açıklaması), canlı görselleştirme (kutu + `ID n`, `DETECTIONS`/`ACTIVE TRACKS`/`LOST TRACKS`), `run_tracking` döngüsü, `scripts/run_person_tracking.py`, benchmark ve `lap==0.5.14` bağımlılığı (otomatik kurulum engellendi).
+**287 yeni test** (203 mock/birim, 62 gerçek ByteTrack, 20 gerçek YOLO + ByteTrack, 2 isteğe bağlı GUI); toplam 883, önceki 596 korundu; Aşama 2 bütünlüğü 12/12. Ölçüm (kayıtlı sentetik video): ByteTrack ≈ 0,4 ms/kare. **Yapılmayan / bekleyen:** gerçek MacBook kamerası manuel testlerinin çoğu (yalnızca pencereli/penceresiz koşular ve Q çıkışı yapıldı; poster yanlış pozitifi FP-4B-001 gözlendi, kaynağı ayrıştırılmadı), takip doğruluğu (IDF1/HOTA ölçülmedi), gerçek yorgan gözlemi (FP-4A-001 çözülmedi), canlı kare→sonuç gecikmesi, gerçek IP kamera (`DEFERRED_TO_SYSTEM_INTEGRATION`). Aşama 5 başlatılmamıştır.
+
 **Aşama 4A — Çoklu insan tespiti (`COMPLETED`, 2026-11-12; kapsam içi prototip geliştirme ve doğrulama).** Eklenenler: `PersonDetector` (hazır `yolo11n.pt`, yalnızca `person`, model bir kez yüklenir, `person` kimliği metadata'dan), `DetectionConfig`/cihaz seçimi (`auto`/`cpu`/`mps`; açıkça `mps` istenip yoksa hata),
 sonuç veri yapıları (piksel `xyxy`, güven), kutu/güven/kişi sayısı görselleştirmesi, `FrameSource` → `PersonDetector` döngüsü ve `scripts/run_person_detection.py`, ölçüm altyapısı (çıkarım gecikmesi, uçtan uca FPS, kare→sonuç gecikmesi), CPU/MPS karşılaştırması,
 Precision/Recall/F1/mAP değerlendirme altyapısı ve otomatik testler (mock testler ile **gerçek model** testleri ayrı). Gerçek model Ultralytics örnek görüntülerinde 4 ve 2 kişiyi tespit etti; sentetik 1280×720 videoda CPU ≈51,7 FPS / MPS ≈104,2 FPS (pencere yok, çıkarım medyanı 18,8 / 9,1 ms; yalnızca bu makine ve oturum).
-Kullanıcı gerçek MacBook kamerasında doğruladı: üç kişi aynı anda `PERSONS: 3`; penceresiz canlı hız CPU ve MPS'te 30,0 FPS (medyan çıkarım MPS 13,4 ms, CPU 18,5 ms); pencereli FPS 18,4–25,3 (nedeni ayrıştırılmadı; `conf` farkına atfedilmez); ≈2 m yükseklikte ön test; Q/Esc/kırmızı düğme/Ctrl+C ile çıkış. **Açık / yapılmayan:** `conf=0.35` testi yapıldı ama yorgan yanlış pozitifini çözmedi (OT-4A-001, `TEST_PERFORMED`), doğruluk ölçümü (etiketli bağımsız küme yok; Precision/Recall/mAP ölçülmedi, %85 hedefi karşılandı denmez), gerçek IP kamera (`DEFERRED_TO_SYSTEM_INTEGRATION`), yorgan yanlış pozitifi FP-4A-001 ve 7 tespit gözlemi OBS-4A-001, takip (4B). Aşama 4B başlatılmamıştır.
+Kullanıcı gerçek MacBook kamerasında doğruladı: üç kişi aynı anda `PERSONS: 3`; penceresiz canlı hız CPU ve MPS'te 30,0 FPS (medyan çıkarım MPS 13,4 ms, CPU 18,5 ms); pencereli FPS 18,4–25,3 (nedeni ayrıştırılmadı; `conf` farkına atfedilmez); ≈2 m yükseklikte ön test; Q/Esc/kırmızı düğme/Ctrl+C ile çıkış. **Açık / yapılmayan:** `conf=0.35` testi yapıldı ama yorgan yanlış pozitifini çözmedi (OT-4A-001, `TEST_PERFORMED`), doğruluk ölçümü (etiketli bağımsız küme yok; Precision/Recall/mAP ölçülmedi, %85 hedefi karşılandı denmez), gerçek IP kamera (`DEFERRED_TO_SYSTEM_INTEGRATION`), yorgan yanlış pozitifi FP-4A-001 ve 7 tespit gözlemi OBS-4A-001, takip (4B). Aşama 4B bu aşamanın ardından geliştirildi (yukarıda).
 
 **Aşama 3 — Canlı kamera altyapısı (`COMPLETED`, 2026-11-11, kullanıcı onayıyla).** Eklenenler: `FrameSource` (kamera/video ortak kare okuma), `FramePacket` (kare + metadata), `FpsMeter`, OpenCV
 canlı pencere (overlay), `scripts/run_camera.py`, hata yönetimi, macOS pencere kapatma düzeltmesi (`macos_window.py`) ve `tests/test_camera_*.py` otomatik testleri. Kullanıcı gerçek kamerada doğruladı:

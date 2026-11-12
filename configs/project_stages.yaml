@@ -6,7 +6,7 @@ stages:
   1: {title: "Proje ortamının hazırlanması", status: completed}
   2: {title: "Veri setlerinin analizi ve doğrulanması", status: completed}
   3: {title: "Canlı kamera altyapısı", status: completed}
-  4: {title: "Çoklu insan tespiti ve takibi", status: in_progress}   # 4A ve 4B alt aşamaları: aşağıdaki stage4_substages; 4 yalnızca 4B de bitince COMPLETED olur
+  4: {title: "Çoklu insan tespiti ve takibi", status: in_progress}   # 4A ve 4B alt aşamaları: aşağıdaki stage4_substages; 4 yalnızca 4B de COMPLETED olunca COMPLETED olur
   5: {title: "Çoklu yüz tespiti", status: planned}
   6: {title: "Çalışan kayıt sistemi", status: planned}
   7: {title: "Çoklu çalışan kimlik tanıma", status: planned}
@@ -33,14 +33,19 @@ stage3_deferred_backlog:
   B3-3: {title: "Gecikme ölçümü", target_stages: [4, 12]}
   B3-4: {title: "Gerçek kamera FPS'inin ileri doğrulaması", target_stages: [4, 12]}
   B3-5: {title: "Fiziksel bağlantı kopması testi", target_stages: [12]}
+# 4B notu (2026-11-12): B3-3 yalnızca kayıtlı videoda (kare->takip sonucu gecikmesi) ölçüldü, canlıda bildirilmedi; B3-4 kısmen (kullanıcının canlı koşuları, bağımsız zaman referansı yok); B3-2 yapılmadı. Hepsi ertelenmiş kalır (OT-4B-004).
 
-# Aşama 4 alt aşamaları (kullanıcı kararı, 2026-11-12): 4A çoklu insan tespiti, 4B çoklu insan takibi. Aşama 4 genel durumu, 4B tamamlanana kadar COMPLETED OLMAZ.
+# Aşama 4 alt aşamaları (kullanıcı kararı, 2026-11-12): 4A çoklu insan tespiti, 4B çoklu insan takibi. Aşama 4 genel durumu, 4B COMPLETED olana kadar COMPLETED OLMAZ.
 # 4A: COMPLETED (2026-11-12) — yalnızca kapsam içi prototip geliştirme ve doğrulama: kod, otomatik testler, gerçek model doğrulamaları ve kullanıcının MacBook kamerasıyla yaptığı manuel testler tamam.
 # Kapanışta açık kalanlar aşağıdaki stage4a_open_items / stage4a_known_limitations içindedir (tamamlanmış sayılmaz). Aşama 4B başlatılmamıştır.
 # Ayrıntı: reports/detection/STAGE_4A_REPORT.md, docs/person_detection.md
+# 4B: READY_FOR_MANUAL_VERIFICATION (2026-11-12) — kod, otomatik testler (883), gerçek ByteTrack ve gerçek YOLO+ByteTrack testleri, kayıtlı/sentetik video ölçümleri tamam;
+# gerçek MacBook kamerası manuel testleri yalnızca KISMEN yapıldı (COMPLETED DEĞİL): pencereli MPS 2924 kare 16,3 FPS, penceresiz CPU/MPS 29,9 FPS, Q ile çıkış; üç kişi/örtüşme/yer değiştirme/ID switch/kadrajdan çıkma/yüksek açı/diğer çıkışlar YAPILMADI.
+# Canlıda poster yanlış pozitifi gözlendi (FP-4B-001); kaynağı ayrıştırılmadı. Takip doğruluğu (IDF1/HOTA) ölçülmedi. Aşağıdaki stage4b_* bölümlerine bakın.
+# Ayrıntı: reports/tracking/STAGE_4B_REPORT.md, docs/person_tracking.md
 stage4_substages:
   4A: {title: "Çoklu insan tespiti", status: completed}
-  4B: {title: "Çoklu insan takibi", status: planned}
+  4B: {title: "Çoklu insan takibi", status: ready_for_manual_verification}
 
 # Aşama 4A kapanışında (2026-11-12) AÇIK kalan görevler. OT-4A-001 kapanıştan sonra kullanıcı tarafından test edildi ama sorunu çözmedi; diğerleri yapılmamıştır. Hiçbiri tamamlanmış sayılmaz.
 stage4a_open_items:
@@ -52,6 +57,31 @@ stage4a_open_items:
 # Bilinen sınırlamalar / gözlemler (Aşama 4A kapanışı).
 stage4a_known_limitations:
   FP-4A-001: {title: "Yorgan/kumaş kısa süreli insan olarak tespit edildi (conf 0.25, MacBook ≈2 m yükseklikte; conf 0.35'te de kısa süreliğine görüldü, süre gözle daha kısa ama ölçülmedi; çözülmedi; tek kullanıcı gözlemi)", status: open_known_limitation}
+
+# Aşama 4B (2026-11-12) AÇIK görevler. Hiçbiri tamamlanmış sayılmaz; 4A'nın açık görevleri (OT-4A-002/003/004, FP-4A-001) aynen geçerlidir.
+stage4b_open_items:
+  OT-4B-001: {title: "Gerçek MacBook kamerası manuel testleri (docs/person_tracking.md bölüm 17). YAPILAN: pencereli MPS oturumu (2924 kare), Q ile sorunsuz çıkış. YAPILMAYAN/bildirilmeyen: tek kişi kontrol listesi, üç kişi, yer değiştirme/ID switch, kısmi örtüşme, kadrajdan çıkma, yüksek kamera açısı (~2 m), Esc/kırmızı düğme/Ctrl+C ile çıkış, çıkış kodu ve kameranın serbest kalması", status: partially_performed}
+  OT-4B-002: {title: "Yorgan yanlış pozitifi gözlemi (Manuel Test 7): yorgan Track ID alıyor mu, kaç kare/saniye sürüyor, --new-track-thresh 0.6 etkisi ve gerçek kişi üzerindeki bedeli; YAPILMADI; FP-4A-001 çözülmedi", status: pending_user_verification}
+  OT-4B-003: {title: "Takip doğruluğu: etiketli/izinli değerlendirme videosuyla ID switch ve IDF1/HOTA/MOTA (ölçülmedi; etiketli takip verisi yok; %85 hedefi karşılandı denmez)", status: open}
+  OT-4B-004: {title: "Canlı kamera performansı. YAPILAN (kullanıcı): pencereli MPS 16,3 FPS (YOLO 17,7 / ByteTrack 0,5 ms), penceresiz CPU 29,9 FPS (18,5 / 0,2 ms), penceresiz MPS 29,9 FPS (14,7 / 0,4 ms). EKSİK: okuma/çizim/gösterme/kare->sonuç satırları, pencereli CPU, ham kamera ölçümü aynı oturumda; backlog B3-3 ve B3-4 ile ilişkili", status: partially_performed}
+  OT-4B-005: {title: "Poster/çakışan büyük kutu tanısı: kaynak YOLO tespiti mi ByteTrack mi? Test planı T0-T7 hazır (docs/person_tracking.md bölüm 21, rapor bölüm 26); koşulmadı. Eşik/filtre çözümleri doğrulama yapılana kadar UYGULANMAZ", status: pending_user_verification}
+
+# Aşama 4B canlı gözlemler (kullanıcı, gerçek MacBook kamerası, 2026-11-12). Hiçbiri çözülmüş sayılmaz.
+stage4b_observations:
+  FP-4B-001: {title: "Panodaki basılı erkek fotoğrafı insan olarak algılandı ve Track ID aldı (ID 167; pencereli MPS oturumu; tek kullanıcı gözlemi; güveni ve kaç kare sürdüğü bildirilmedi)", status: open_known_limitation}
+  OBS-4B-001: {title: "İki gerçek kişi varken dört aktif Track ID ve gerçek kişiler üzerinde çakışan büyük takip kutuları; ACTIVE <= DETECTIONS değişmezi gereği en az dört YOLO kutusu vardı; kutuların ham YOLO çıktısında olup olmadığı ayrıştırılmadı (OT-4B-005)", status: open_investigation}
+  OBS-4B-002: {title: "Pencereli canlı FPS 16,3 vs penceresiz 29,9 (2924 vs 300 kare, farklı oturumlar); imshow+waitKey(1) kameasız ortamda ~15-17 ms ölçüldü; fark tam açıklanmadı; 4A pencereli 18,4-25,3 FPS ile aynı aile", status: open_investigation}
+
+# Aşama 4B bilinen sınırlamalar (ayrıntı: reports/tracking/STAGE_4B_REPORT.md bölüm 20, docs/person_tracking.md bölüm 16).
+stage4b_known_limitations:
+  KL-4B-001: {title: "ID'ler konuma yapışır (ByteTrack görünüm kullanmaz): hızlı/anlık yer değiştirmede ID switch; tampon içinde kaybolanın konumuna giren kişi eski ID'yi devralır", status: open_known_limitation}
+  KL-4B-002: {title: "Kalıcı (statik) yanlış pozitif sürekli Track ID alır; ByteTrack yalnızca tek karelik tespitleri eler (FP-4A-001 çözülmedi)", status: open_known_limitation}
+  KL-4B-003: {title: "Kadrajdan çıkıp aynı kenardan dönen kişi tampon süresi dolmadan bile yeni ID alır", status: open_known_limitation}
+  KL-4B-004: {title: "Düşük güvenli kurtarma aşaması varsayılan conf 0.25 ile fiilen kapalı; açmak şüpheli iz ömrünü uzatır, yararı gösterilemedi", status: open_known_limitation}
+  KL-4B-005: {title: "track_buffer kare sayısıdır (FPS'e bağlı süre); oturumun ilk karesi onaysız iz alır; çıktı kutusu Kalman tahminidir; hızlı hareket (düşük IoU) iz oluşturmaz", status: open_known_limitation}
+  KL-4B-006: {title: "BYTETracker/Boxes dahili Ultralytics API'sidir (ultralytics==8.4.210'a sabit; sürüm riski); AGPL-3.0 yükümlülükleri ürünleştirmede yeniden değerlendirilmeli", status: open_known_limitation}
+  KL-4B-007: {title: "Kanıt sınırı: gerçek-ByteTrack senaryoları idealize sentetik, gerçek-model testleri örnek görüntülerden; gerçek kamerada ID sürekliliği ve IDF1/HOTA ölçülmedi", status: open_known_limitation}
+  KL-4B-008: {title: "ByteTrack çakışan/iç içe kutuları birleştirmez ve yanlış pozitifi süzmez: kararsız yinelenen veya kalıcı yanlış pozitif kutu kalıcı ek Track ID alır (poster, yorgan); eşik değişiklikleri gerçek kişi kaybettirebilir (montajda ölçüldü)", status: open_known_limitation}
 
 # Aşama 3 kapsamı DIŞINDA kalanlar (kullanıcı talimatı)
 stage3_excludes: ["YOLO eğitimi", "veri seti birleştirme", "model doğruluğu değerlendirmesi"]

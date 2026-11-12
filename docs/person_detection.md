@@ -1,7 +1,7 @@
 # Çoklu İnsan Tespiti Modülü (Aşama 4A)
 
 > **Durum: Aşama 4A `COMPLETED`** (2026-11-12; yalnızca kapsam içi prototip geliştirme ve doğrulama). Kod, otomatik testler, gerçek model doğrulamaları ve kullanıcının gerçek MacBook kamerasıyla yaptığı manuel testler tamamdır (§9.1, §14).
-> Aşama 4 genel durumu **`IN_PROGRESS`**: takip (Aşama 4B) `PLANNED`, başlatılmamıştır. **Açık kalanlar** (kapatılmış sayılmaz, §14): bağımsız doğruluk değerlendirmesi, gerçek IP kamera doğrulaması (`DEFERRED_TO_SYSTEM_INTEGRATION`), yorgan yanlış pozitifi (FP-4A-001) ve ilk oturumdaki en yüksek 7 tespit gözlemi (OBS-4A-001).
+> Aşama 4 genel durumu **`IN_PROGRESS`**: takip (Aşama 4B) bu belgeden sonra geliştirildi ve `READY_FOR_MANUAL_VERIFICATION` durumundadır (gerçek kamera testleri kullanıcıda; bkz. [person_tracking.md](person_tracking.md)). **Açık kalanlar** (kapatılmış sayılmaz, §14): bağımsız doğruluk değerlendirmesi, gerçek IP kamera doğrulaması (`DEFERRED_TO_SYSTEM_INTEGRATION`), yorgan yanlış pozitifi (FP-4A-001) ve ilk oturumdaki en yüksek 7 tespit gözlemi (OBS-4A-001).
 > Kapanıştan sonra kullanıcı `conf=0.35` karşılaştırmasını (OT-4A-001, `TEST_PERFORMED`) yaptı: yorgan 0,35'te de kısa süreliğine insan sanıldı, **FP-4A-001 çözülmedi**; varsayılan `conf` 0,25 kalır. Doğruluk ölçülmedi; %85 hedefinin karşılandığı iddia edilmez.
 > Teknik sonuç raporu: [../reports/detection/STAGE_4A_REPORT.md](../reports/detection/STAGE_4A_REPORT.md).
 
@@ -119,7 +119,7 @@ with FrameSource(SourceConfig.camera(0)) as source, PersonDetector(DetectionConf
             print(person.bbox_xyxy, person.confidence)
 ```
 
-Hazır döngü (`pipeline.run_detection`) pencere, Q/Esc/pencere kapatma/`Ctrl+C`, video sonu ve `--max-frames` çıkışlarını ve ölçümleri yönetir. `on_result(packet, result)` kancası, Aşama 4B takipçisinin aynı döngüye bağlanması için bırakılmıştır.
+Hazır döngü (`pipeline.run_detection`) pencere, Q/Esc/pencere kapatma/`Ctrl+C`, video sonu ve `--max-frames` çıkışlarını ve ölçümleri yönetir. `on_result(packet, result)` kancası, Aşama 4B takipçisinin aynı döngüye bağlanması için bırakılmıştır (4B'de kanca çizimi ve takip süresini kapsamadığı için aynı yapıda kardeş bir döngü, `tracking.pipeline.run_tracking`, yazıldı; bu döngü ve `run_detection` değişmedi).
 
 ## 6. Canlı görüntüleme
 
@@ -293,7 +293,7 @@ Kullanıcının kendi MacBook Pro M4'ünde, gerçek kamerayla yaptığı testler
 | Video kanıtı | Kaydedilmedi (varsayılan olarak görüntü kaydedilmez) |
 | Önem | İzlenmesi ve sonraki aşamalarda değerlendirilmesi gereken yanlış pozitif |
 | Güncelleme (OT-4A-001, `conf 0.35`) | Yorgan `conf 0.35`'te de kısa süreliğine insan sanıldı (eşik gereği güven ≥ 0,35 — *[Türetilmiş]*); yanlış tespit süresi gözle görülür biçimde daha kısaydı, **sayısal ölçülmedi**. **Sorun çözülmedi; kayıt açık kalır.** Varsayılan `conf` 0,25 |
-| Yorum sınırı | Tek gözlemdir; genel model başarısızlığı sonucu çıkarılmaz. ByteTrack'in yanlış pozitifleri otomatik çözeceği iddia edilmez (etkisi 4B'de ölçülmeden bilinmez). Kamera açısının FPS düşüşüne neden olduğu da söylenmez (kontrollü deney yok) |
+| Yorum sınırı | Tek gözlemdir; genel model başarısızlığı sonucu çıkarılmaz. ByteTrack'in yanlış pozitifleri otomatik çözeceği iddia edilmez (etkisi 4B'de kontrollü sahte dizilerle incelendi; gerçek yorganla ölçülmedi, bkz. [person_tracking.md](person_tracking.md) §12). Kamera açısının FPS düşüşüne neden olduğu da söylenmez (kontrollü deney yok) |
 | İlgili görev | OT-4A-001 (`conf 0.35` karşılaştırması: yapıldı, çözmedi), OT-4A-002 (bağımsız değerlendirme) |
 
 **OBS-4A-001 — Investigation / Unverified Peak Detection Count.** Test 1'de (800 kare, kare başına ortalama 2,32 kişi) en yüksek tespit sayısı **7** olarak raporlandı; aynı oturumda üç kişi kadraja girmişti. Bu 7 tespitin hangi karelerde ve hangi görüntü içeriğiyle oluştuğu **bilinmiyor** (kayıt yok; CLI özeti yalnızca en yüksek sayıyı yazar, hangi karede olduğunu yazmaz).
@@ -363,5 +363,5 @@ Test tasarımı (yapılmadan önce yazılmıştı): amaç yukarıdaki 5 soruydu;
 * `DetectionResult` / `PersonDetection`: piksel `xyxy`, güven, `frame_index`, `timestamp` — takipçinin ihtiyaç duyduğu girdi (kare başına liste).
 * `run_detection(..., on_result=...)` kancası ve `FramePacket.timestamp` (monotonic zaman) takipçiyi döngüye bağlamak için.
 * Ölçüm altyapısı (`LatencyStats`, benchmark) takip ekleyince gecikme artışını ölçmek için yeniden kullanılabilir.
-* **Notlar:** ByteTrack/BoT-SORT için Ultralytics izleyicileri ek bağımlılık (ör. `lap`) isteyebilir; ortamda `lap` ve `scipy` kurulu **değildir** — kurulum kararı 4B'de verilmelidir. Ultralytics bağımlılıkları kendiliğinden kurmaya (ağ) çalışabilir; 4B'de bu da `YOLO_OFFLINE` ile birlikte ele alınmalıdır.
+* **Notlar:** ByteTrack/BoT-SORT için Ultralytics izleyicileri ek bağımlılık (ör. `lap`) isteyebilir; 4A kapanışında ortamda `lap` ve `scipy` kurulu **değildi** — kurulum kararı 4B'de verildi: yalnızca `lap==0.5.14` kuruldu, `scipy` gerekmediği için eklenmedi (bkz. [person_tracking.md](person_tracking.md) §4). Ultralytics bağımlılıkları kendiliğinden kurmaya (ağ) çalışabilir; 4B'de bu da `YOLO_OFFLINE` ile birlikte ele alınmalıdır.
   Takip, kimlik/kalıcı numara üretecektir; bu modül bunları üretmez.

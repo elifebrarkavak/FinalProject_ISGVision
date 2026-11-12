@@ -12,3 +12,7 @@ mediapipe==1.2.2
 # Asama 2 (veri seti analizi): gorsellestirme ve goruntu okuma (ultralytics ile zaten gelir, acikca sabitlendi)
 pillow==13.0.0
 matplotlib==3.11.2
+# Asama 4B (ByteTrack takibi): ultralytics.trackers.utils.matching modul duzeyinde `import lap` yapar ve yoksa pip ile OTOMATIK
+# KURMAYA calisir; bu yuzden acikca sabitlenir. cp311 macOS arm64 hazir wheel, BSD-2-Clause, tek bagimlilik numpy>=1.21.6.
+# scipy GEREKMEZ (BYTETracker lap.lapjv kullanir; ultralytics'in scipy'siz NumPy yedegi vardir) ve bilincli olarak eklenmedi.
+lap==0.5.14
