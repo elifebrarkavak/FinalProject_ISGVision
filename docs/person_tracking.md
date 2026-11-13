@@ -1,9 +1,9 @@
 # Çoklu İnsan Takibi Modülü (Aşama 4B)
 
-> **Durum: Aşama 4B `READY_FOR_MANUAL_VERIFICATION`** (2026-11-12). Kod, otomatik testler (mock, gerçek ByteTrack, gerçek YOLO + ByteTrack, sentetik/kayıtlı örnek görüntü) ve performans ölçümleri tamamdır;
-> **gerçek MacBook kamerası ile manuel testlerin yalnızca bir kısmı yapılmıştır** (§17, §19): pencereli MPS oturumu, penceresiz CPU ve MPS koşuları ve Q ile çıkış *[Kullanıcı]*. Üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı ve diğer çıkış yöntemleri **yapılmadı**. `COMPLETED` iddiası yoktur. Aşama 4 genel durumu **`IN_PROGRESS`**.
-> **Canlı testte yeni yanlış pozitif gözlemi (FP-4B-001):** panodaki basılı erkek fotoğrafı insan olarak algılanıp Track ID aldı (ID 167); iki gerçek kişi varken dört aktif iz ve çakışan büyük kutular görüldü. **Kaynak (YOLO mu ByteTrack mi) henüz ayrıştırılmadı**; tanı planı §21, çözüm adaylarının değerlendirmesi §22. **Hiçbir eşik/varsayılan değiştirilmedi.**
-> **Ölçülmeyenler:** takip doğruluğu (IDF1 / HOTA / MOTA), gerçek kamerada ID sürekliliği/ID switch, canlı gecikme (kare→sonuç), yorgan ve poster yanlış pozitiflerinin kaynağı. "%85 hedefi karşılandı" iddiası yoktur.
+> **Durum: Aşama 4B `COMPLETED`** (2026-11-13, kullanıcı onayıyla; **yalnızca kapsam içi prototip geliştirme ve doğrulama**, açık sınırlamalarla). Önceki durum: `READY_FOR_MANUAL_VERIFICATION` (2026-11-12). Dayanak: ilk görev tanımındaki **28 kabul kriterinin 28'i karşılandı — 24'ü tam kanıtlı, 4'ü sınırlı kanıtlı** (#9 tek insan, #17 yorgan riski, #19 FPS/gecikme, #21 çıkış yöntemleri: canlı kamera kanıtı kısmi/eksik; **tam doğrulanmış sayılmaz**, rapor §23). Aşama 4 genel durumu **`COMPLETED`** (4A ve 4B).
+> Kod, otomatik testler (mock, gerçek ByteTrack, gerçek YOLO + ByteTrack, sentetik/kayıtlı örnek görüntü) ve performans ölçümleri tamamdır. **Gerçek MacBook kamerası ile manuel testler yalnızca kısmen yapılmıştır** (§17, §19, §23): pencereli MPS oturumu, penceresiz CPU ve MPS koşuları, Q ile çıkış *[Kullanıcı]*; 2026-11-13'te çoklu takibin çalıştığı ve **örtüşmede ID değişimi ile kadrajdan çıkıp-girişte yeni ID** oluştuğu **nitel** olarak gözlendi (sayı/oran yok). **Yapılmayan/bildirilmeyen (başarılı sayılmaz):** üç kişi (belirsiz), yer değiştirme, yüksek açı, yorgan, Esc/kırmızı düğme/Ctrl+C (gerçek kamerada), ayrıntılı ID switch kaydı.
+> **Canlı yanlış pozitif FP-4B-001 (basılı poster) AÇIK ve ÇÖZÜLMEDİ** (ID 167; iki gerçek kişi varken dört aktif iz ve çakışan büyük kutular, kullanıcının ekran görüntüsüyle doğrulanmış gözlem). **Test ortamı değişti, poster artık kamerada yok: aynı koşullarda T1/T2 yeniden doğrulaması yapılamıyor** (yapılmadı; tamamlanmış/başarılı değil). Kaynak (YOLO mu ByteTrack mı) ayrıştırılmadı; tanı planı §21 `OT-4B-005` altında **araştırma görevi** olarak taşınır, **4B kapanışını engellemez** (kullanıcı kararı). Çözüm adayları §22; **hiçbir eşik/algoritma/varsayılan değiştirilmedi.**
+> **Ölçülmeyenler:** ID switch **oranı**, takip doğruluğu (IDF1 / HOTA / MOTA — **hiçbir değer üretilmedi**), canlı gecikme (kare→sonuç), yorgan ve poster yanlış pozitiflerinin kaynağı. "%85 hedefi karşılandı" iddiası yoktur. Kapanış, "ID sürekliliği doğrulandı" demek **değildir.**
 > **Track ID bir kimlik değildir:** geçici ve oturum kapsamlıdır; çalışan adı, personel numarası veya biyometrik kimlik DEĞİLDİR.
 > Teknik sonuç raporu: [../reports/tracking/STAGE_4B_REPORT.md](../reports/tracking/STAGE_4B_REPORT.md). Önceki aşama: [person_detection.md](person_detection.md).
 
@@ -199,7 +199,7 @@ Takip tek başına çözüm değildir; çözüm tespit kalitesinde veya sonraki 
 
 ## 13. Testler
 
-`.venv/bin/python -m unittest discover -s tests` — **883 test** (4A kapanışındaki 596 + 287 yeni). Varsayılanda **7 atlanır** (hepsi isteğe bağlı gerçek-pencere GUI testleri: Aşama 3'ten 3, 4A'dan 2, 4B'den 2); `ISG_GUI_TESTS=1` ile 883 test, 0 atlanan. Gerçek kamera açılmaz, izin istenmez, ağ kullanılmaz.
+`.venv/bin/python -m unittest discover -s tests` — **883 test** (340 Aşama 1–3 + 256 4A = önceki **596**, + **287** yeni 4B). Varsayılan çalıştırma: **876 test çalışır ve geçer, 7 atlanır** (`OK (skipped=7)`); atlanan 7 test **başarılı sayılmaz.** Atlananların **hepsi** isteğe bağlı gerçek-pencere (GUI) testidir (`macOS + ISG_GUI_TESTS=1 + grafik oturumu` gerekir; gerçek Cocoa penceresi açarlar, **kamera açmazlar**): Aşama 3'ten 3 (`RealCocoaWindowTest`), 4A'dan 2 (`RealWindowDetectionLoopTest`), 4B'den 2 (`RealWindowTrackingLoopTest`). `ISG_GUI_TESTS=1` ile 883 test, 0 atlanan. Koşullu atlamalar (`yolo11n.pt`, `lap`/`ultralytics`, MPS, örnek görüntüler yoksa) bu makinede **tetiklenmedi**: gerçek ByteTrack (62) ve gerçek YOLO + ByteTrack (20) testleri çalıştı. Önceki raporlarla tutarlıdır (Aşama 3: 340 test / 3 atlanan; 4A: 596 / 5; 4B: 883 / 7). **883 testin hiçbiri gerçek kamera, takip doğruluğu veya canlı performans kanıtı değildir.** Ayrıntı: rapor §12. Gerçek kamera açılmaz, izin istenmez, ağ kullanılmaz.
 Yeni 287 test, kanıt türüne göre **ayrı** raporlanır:
 
 | Tür | Dosya (test sayısı) | Ne kanıtlar / kanıtlamaz |
@@ -216,9 +216,9 @@ Aşama 2 bütünlük denetimi 12/12, `check_environment.py` başarılı.
 
 | Ölçüt | Durum |
 |---|---|
-| ID switch sayısı | Kimlik **bilinen** kontrollü dizilerde sayılır (`count_id_switches`; testler ve §7). Gerçek kamerada/etiketsiz videoda **ölçülmedi** |
+| ID switch sayısı / oranı | Kimlik **bilinen** kontrollü dizilerde sayılır (`count_id_switches`; testler ve §7). Gerçek kamerada/etiketsiz videoda **ölçülmedi; oran üretilmedi** (gerçek kamerada ID değişimi gözlendi, sıklığı bilinmiyor) |
 | IDF1 / MOTA / HOTA | **Ölçülmedi** (etiketli takip verisi yok; hesaplayan kod da yazılmadı) |
-| Takip sürekliliği | Yalnızca betiklenmiş/sentetik dizilerde gözlendi; gerçek ortamda **ölçülmedi** |
+| Takip sürekliliği | Betiklenmiş/sentetik dizilerde gözlendi; gerçek kamerada **yalnızca nitel** gözlendi (kullanıcı, 2026-11-13: örtüşmede ve kadrajdan çıkıp-girişte ID değişimleri); **sayısal olarak ölçülmedi** |
 | FPS ve takip gecikmesi | Kayıtlı videoda ölçüldü (§11); canlı kamerada **ölçülmedi** |
 
 `distinct_tracks` (görülen farklı ID sayısı) ve iz özeti ID parçalanmasına dair **ipucudur**, doğruluk ölçüsü değildir. YOLO güven skoru takip doğruluğu değildir. %85 başarı hedefinin karşılandığı iddia edilmez.
@@ -244,18 +244,20 @@ Sentetik montaj ve örnek görüntüler Ultralytics paketinin kendi dosyalarıd�
 10. AGPL-3.0 (Ultralytics/YOLO11n): ürünleştirilirse lisans yükümlülükleri yeniden değerlendirilmelidir (4A raporu §3).
 11. **Basılı insan fotoğrafı (pano/poster) insan sanılabilir ve Track ID alır** (FP-4B-001, kullanıcının canlı gözlemi; §19). Çakışan büyük kutular gözlendi, kaynağı ayrıştırılmadı (§21).
 12. **Pencereli mod ağırdır:** bu makinede `imshow+waitKey(1)` tek başına ≈ 15–17 ms ölçüldü (§20.4); kullanıcının pencereli canlı koşusu 16,3 FPS verdi, penceresiz 29,9 FPS. Pencereli FPS'in tam nedeni ölçülmedi.
+13. **Örtüşmede ID değişimi (KL-4B-009) ve kadrajdan çıkıp yeniden girişte yeni ID (KL-4B-010) gerçek kamerada gözlendi** (kullanıcı, 2026-11-13; **nitel**; kişi sayısı, sıklık, kenar/süre kayıtlı değil). Madde 1 ve 3 ile uyumludur; ID switch **oranı ölçülmedi**, IDF1/HOTA/MOTA üretilmedi. Track ID kalıcı kişi kimliği olarak kullanılamaz.
+14. **FP-4B-001 (poster) açık ve çözülmedi;** test ortamı değiştiği için aynı koşullarda T1/T2 yeniden doğrulaması yapılamıyor (§21). 4B kapanışını engellemez; `OT-4B-005` araştırma görevi.
 
 ## 17. Manuel MacBook test planı (kullanıcı tarafından yapılacak; Claude ortamında kamera izni yoktur)
 
-**Durum (2026-11-12, kullanıcı bildirimine göre; bildirilmeyen = yapılmadı sayılır):**
+**Durum (2026-11-12, güncelleme 2026-11-13; kullanıcı bildirimine göre; bildirilmeyen = yapılmadı sayılır):** *(Kapanış 2026-11-13: bu testlerin kalanı kapanışı engellemeyen açık görevlerdir — `OT-4B-001`; başarılı sayılmaz.)*
 
 | # | Test | Durum |
 |---|---|---|
 | 1 | Tek kişi | Kontrol listesi **doldurulmadı** (bildirilen sahnede iki gerçek kişi vardı) |
-| 2 | Üç kişi | **Yapılmadı** |
-| 3 | Yer değiştirme / ID switch | **Yapılmadı** |
-| 4 | Kısmi örtüşme | **Yapılmadı** (çakışan büyük kutular gözlendi, bu bir örtüşme senaryosu testi değildir; §19) |
-| 5 | Kadrajdan çıkma | **Yapılmadı** |
+| 2 | Üç kişi | **Belirsiz:** 2026-11-13'te "çoklu takip çalışıyor" bildirildi, kişi sayısı belirtilmedi; üç kişilik test yapıldı sayılmaz |
+| 3 | Yer değiştirme / ID switch | **Ayrıca bildirilmedi** (yapılmadı sayılır); ID değişimleri için bkz. test 4 ve 5 |
+| 4 | Kısmi örtüşme | **Nitel gözlem (kullanıcı, 2026-11-13): örtüşmede ID değişimi gözlendi;** ayrıntılı kayıt yok (kişi sayısı, sıklık, kontrol listesi), başarılı/başarısız etiketi verilmedi. Önceki çakışan büyük kutular (§19) örtüşme senaryosu testi değildi |
+| 5 | Kadrajdan çıkma | **Nitel gözlem (kullanıcı, 2026-11-13): çıkıp yeniden girişte ID değişimi (yeni ID) gözlendi;** kenar/süre koşulları kayıtlı değil, başarılı/başarısız etiketi verilmedi |
 | 6 | Yüksek kamera açısı | **Bildirilmedi** (yapılmadı sayılır) |
 | 7 | Yorgan yanlış pozitifi | **Yapılmadı**; bunun yerine **poster** yanlış pozitifi gözlendi (FP-4B-001, §19) |
 | 8 | Çıkışlar | **Q: sorunsuz** *[Kullanıcı]*. Esc, kırmızı düğme, Ctrl+C, çıkış kodu ve kameranın serbest kalması **bildirilmedi** |
@@ -302,6 +304,13 @@ Sonuç ifadeleri: "ID korundu / ID switch N kez / yeni ID aldı" gibi **gözlemi
 * `run_tracking(..., on_result=lambda paket, tespit, takip: ...)` kancası: `FramePacket` (görüntü), `DetectionResult` (ham tespitler) ve `TrackingResult` aynı kare için birlikte verilir.
 * `TrackedPerson.detection_index`: ham YOLO tespitine dönüş. `LostTrack`: kimlik atamalarının ne zaman bekletileceği/silineceği için kayıp tampon bilgisi.
 * **Uyarılar:** ID'ler oturum kapsamlıdır; kimlik tanıma sonuçları bir `track_id`'ye bağlanıyorsa `reset_reason`/`session_id` değişiminde ve iz silinince geçersiz sayılmalıdır. `track_id` bir kimliğe dönüştürülürken ID devralma/switch olasılığı (§7, §16) göz önünde tutulmalı, tek bir kare yerine birden fazla karedeki yüz eşleşmesiyle doğrulanmalıdır.
+
+**Aşama 5 tasarım notları (4B kapanışı, 2026-11-13; yalnızca girdi notu — Aşama 5 başlatılmadı, Aşama 5 kodu yazılmadı):**
+
+1. **Geçici Track ID, kayıtlı çalışan kimliği değildir; ikisi ayrı kavramdır.** Track ID oturum kapsamlıdır (`(session_id, track_id)`), bellekte yaşar, çalışan adı/personel numarası/biyometrik kimlik içermez ve çalışan kaydıyla (Aşama 6) doğrudan eşlenmez. Çalışan kimliği, kimlik tanıma (Aşama 7) sonucundan gelir; Track ID yalnızca "aynı oturumda aynı iz" bilgisidir.
+2. **ID değişimlerinde yanlış çalışan eşleştirmesi önlenmelidir.** Örtüşmede ID değişimi ve kadrajdan çıkıp-girişte yeni ID gerçek kamerada gözlendi (KL-4B-009/010; oran ölçülmedi). Bir yüzü/çalışanı bir Track ID'ye **kalıcı bağlamak** yanlış eşleştirmeye yol açabilir: tek kare yerine çok kareli doğrulama; iz değiştiğinde, kaybolduğunda, yeni oturumda veya şüpheli (ID devri) durumda eşleşmeyi geçersiz kılma; **belirsizlikte eşleştirmeme (güvenli varsayılan).**
+3. **Yanlış pozitif iz üzerindeki yüz çalışana bağlanmamalıdır** (poster/yorgan, FP-4B-001/FP-4A-001; posterdeki yüz de yüz dedektörü tarafından bulunabilir, §22). Kalıcı ve hareketsiz iz, silme değil **bayrak** adayıdır. Kaynak (YOLO/ByteTrack) ayrıştırılmadı (`OT-4B-005`).
+4. ID değişimi sıklığı bilinmiyor (`OT-4B-003`); Aşama 5 tasarımı bunu "ölçülmemiş" varsaymalı, iyimser varsayım yapmamalıdır.
 
 ## 19. Gerçek MacBook kamerası gözlemleri (kullanıcı, 2026-11-12) *[Kullanıcı]*
 
@@ -383,6 +392,8 @@ Ekran görüntüsünde bir izin **ID 167** olması, bu oturumda o ana kadar **en
 
 ## 21. Poster / çakışan kutu tanısı: YOLO mu, ByteTrack mi?
 
+> **Güncelleme (2026-11-13):** test ortamı değişti, poster artık kameranın arka planında değil; **poster için aynı koşullardaki T1/T2 yeniden doğrulaması yapılamıyor** (yapılmadı; tamamlanmış/başarılı değil). FP-4B-001 **açık ve çözülmedi.** Bu bölüm 4B kapanışında **araştırma görevi** (`OT-4B-005`, kapanışı engellemez) olarak taşınır ve ileride görülecek başka bir statik yanlış pozitif için geçerliliğini korur.
+
 ### 21.1 Şimdiden söylenebilenler
 1. **Değişmez:** `ACTIVE TRACKS ≤ DETECTIONS`. Takipçi yalnızca bu karede bir tespitle eşleşmiş izleri döndürür (çıktı satırlarındaki `idx` tespit dizisine işaret eder); adaptör geçersiz `idx`'i ve yinelenen ID'yi hata sayar; gerçek-model testleri değişmezi denetler. **Dört aktif iz, o karede en az dört YOLO kutusu demektir.** (Ekrandaki `DETECTIONS` değerini bilmiyorum; kullanıcıdan istenir.) Yani ByteTrack kutu **uyduramaz**.
 2. **ByteTrack çakışan/iç içe kutuları birleştirmez, bastırmaz:** gerçek ByteTrack + betiklenmiş tespit *[Ölçüldü]*: bir kişiyi çevreleyen büyük ikinci kutu (IoU = 0,49) ve 15 px yana kaymış ikinci kutu (IoU = 0,60) **ayrı, kararlı ID'ler** aldı; ikinci kutu 3 karenin 2'sinde gelirse bile onaylandı ve ID'sini korudu (aktif iz sayısı 1 ↔ 2 salındı). Yani YOLO'nun kararsız/yinelenen bir kutusu ByteTrack'te **kalıcı bir ek ID'ye** dönüşebilir.
@@ -439,3 +450,12 @@ Kural: gerçek kişi kaybına yol açabilecek hiçbir eşik/filtre, aşağıdaki
 
 **Önerilen sıra:** T0 → T1 (kaynağı ayır) → T2/T3 (güven dağılımı; eşik kararının tek geçerli girdisi) → T4 (klip) → ancak sonra seçenek 1/2/3'ün klip üzerinde **tanı** olarak denenmesi → kabul ölçütü sağlanırsa kullanıcı onayıyla uygulama.
 **Araç notu (eklenmedi; onayınıza bağlı):** T3/T5 için kare bazlı sayısal log (kare, tespit sayısı, ham kutu, iz kutusu, ID, güven; görüntü içermez) ve ham tespitleri ince çizgiyle gösteren bir `--show-detections` seçeneği, ayrıca iz özetinde tüm izleri/süreye göre sıralamayı sağlayan küçük bir seçenek faydalı olur. Bunlar yeni kod ve test demektir; istenirse ayrı bir adım olarak eklenir.
+
+## 23. Kapanış kaydı (2026-11-13)
+
+* **Durum:** Aşama 4B **`COMPLETED`** — kullanıcı onayıyla, **yalnızca kapsam içi prototip geliştirme ve doğrulama**, açık sınırlamalarla. Aşama 4 genel durumu `COMPLETED` (4A ve 4B). Aşama 5 başlatılmadı.
+* **Kabul kriterleri (ilk görev tanımı, 28 madde):** 28'i karşılandı — **24 tam kanıtlı, 4 sınırlı kanıtlı.** Sınırlı kanıtlılar: **#9** tek insan (canlıda ayrı test yok), **#17** yorgan riski (gerçek yorgan testi yok; risk çözülmedi), **#19** FPS/gecikme (canlı kare→sonuç gecikmesi bildirilmedi), **#21** çıkış yöntemleri (gerçek kamerada yalnızca Q doğrulandı). Bu dördü eksiksiz doğrulanmış sayılmaz. Tablo ve kanıtlar: rapor §23.
+* **Açık görevler (kapanışı engellemez, tamamlanmış sayılmaz):** `OT-4B-001` (kalan gerçek kamera kontrolleri), `OT-4B-002` (yorgan), `OT-4B-003` (ID switch oranı, IDF1/HOTA/MOTA — ölçülmedi), `OT-4B-004` (canlı performans eksikleri), `OT-4B-005` (poster/çakışan kutu tanısı — **araştırma görevi**); 4A'dan `FP-4A-001`, `OT-4A-002/003/004/005`.
+* **Açık gözlem ve sınırlamalar:** `FP-4B-001` (poster; **çözülmedi**, test ortamı değiştiği için T1/T2 aynı koşullarda yeniden doğrulanamıyor), `OBS-4B-001/002`, `OBS-4B-003`; bilinen sınırlamalar `KL-4B-001…010` — özellikle **örtüşmede ID değişimi (KL-4B-009)** ve **kadrajdan çıkıp-girişte yeni ID (KL-4B-010)** gerçek kamerada gözlendi (nitel, oran ölçülmedi).
+* **Değişmeyenler:** 4A kaynak kodu, YOLO model ağırlıkları, ham veri, ByteTrack algoritması ve mevcut eşikler (`conf 0.25`, `track_high 0.25`, `track_low 0.1`, `new_track 0.25`, `track_buffer 30`, `match_thresh 0.8`, `fuse_score True`).
+* Ayrıntı: [../reports/tracking/STAGE_4B_REPORT.md](../reports/tracking/STAGE_4B_REPORT.md) (§23, §29), [../reports/tracking/STAGE_4B_CLOSURE_ASSESSMENT.md](../reports/tracking/STAGE_4B_CLOSURE_ASSESSMENT.md).

@@ -1,7 +1,7 @@
 # Çoklu İnsan Tespiti Modülü (Aşama 4A)
 
 > **Durum: Aşama 4A `COMPLETED`** (2026-11-12; yalnızca kapsam içi prototip geliştirme ve doğrulama). Kod, otomatik testler, gerçek model doğrulamaları ve kullanıcının gerçek MacBook kamerasıyla yaptığı manuel testler tamamdır (§9.1, §14).
-> Aşama 4 genel durumu **`IN_PROGRESS`**: takip (Aşama 4B) bu belgeden sonra geliştirildi ve `READY_FOR_MANUAL_VERIFICATION` durumundadır (gerçek kamera testleri kullanıcıda; bkz. [person_tracking.md](person_tracking.md)). **Açık kalanlar** (kapatılmış sayılmaz, §14): bağımsız doğruluk değerlendirmesi, gerçek IP kamera doğrulaması (`DEFERRED_TO_SYSTEM_INTEGRATION`), yorgan yanlış pozitifi (FP-4A-001) ve ilk oturumdaki en yüksek 7 tespit gözlemi (OBS-4A-001).
+> Aşama 4 genel durumu **`COMPLETED`** (2026-11-13): takip (Aşama 4B) bu belgeden sonra geliştirildi ve `COMPLETED` oldu (kapsam içi prototip, açık sınırlamalarla; bkz. [person_tracking.md](person_tracking.md)). *(Bu belge 4A kapanış durumunu anlatır; 4A `COMPLETED` durumu ve aşağıdaki açık kalanlar değişmedi.)* **Açık kalanlar** (kapatılmış sayılmaz, §14): bağımsız doğruluk değerlendirmesi, gerçek IP kamera doğrulaması (`DEFERRED_TO_SYSTEM_INTEGRATION`), yorgan yanlış pozitifi (FP-4A-001) ve ilk oturumdaki en yüksek 7 tespit gözlemi (OBS-4A-001).
 > Kapanıştan sonra kullanıcı `conf=0.35` karşılaştırmasını (OT-4A-001, `TEST_PERFORMED`) yaptı: yorgan 0,35'te de kısa süreliğine insan sanıldı, **FP-4A-001 çözülmedi**; varsayılan `conf` 0,25 kalır. Doğruluk ölçülmedi; %85 hedefinin karşılandığı iddia edilmez.
 > Teknik sonuç raporu: [../reports/detection/STAGE_4A_REPORT.md](../reports/detection/STAGE_4A_REPORT.md).
 

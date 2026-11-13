@@ -1,8 +1,10 @@
 # Aşama 4B — ByteTrack ile Çoklu İnsan Takibi: Sonuç Raporu
 
-**Tarih:** 2026-11-12 · **Durum: `READY_FOR_MANUAL_VERIFICATION`** (kod, otomatik testler, gerçek ByteTrack ve gerçek YOLO + ByteTrack entegrasyon testleri, kayıtlı/sentetik video ölçümleri tamam; **gerçek MacBook kamerası ile manuel testler yalnızca kısmen yapıldı** — §24; üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı ve Esc/kırmızı düğme/Ctrl+C çıkışları yapılmadı) — `COMPLETED` değildir.
+**Tarih:** 2026-11-12 (kapanış: 2026-11-13) · **Durum: `COMPLETED`** (2026-11-13, kullanıcı onayıyla; **yalnızca kapsam içi prototip geliştirme ve doğrulama**, açık sınırlamalarla — §29). Önceki durum `READY_FOR_MANUAL_VERIFICATION` (2026-11-12).
+**Dayanak:** ilk görev tanımındaki **28 kabul kriterinin 28'i karşılandı — 24'ü tam kanıtlı, 4'ü sınırlı kanıtlı** (#9, #17, #19, #21: canlı kamera kanıtı kısmi/eksik; tam doğrulanmış gösterilmez, §23). **Ölçülmeyenler/yapılmayanlar (başarılı sayılmaz):** ID switch oranı ve IDF1/HOTA/MOTA (ölçülmedi, değer üretilmedi); gerçek kamerada üç kişi (belirsiz), yüksek açı, yorgan, Esc/kırmızı düğme/Ctrl+C; poster T1/T2 (test ortamı değişti, yapılamadı). Kullanıcının canlı gözlemi (2026-11-13, nitel): çoklu takip çalışıyor; örtüşmede ve kadrajdan çıkıp-girişte ID değişimleri gözlendi (bilinen sınırlamalar KL-4B-009/010).
 **2026-11-12 güncellemesi (§24–§28):** kullanıcının gerçek kamera sonuçları eklendi (pencereli MPS 2924 kare 16,3 FPS; penceresiz CPU ve MPS 29,9 FPS); **panodaki basılı fotoğraf insan sanıldı ve Track ID aldı (FP-4B-001)**, iki gerçek kişi varken dört aktif iz ve çakışan büyük kutular görüldü; kaynak (YOLO mu ByteTrack mi) **henüz ayrıştırılmadı**, tanı planı hazırlandı; **hiçbir eşik/varsayılan değiştirilmedi**.
-**Aşama 4 genel durumu: `IN_PROGRESS`** (4A `COMPLETED`; 4B kullanıcı doğrulamasını bekliyor) · **Teknik belge:** [docs/person_tracking.md](../../docs/person_tracking.md) · **Git:** commit/push yapılmadı.
+**2026-11-13 kapanış güncellemesi (§29):** durum `COMPLETED`; poster yanlış pozitifi **FP-4B-001 açık ve çözülmedi**, test ortamı değiştiği için aynı koşullarda T1/T2 yeniden doğrulaması **yapılamadı**; hiçbir eşik/algoritma/kaynak/model değişmedi.
+**Aşama 4 genel durumu: `COMPLETED`** (4A ve 4B `COMPLETED`; "Aşama 4 yalnızca 4B de `COMPLETED` olunca `COMPLETED` olur" kuralı uygulandı; Aşama 5 başlatılmadı) · **Teknik belge:** [docs/person_tracking.md](../../docs/person_tracking.md) · **Kapanış değerlendirmesi:** [STAGE_4B_CLOSURE_ASSESSMENT.md](STAGE_4B_CLOSURE_ASSESSMENT.md) · **Git:** commit/push yapılmadı.
 
 > **Özet.** Aşama 4A'nın `PersonDetector` çıktıları (`DetectionResult`), kurulu `ultralytics==8.4.210`'daki **gerçek ByteTrack** (`BYTETracker`) algoritmasına küçük bir adaptörle (`PersonTracker`) verilir ve her aktif insana **geçici, oturum kapsamlı Track ID** atanır.
 > **YOLO her karede yalnızca bir kez çalışır** (takip ek çıkarım yapmaz); canlı pencerede kutu + `ID n`, `DETECTIONS` / `ACTIVE TRACKS` / `LOST TRACKS` ayrı sayılarıyla gösterilir. Track ID bir çalışan kimliği değildir.
@@ -15,10 +17,11 @@
 | **Gerçekte çalışanlar** | `PersonTracker` + gerçek ByteTrack; kare başına tek YOLO çağrısı; Track ID yaşam döngüsü (onay, kayıp tamponu, oturum/sıfırlama); canlı görselleştirme; `run_person_tracking.py` CLI (kamera/video, CPU/MPS, penceresiz); `lap` eksikse temiz hata (otomatik kurulum yok); iz özeti çıktısı; benchmark betiği |
 | **Test edilenler** | 287 yeni test: 203 mock/birim + 62 gerçek ByteTrack (sahte tespit) + 20 gerçek YOLO + ByteTrack (örnek görüntü/sentetik montaj; CPU 12, MPS 8) + 2 isteğe bağlı gerçek pencere. Aşama 2 bütünlüğü 12/12, ortam denetimi başarılı |
 | **Ölçülenler** | Kayıtlı (sentetik montaj) videoda CPU/MPS: FPS, çıkarım, **ByteTrack süresi**, kare→sonuç gecikmesi, çizim; ByteTrack'in kişi sayısıyla ölçeklenmesi; altı eşik yapılandırmasının gerçek YOLO ile karşılaştırması |
-| **Yapılamayanlar** | Claude ortamında gerçek kamera testi (izin yok). Kullanıcı tarafında **yapılmayanlar:** üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı, Esc/kırmızı düğme/Ctrl+C çıkışları, yorgan testi. Ayrıca IDF1/HOTA/MOTA (etiketli veri yok); canlı kare→sonuç gecikmesi ve konsolun okuma/çizim/gösterme satırları (bildirilmedi); ≥3 kişilik gerçek video |
+| **Yapılamayanlar** | Claude ortamında gerçek kamera testi (izin yok). Kullanıcı tarafında **yapılmayan/bildirilmeyenler (kapanışta da yapılmış sayılmaz):** üç kişi canlı testi (kaç kişi olduğu belirsiz), yüksek açı, Esc/kırmızı düğme/Ctrl+C çıkışları (gerçek kamerada), yorgan testi, ayrıntılı/sayısal yer değiştirme-örtüşme-çıkış-giriş kaydı (2026-11-13'te yalnızca nitel gözlem bildirildi, §29). Ayrıca ID switch oranı ve IDF1/HOTA/MOTA (etiketli veri yok, **ölçülmedi, değer üretilmedi**); canlı kare→sonuç gecikmesi ve konsolun okuma/çizim/gösterme satırları (bildirilmedi); ≥3 kişilik gerçek video; **poster T1/T2 aynı koşullarda (test ortamı değişti, yapılamadı)** |
 | **Kullanıcının canlı testleri (2026-11-12)** *[Kullanıcı]* | Pencereli MPS 1280×720, 2924 kare, 178,9 sn, **16,3 FPS**, YOLO 17,7 ms, ByteTrack 0,5 ms, 30 farklı ID, Q ile sorunsuz çıkış; penceresiz CPU 29,9 FPS (YOLO 18,5 / ByteTrack 0,2 ms) ve MPS 29,9 FPS (14,7 / 0,4 ms), her ikisinde 2 ID. **Poster yanlış pozitifi (ID 167), dört aktif iz, çakışan büyük kutular.** Ayrıntı §24–§28 |
-| **Bilinen sınırlamalar** | §20 — özellikle: ID'ler konuma yapışır (görünüm kullanılmaz), kalıcı yanlış pozitif iz alır, kenardan çıkıp dönen kişi yeni ID alır, düşük güven kurtarması varsayılanda fiilen kapalı |
-| **Kullanıcının yapacağı manuel testler** | §21 (durum sütunuyla) ve poster/çakışan kutu tanı planı §26 |
+| **Kullanıcının canlı gözlemi (2026-11-13)** *[Kullanıcı; nitel]* | Gerçek kamerada çoklu insan takibi çalışıyor; **örtüşme sırasında ID değişimleri** ve **kadrajdan çıkıp yeniden girişte yeni ID** gözlendi. Kişi sayısı, değişim sayısı/sıklığı, kenar/süre bildirilmedi → **sayı/oran üretilmedi.** Bilinen sınırlamalarla uyumlu (KL-4B-001/003 → KL-4B-009/010). Poster artık kamerada yok; aynı koşullarda yeniden doğrulama yapılamıyor. Ayrıntı §29 |
+| **Bilinen sınırlamalar** | §20 — özellikle: ID'ler konuma yapışır (görünüm kullanılmaz), kalıcı yanlış pozitif iz alır (poster FP-4B-001 açık, çözülmedi), kenardan çıkıp dönen kişi yeni ID alır, düşük güven kurtarması varsayılanda fiilen kapalı; **örtüşmede ID değişimi ve kadrajdan çıkıp-girişte yeni ID gerçek kamerada da gözlendi (KL-4B-009/010; oran ölçülmedi)** |
+| **Kalan (kapanışı engellemeyen) manuel kontroller ve araştırma görevleri** | §21 (durum sütunuyla), poster/çakışan kutu tanı planı §26 (araştırma görevi `OT-4B-005`), kapanış kaydı §29 |
 
 **Kanıt türleri bu raporda ayrı tutulmuştur:** *[Mock]* = sahte bağımlılıklarla birim testi; *[Gerçek ByteTrack]* = gerçek `BYTETracker`, sahte (betiklenmiş) tespit; *[Gerçek YOLO+ByteTrack]* = gerçek `yolo11n.pt` + gerçek ByteTrack, örnek görüntü veya sentetik montaj; *[Ölçüldü]* = Claude'un çalıştırıp sonucunu gördüğü; *[Sentetik]* = Ultralytics örnek görüntülerinden montaj/betikli dizi (hız/entegrasyon amaçlı, **doğruluk çıkarılamaz**);
 *[Bekliyor]* = yapılmamış, kullanıcı görevi. Yapılmayan hiçbir test başarılı gösterilmemiştir.
@@ -143,6 +146,23 @@ Q / Esc / kırmızı kapatma / Ctrl+C: kamera paketinin `PreviewWindow`'u yenide
 | Gerçek YOLO + ByteTrack | real_model (CPU 12, MPS 8) | **20** |
 | İsteğe bağlı gerçek pencere | pipeline (2) | **2** |
 
+**Test kapsamı — "883 başarılı, 7 atlandı" ne demek? (netleştirme, 2026-11-13)** *[Ölçüldü]*
+
+* **Dağılım:** 883 = 340 (Aşama 1–3) + 256 (4A) + **287 (4B)**; önceki 596 test (340 + 256) hiç değişmedi, yalnızca test eklendi (`git diff c51ae14 HEAD -- tests`: yalnızca ekleme; `test_no_side_effects.py` +9 satır, yeni modül adları, hiçbir kontrol gevşetilmedi).
+* **Varsayılan çalıştırma:** `Ran 883 tests … OK (skipped=7)` → **876 test çalıştı ve geçti, 0 başarısız, 0 hata, 7 atlandı.** Atlanan 7 test **başarılı sayılmaz;** çalışmadılar.
+* **Atlanan 7 test ve nedeni:** hepsi isteğe bağlı **gerçek pencere (GUI)** testidir ve aynı nedenle atlanır: `Gerçek pencere testi: macOS + ISG_GUI_TESTS=1 + grafik oturumu gerekir` (gerçek bir Cocoa/OpenCV penceresi açarlar; başsız/otomatik çalıştırmada pencere açılmasın diye kapalıdır; **kamera açmazlar**, sahte kareler kullanırlar).
+
+| Kaynak aşama | Dosya / sınıf | Atlanan | Ne sınar |
+|---|---|---|---|
+| Aşama 3 | `test_camera_window_close.py` / `RealCocoaWindowTest` | 3 | Gerçek pencerede kırmızı düğme etkin mi, tıklama pencereyi kapatıyor mu, döngü `closed_by_user` ile bitiyor mu |
+| Aşama 4A | `test_person_detection_pipeline.py` / `RealWindowDetectionLoopTest` | 2 | Gerçek pencerede tespit döngüsü çizimi ve kırmızı düğme çıkışı |
+| Aşama 4B | `test_person_tracking_pipeline.py` / `RealWindowTrackingLoopTest` | 2 | Gerçek pencerede takip döngüsü çizimi ve kırmızı düğme çıkışı |
+
+* **GUI açıkken:** `ISG_GUI_TESTS=1` ile aynı paket **883 test, OK, 0 atlandı** (sonuç §29.3'te).
+* **Koşullu atlamalar (ortam eksikse sessizce geçmez, açık nedenle atlanır):** `yolo11n.pt` yok → 4A/4B gerçek-model testleri; `lap`/`ultralytics` yok → gerçek ByteTrack testleri; MPS yok → MPS testleri; Ultralytics örnek görüntüleri yok → örnek görüntü testleri; ham veri/üretilmiş Aşama 2 çıktıları yok → ilgili Aşama 2 testleri; root kullanıcı → bir kamera izin testi. **Bu makinede bu koşullu atlamaların hiçbiri tetiklenmedi:** 7 atlamanın tamamı GUI'dir, yani 62 gerçek ByteTrack testi ve 20 gerçek YOLO + ByteTrack testi (CPU 12, MPS 8) **gerçekten çalıştı**.
+* **Önceki raporlarla tutarlılık:** Aşama 3 raporu 340 test / **3 atlanan** (337 çalıştı), 4A raporu 596 test / **5 atlanan** (3 + 2); 4B 883 test / **7 atlanan** (3 + 2 + 2). Aşama 3 3, 4A 2, 4B 2 GUI testi ekledi; sayılar kümülatif ve tutarlıdır (3 → 5 → 7). Üç raporda da GUI açıkken 0 atlanan beklenir.
+* **Kapsam sınırı:** 883 testin **hiçbiri gerçek kamera, takip doğruluğu (ID switch oranı, IDF1/HOTA/MOTA) veya canlı performans kanıtı değildir;** bunlar mock, betiklenmiş/sentetik veya örnek görüntü düzeyindedir (§13–§15). Gerçek kamera kanıtı yalnızca kullanıcının bildirdiği canlı koşulardır (§24, §29).
+
 İlkeler: birim testleri internet/kamera izni gerektirmez; mock ve gerçek testler ayrı dosyalarda ve ayrı raporlanır; `lap`/ağırlık/MPS yoksa ilgili testler **açık nedenle atlanır** (sahte başarı yok); testler yalnızca geçsin diye gevşetilmedi. Beklentiler ölçümle belirlendi; ölçüm beklentimi yalanladığında **beklenti** düzeltilip bulgu belgelendi (kenardan çıkıp aynı kenardan dönen kişinin "aynı ID alır" varsayımı yanlıştı → sınırlama olarak kaydedildi; kayıp kurtarma penceresi `track_buffer+1` ölçüldü). Gevşek bir eşik (Kalman kutusu sapması, ölçülen ≈0,2 kare) sıkılaştırıldı; docstring'i taramaya takılan zayıf bir metin-tarama testi `ast` tabanlı teste çevrildi; adaptör sınıf kimliğine bağlı `isinstance` yerine öznitelik tabanlı doğrulamaya geçirildi.
 Zorunlu mimari testi: aynı kare için YOLO yalnızca bir kez çağrılır (§6). `test_no_side_effects.py` yeni modülleri kapsar (import: kamera/ağ/torch/ultralytics/lap yok).
 
@@ -237,6 +257,8 @@ Gerçek yorgan görüntüsü kaydedilmedi; **olay birebir yeniden üretilmedi**.
 9. Açık görevler: FP-4A-001, OT-4A-002, OT-4A-003 (`DEFERRED_TO_SYSTEM_INTEGRATION`), OT-4A-004/OBS-4A-001. Gerçek IP kamera 4B kapanış koşulu yapılmadı.
 10. **Basılı insan fotoğrafı (pano/poster) insan sanılır ve Track ID alır (FP-4B-001, kullanıcının canlı gözlemi);** çakışan büyük kutular gözlendi (OBS-4B-001); kaynak ayrıştırılmadı (§26). Eşikle çözüm denenmedi/uygulanmadı (§27).
 11. **Pencereli mod ağırdır:** `imshow+waitKey(1)` bu makinede tek başına ≈ 15–17 ms ölçüldü; kullanıcının pencereli canlı koşusu 16,3 FPS, penceresiz 29,9 FPS (OBS-4B-002); pencereli FPS'in tam nedeni ölçülmedi (§25.4).
+12. **Örtüşmede ID değişimi (KL-4B-009) ve kadrajdan çıkıp yeniden girişte yeni ID (KL-4B-010) gerçek kamerada gözlendi** (kullanıcı, 2026-11-13; **nitel**). KL-4B-001/003 ile uyumludur (§15; §20 madde 1 ve 3). ID switch **oranı ve koşulları ölçülmedi;** IDF1/HOTA/MOTA üretilmedi. Track ID kalıcı kişi kimliği olarak kullanılamaz.
+13. **FP-4B-001 (poster) açık ve çözülmedi;** test ortamı değiştiği, poster artık kamerada olmadığı için aynı koşullarda T1/T2 yeniden doğrulaması yapılamıyor (§26, §29). Kaynak (YOLO/ByteTrack) ayrıştırılmadı.
 
 ## 21. Bekleyen manuel testler (kullanıcı; MacBook kamerası) — durum 2026-11-12
 
@@ -261,45 +283,56 @@ Ayrıntılı kontrol listeleri: [docs/person_tracking.md §17](../../docs/person
 `TrackingResult` / `TrackedPerson` (`track_id`, `session_id`, `bbox_xyxy`, `confidence`, `frame_index`, `timestamp`, `detection_index`, `age_frames`), `LostTrack`, benzersiz anahtar `(session_id, track_id)`, `run_tracking(..., on_result=lambda paket, tespit, takip: ...)` (görüntü + ham tespit + takip birlikte). Yüz tespiti yüz kutularını kişi izlerine kutu içerme/örtüşmeyle ilişkilendirirken `(session_id, track_id)` kullanmalı; kimlik tanıma sonuçları `session_id` değişiminde ve iz silinince geçersiz sayılmalı;
 ID devralma/switch olasılığı nedeniyle tek kare yerine çok kareli yüz eşleşmesiyle doğrulanmalıdır. Biyometrik veri bu aşamada yoktur; ID'ler bellekte kalır, diske yazılmaz.
 
+**Aşama 5 tasarım notları (4B kapanışı, 2026-11-13; yalnızca girdi notu — Aşama 5 başlatılmadı, Aşama 5 kodu yazılmadı):**
+
+1. **Geçici Track ID, kayıtlı çalışan kimliği değildir; ikisi ayrı kavramdır.** Track ID oturum kapsamlıdır (`(session_id, track_id)`), bellekte yaşar, çalışan adı/personel numarası/biyometrik kimlik içermez ve çalışan kaydıyla (Aşama 6) doğrudan eşlenmez. Çalışan kimliği, kimlik tanıma (Aşama 7) sonucundan gelir; Track ID yalnızca "aynı oturumda aynı iz" bilgisidir.
+2. **ID değişimlerinde yanlış çalışan eşleştirmesi önlenmelidir.** Örtüşmede ID değişimi ve kadrajdan çıkıp-girişte yeni ID gerçek kamerada gözlendi (KL-4B-009/010; oran ölçülmedi). Bu nedenle bir yüzü/çalışanı bir Track ID'ye **kalıcı bağlamak** yanlış eşleştirmeye yol açabilir. Tasarım girdileri: tek kare yerine çok kareli doğrulama; iz değiştiğinde, kaybolduğunda, yeni oturumda veya şüpheli (ID devri) durumda önceki eşleşmeyi geçersiz kılma; **belirsizlikte eşleştirmeme (güvenli varsayılan);** eşleşmenin güvenini ve dayandığı kare sayısını saklama.
+3. **Yanlış pozitif iz üzerindeki yüz çalışana bağlanmamalıdır.** Poster/yorgan (FP-4B-001, FP-4A-001) kalıcı Track ID alabilir; posterdeki yüz de yüz dedektörü tarafından bulunabilir (§27). Kalıcı ve hareketsiz iz, silme değil **bayrak** adayıdır. Yanlış pozitif kaynağı (YOLO mu ByteTrack mı) ayrıştırılmadı (`OT-4B-005`).
+4. ID değişimi sıklığı bilinmiyor (`OT-4B-003`); Aşama 5 tasarımı bunu "ölçülmemiş" varsaymalı, iyimser varsayım yapmamalıdır.
+
 ## 23. Tamamlama kriterleri ve sonuç
 
-| # | Kriter | Durum | Kanıt / not |
+**Esas ölçüt:** ilk Aşama 4B görev tanımının "Aşama 4B kabul kriterleri" listesi — **28 kriter** (aşağıda 1–28). **29. satır özgün listede yoktur;** poster gözleminden sonra Claude'un eklediği bir belgeleme maddesidir ve kapanış koşulu değildir. *[Ölçüldü]* = Claude çalıştırıp sonucunu gördü; *[Kullanıcı]* = kullanıcının bildirdiği canlı kamera sonucu.
+
+**Kanıt düzeyi:** **✔ = tam kanıtlı (24 kriter)** · **✔\* = sınırlı kanıtlı (4 kriter: #9, #17, #19, #21)** — kriter metni karşılandı, ancak canlı kamera kanıtı kısmi/eksiktir; **eksiksiz doğrulanmış sayılmaz.** Karşılanmayan (✖) özgün kriter yoktur; yapılmayan alt unsurlar aşağıda ve §29.2'de açıkça listelenmiştir.
+
+| # | Kriter | Düzey | Kanıt / not |
 |---|---|---|---|
-| 1 | Aşama 4A kaynak kodları korunuyor | ✔ | `git diff HEAD`: `human_detection/`, `camera/`, 4A betikleri, raporlar boş *[Ölçüldü]* |
+| 1 | Aşama 4A kaynak kodları korunuyor | ✔ | `git diff --stat c51ae14 HEAD`: `human_detection/`, `camera/`, 4A/3 betikleri, `data/`, `models/` **fark yok** *[Ölçüldü]*. 4A **raporu** kaynak kodu değildir: 4B sırasında `reports/detection/STAGE_4A_REPORT.md`'ye yalnızca **+17/−0 satır** ek gözlem bölümü (§24, yeni ortam T1 gözlemi) eklendi; 4A sonuçları/kararları değişmedi. *(Önceki "raporlar boş" ifadesi güncelliğini yitirmişti; düzeltildi.)* |
 | 2 | ByteTrack mevcut Ultralytics sürümüyle çalışıyor | ✔ | 8.4.210; §13 *[Gerçek ByteTrack, Gerçek YOLO+ByteTrack]* |
-| 3 | Bağımlılıklar kontrollü kurulmuş | ✔ | `lap==0.5.14` (kaynak, hash, lisans kayıtlı); `scipy` gereksiz, eklenmedi |
+| 3 | Bağımlılıklar kontrollü kurulmuş | ✔ | `lap==0.5.14` (kaynak, hash, lisans kayıtlı; `requirements.txt` + lock); `scipy` gereksiz, eklenmedi; `pip check` temiz |
 | 4 | Ağ olmadan takip çalışıyor | ✔ | ağ/pip yasaklı testler + `YOLO_OFFLINE`; ağ yalnızca `lap` kurulumunda kullanıldı |
 | 5 | YOLO her karede yalnızca bir kez | ✔ | mock model + gerçek model `predict` sayımı + `ast` testi |
 | 6 | DetectionResult → ByteTrack | ✔ | `PersonTracker.update` |
-| 7 | Her aktif takip için geçici Track ID | ✔ | §7 |
-| 8 | Aynı karede ID benzersiz | ✔ | çalışma anı değişmezi + testler |
-| 9 | Tek insan takibi | ✔* | *sentetik/örnek görüntü; gerçek kamera bekliyor |
-| 10 | Çoklu insan takibi | ✔* | *aynı kısıt |
-| 11 | Kısa örtüşme değerlendirildi | ✔* | §15 *idealize sentetik; gerçek video yok |
-| 12 | Kadraja giriş/çıkış yönetiliyor | ✔* | §15; **kenardan dönen yeni ID alır** (sınırlama) |
+| 7 | Her aktif takip için geçici Track ID | ✔ | §7; canlı ekran görüntüsünde `ID n` etiketleri *[Kullanıcı]* |
+| 8 | Aynı karede ID benzersiz | ✔ | çalışma anı değişmezi (ihlal hata verir) + testler |
+| 9 | Tek insan takibi | **✔\*** | Sentetik: ID 1 tüm karelerde, switch 0 (§14-A); gerçek model kesiti 30/30 kare aynı ID. **Sınırlı:** canlıda ayrı tek kişi testi yapılmadı (Manuel Test 1 doldurulmadı) |
+| 10 | Çoklu insan takibi | ✔ | 3 ve 30 kişi benzersiz ID (§14-B); gerçek model 2 kişi 50/50 kare; **canlı *[Kullanıcı]*:** iki gerçek kişi penceresiz CPU/MPS'te 300'er karede 2 ID (300/300 ve 300/299 kare); 2026-11-13: çoklu takip çalışıyor. Üç kişilik canlı test bildirilmedi; kriter ≥ 2 kişiyle karşılandı |
+| 11 | Kısa örtüşme davranışı değerlendirildi | ✔ | §15-D (idealize sentetik) + **canlı *[Kullanıcı, 2026-11-13, nitel]*: örtüşmede ID değişimi gözlendi** → KL-4B-001/009. Kriter "davranış değerlendiriliyor" der; davranış kusursuz değildir (sınırlama), oran ölçülmedi |
+| 12 | Kadraja giriş/çıkış yönetiliyor | ✔ | §15-E (tampon, `LostTrack`) + **canlı *[Kullanıcı, nitel]*: çıkıp-girişte yeni ID gözlendi** → KL-4B-003/010; oran/koşullar ölçülmedi |
 | 13 | Kayıp/aktif iz ayrımı | ✔ | `LostTrack` ayrı, çizilmez/sayılmaz |
 | 14 | Tracker reset doğru | ✔ | oturum/kaynak/çözünürlük/elle; testlerle |
 | 15 | İnsan olmayan kareler | ✔ | §15-F |
-| 16 | Eşik davranışları analiz edildi | ✔ | §8–9; gerçek YOLO karşılaştırması |
-| 17 | Yorgan riski değerlendirildi | ✔* | §18 *kontrollü sahte dizi; gerçek yorgan bekliyor; **çözülmedi/engellenmedi** |
-| 18 | Bounding box ve Track ID görüntüleniyor | ✔* | testler + gözle incelenen kareler; **canlı kamerada kullanıcı ekran görüntüsünde kutular ve ID'ler göründü** *[Kullanıcı]* (poster/çakışan kutu sorunuyla birlikte, §24) |
-| 19 | FPS ve takip gecikmesi ölçülüyor | ✔* | kayıtlı videoda ölçüldü; **canlıda FPS/YOLO/ByteTrack süreleri kullanıcı tarafından bildirildi** (§24); **canlı kare→sonuç gecikmesi bildirilmedi** |
-| 20 | Kamera/video kaynakları destekleniyor | ✔* | video gerçek koşu ✔; **gerçek MacBook kamerası kullanıcı tarafından çalıştırıldı** *[Kullanıcı]*; IP/RTSP kapsam dışı |
-| 21 | Q/Esc/kırmızı düğme/Ctrl+C korunuyor | ✔* | sahte pencere + gerçek Cocoa penceresinde kırmızı düğme *[Ölçüldü]*; **gerçek kamerada yalnızca Q doğrulandı** *[Kullanıcı]*; Esc/kırmızı düğme/Ctrl+C bekliyor |
+| 16 | Eşik davranışları analiz edildi | ✔ | §8–9; gerçek YOLO karşılaştırması; hiçbir varsayılan değişmedi |
+| 17 | Yorgan riski değerlendirildi | **✔\*** | §18 kontrollü sahte diziler (tek karelik iz almaz; kalıcı statik sürekli ID alır); canlı poster gözlemi (FP-4B-001) bu öngörüyle tutarlı. **Sınırlı:** gerçek yorgan testi yapılmadı; risk **çözülmedi/engellenmedi** |
+| 18 | Bounding box ve Track ID görüntüleniyor | ✔ | görselleştirme testleri + gözle incelenen kareler; canlı kamerada kullanıcı ekran görüntüsünde kutular ve ID'ler göründü *[Kullanıcı]* (poster/çakışan kutu sorunuyla birlikte, §24) |
+| 19 | FPS ve takip gecikmesi ölçülüyor | **✔\*** | Kayıtlı videoda tam ölçüm (§16); canlıda FPS/YOLO/ByteTrack süreleri *[Kullanıcı]* (§24). **Sınırlı:** canlı kare→sonuç gecikmesi bildirilmedi (backlog B3-3 ertelenmiş) |
+| 20 | Kamera/video kaynakları destekleniyor | ✔ | video gerçek koşu (CPU/MPS, `exit=0`) *[Ölçüldü]*; kamera: kullanıcının üç canlı koşusu *[Kullanıcı]*; IP/RTSP kapsam dışı |
+| 21 | Q/Esc/kırmızı düğme/Ctrl+C korunuyor | **✔\*** | sahte pencere testleri (Q, Esc, kapatma, Ctrl+C) + gerçek Cocoa penceresinde kırmızı düğme *[Ölçüldü; 2026-11-13'te yeniden koşuldu]*. **Sınırlı:** gerçek kamerada yalnızca Q doğrulandı *[Kullanıcı]*; Esc/kırmızı düğme/Ctrl+C gerçek kamerada bildirilmedi |
 | 22 | Gerçek ByteTrack entegrasyonu doğrulanmış | ✔ | 62 + 20 test |
-| 23 | Önceki 596 test korunuyor | ✔ | 883 test OK |
-| 24 | Aşama 2 bütünlük kontrolleri başarılı | ✔ | 12/12; `check_environment.py` başarılı |
-| 25 | Ham veri ve model ağırlıkları değişmemiş | ✔ | 12/12 T6.8 (ham veri zip ile boyut+CRC32); model SHA-256 aynı, Git dışı |
-| 26 | Teknik rapor hazırlanmış | ✔ | bu rapor, `docs/person_tracking.md`, README/mimari/plan/yaml |
-| 27 | Eksik manuel testler açıkça belirtilmiş | ✔ | §21 (durum sütunuyla) |
-| 28 | Aşama 5'e geçilmemiş | ✔ | yok |
-| 29 | Canlı yanlış pozitif gözlemi kayıtlı ve çözülmüş gösterilmemiş | ✔ | FP-4B-001 / OBS-4B-001 açık; çözüm adayları uygulanmadı (§27) |
+| 23 | Önceki 596 test korunuyor | ✔ | 883 test OK = 596 önceki + 287 yeni; kapsam ve 7 atlanan test §12'de; 2026-11-13'te yeniden koşuldu (§29.3) |
+| 24 | Aşama 2 bütünlük kontrolleri başarılı | ✔ | 12/12; `check_environment.py` başarılı; 2026-11-13'te yeniden koşuldu (§29.3) |
+| 25 | Ham veri ve model ağırlıkları değişmemiş | ✔ | 12/12 T6.8 (ham veri zip ile boyut+CRC32); model SHA-256 `0ebbc80d…ee1` aynı, Git dışı; `data/`, `models/` diff boş |
+| 26 | Teknik rapor hazırlanmış | ✔ | bu rapor, `docs/person_tracking.md`, README/mimari/plan/yaml, kapanış değerlendirmesi |
+| 27 | Eksik manuel testler açıkça belirtilmiş | ✔ | §21 (durum sütunuyla), §29.2 |
+| 28 | Aşama 5'e geçilmemiş | ✔ | başlatılmadı; kod yazılmadı |
+| *(29)* | *Rapor eki — özgün listede yok:* canlı yanlış pozitif gözlemi kayıtlı ve çözülmüş gösterilmemiş | ✔ | FP-4B-001 / OBS-4B-001 **açık**; çözüm adayları uygulanmadı (§27); kapanış koşulu değildir |
 
-(✔* = otomatik/kayıtlı-sentetik düzeyde karşılandı; gerçek MacBook kamerası doğrulaması **kısmen** yapıldı (§24), kalanı kullanıcıda.)
+**Sonuç:** özgün 28 kriterin **28'i karşılandı — 24'ü tam kanıtlı, 4'ü sınırlı kanıtlı.** Sınırlı kanıtlı dört kriterin canlı kamera kısmı eksiksiz doğrulanmış gösterilmez.
 
-**Karar:** Otomatik ve kayıtlı/sentetik video doğrulamaları başarılı, **gerçek MacBook kamera testleri yalnızca kısmen yapıldığı ve canlıda yeni bir yanlış pozitif (FP-4B-001) çözülmeden kaldığı için** Aşama 4B **`READY_FOR_MANUAL_VERIFICATION`** durumundadır; `COMPLETED` iddia edilmez. **Aşama 4 genel durumu `IN_PROGRESS`.**
-Gerçek IP kamera 4B kapanış koşulu yapılmadı (OT-4A-003 sistem entegrasyonuna ertelendi). Açık: `FP-4A-001`, `OT-4A-002`, `OT-4A-003`, `OT-4A-004/OBS-4A-001`; yeni: `OT-4B-001…005` (manuel testler, doğruluk ölçümü, tanı planı), canlı gözlemler `FP-4B-001`, `OBS-4B-001`, `OBS-4B-002` ve bilinen sınırlamalar `KL-4B-001…008` (`configs/project_stages.yaml`).
-Aşama 5'e geçilmedi; Git commit/push yapılmadı; kapanış kararı ve sonraki aşamaya geçiş kullanıcıya aittir.
+**Karar:** Aşama 4B **`COMPLETED`** (2026-11-13; kullanıcı kapanış değerlendirmesini inceleyip onayladı) — **yalnızca kapsam içi prototip geliştirme ve doğrulama.** Özgün durum kuralı gerçek kamera doğrulaması olmadan `COMPLETED` denmemesini ister; gerçek kamera doğrulaması **kısmen** yapılmıştır (§24, §29.1) ve kalan unsurlar kapanışı engellemeyen **açık görevler** olarak taşınır (§29.2). Bu kapanış, "ID sürekliliği doğrulandı", "takip doğruluğu ölçüldü" veya "%85 hedefi karşılandı" **demek değildir.** Aşama 4 genel durumu `COMPLETED` (4A ve 4B `COMPLETED`).
+Gerçek IP kamera 4B kapanış koşulu değildir (OT-4A-003 sistem entegrasyonuna ertelendi). **Açık kalanlar (tamamlanmış sayılmaz):** `FP-4A-001`, `OT-4A-002`, `OT-4A-003`, `OT-4A-004/OBS-4A-001`, `OT-4A-005`; `OT-4B-001…005`, canlı gözlemler `FP-4B-001`, `OBS-4B-001`, `OBS-4B-002`, bilinen sınırlamalar `KL-4B-001…010` (`configs/project_stages.yaml`).
+Aşama 5'e geçilmedi; Git commit/push yapılmadı; sonraki aşamaya geçiş kullanıcıya aittir.
 
 ---
 
@@ -380,6 +413,7 @@ Kimlik sayacı iz **oluşturulunca** artar (onay beklemez): ID 167 bu oturumda e
 | T7 | Pencereli FPS tanısı | (a) `run_camera.py --source camera --no-display --max-frames 300`; (b) pencereli ve `--no-display` koşuların konsol satırları; (c) pencereli `--imgsz 320` (yalnız tanı) | (a) ham kamera tavanı; (b) okuma/gösterme süreleri; (c) bütçe ≤ 25 ms'de FPS ≈ 30'a dönerse H1 |
 
 **T1 durumu (2026-11-12):** kullanıcı 4A betiğiyle **yeni ortamda** gerçek kamera testi yaptı (1812 kare, 21,9 FPS, ort. çıkarım 15,9 ms, ort. 2,89 / en çok 7 kişi; ön plandaki iki kişi 0,85/0,87 ve 0,80/0,66; telefondaki insan fotoğrafı ayrı tespit oluşturmadı; arka plandaki çok küçük kişiler kutulanmadı) — [4A raporu §24](../detection/STAGE_4A_REPORT.md). **Ortam değiştiği için önceki poster aynı şartlarda yeniden kurulamadı; T1 poster karşılaştırması tamamlanmış sayılmaz, H1/H2 doğrulanmadı.** Telefondaki fotoğraf poster değildir; 2,89 / 7 tespit yanlış pozitif sayılmaz. T0, T2–T7 yapılmadı.
+**2026-11-13:** poster artık kameranın arka planında değil (test ortamı değişti); **poster için aynı koşullardaki T1 ve T2 yeniden doğrulaması yapılamıyor — yapılmadı, tamamlanmış/başarılı değildir.** FP-4B-001 **açık ve çözülmedi;** bu plan `OT-4B-005` altında **araştırma görevi** olarak taşınır (kapanış engeli değildir) ve ileride görülecek başka bir statik yanlış pozitif için geçerliliğini korur.
 
 **Not (araç):** T3/T5 için kare bazlı sayısal log, ham tespitleri gösteren `--show-detections` ve iz özetinde tüm izleri gösteren bir seçenek faydalı olur; bunlar yeni kod ve test demektir ve **eklenmemiştir** (onaya bağlı).
 
@@ -404,9 +438,60 @@ Gerçek kişi kaybına yol açabilecek hiçbir eşik/filtre doğrulama olmadan u
 
 ## 28. Güncel durum ve sonraki adımlar
 
-* **Durum: `READY_FOR_MANUAL_VERIFICATION` korunuyor.** `COMPLETED` değil. Yapılmayan testler (üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı, Esc/kırmızı düğme/Ctrl+C, yorgan) başarılı gösterilmemiştir.
+> **Güncelleme (2026-11-13):** bu bölüm **2026-11-12 tarihli durumu** (tarihsel kayıt) anlatır. Durum artık **`COMPLETED`**'tır (kullanıcı onayıyla, kapsam içi prototip, açık sınırlamalarla) — güncel kayıt: §23 ve §29. Aşağıdaki "kullanıcıdan istenenler" arasındaki poster T1 karşılaştırması test ortamı değiştiği için **yapılamıyor** (§29.1).
+
+* **Durum (2026-11-12): `READY_FOR_MANUAL_VERIFICATION` korunuyor.** `COMPLETED` değil. Yapılmayan testler (üç kişi, örtüşme, yer değiştirme, ID switch, kadrajdan çıkma, yüksek açı, Esc/kırmızı düğme/Ctrl+C, yorgan) başarılı gösterilmemiştir.
 * **Yeni açık kayıtlar:** FP-4B-001 (poster yanlış pozitifi, `open_known_limitation`), OBS-4B-001 (dört aktif iz/çakışan kutu, `open_investigation`), OBS-4B-002 (pencereli FPS düşüşü, `open_investigation`), OT-4B-005 (tanı planı). OT-4B-001 ve OT-4B-004 `partially_performed`.
 * **Kod/test değişikliği yok:** bu güncelleme yalnızca belge ve yapılandırma kayıtlarıdır; 883 test sonucu değişmedi (§12). Kameasız deneyler (pacing, kutu sapması, çakışma) depoya eklenmeyen betiklerle yapıldı; yöntemleri yukarıda tarif edildi.
 * **Kullanıcıdan istenenler** (yorumu kesinleştirir): (1) sorunlu karenin `DETECTIONS`/`ACTIVE`/`LOST` değerleri ve her kutunun güveni; (2) pencereli koşunun konsol özetindeki "Kare okuma süresi", "Çizim süresi", "Pencereye gösterme süresi", "Kare → görüntü gecikmesi", "Tespit: kare başına ortalama / en çok" satırları; (3) iki penceresiz koşunun "Kare okuma süresi" ve "Tespit" satırları; (4) üç koşunun sahnesinin aynı olup olmadığı; (5) T1 sonucu — yeni ortamda kısmen bildirildi (4A raporu §24); **önceki poster/çakışan kutular için aynı şartlarda T1 hâlâ bekliyor**.
 * **2026-11-12 (yeni ortam):** 4A betiğiyle yapılan T1 gözlemi kaydedildi (OBS-4A-003, OBS-4A-004, OT-4A-005; 4A raporu §24, docs/person_detection.md §14.4); durum değişmedi, eşik/algoritma değiştirilmedi. Sonraki adım (kullanıcı): aynı yeni ortamda 4B ile iki kişinin ID kararlılığı ve örtüşme testi — kayıt şablonu: docs/person_tracking.md §17.1.
 * Aşama 5'e geçilmedi; commit/push yapılmadı.
+
+---
+
+## 29. Kapanış kaydı (2026-11-13)
+
+### 29.1 Kullanıcı güncellemesi ve kapanış kararı
+
+* **Poster erişilemiyor:** test ortamı değişti, poster kameranın arka planında değil. Poster için planlanan aynı koşullardaki **T1 ve T2 yapılamıyor — yapılmadı, tamamlanmış/başarılı değildir.** **FP-4B-001 açık ve çözülmedi;** kullanıcının ekran görüntüsüyle doğrulanmış gözlem olarak korunur (ekran görüntüsü depoda yok). Poster testi kapanışta zorunlu engel yapılmadı (kullanıcı kararı); özgün 28 kriterde poster zaten yoktur. Tanı planı (§26) `OT-4B-005` altında **araştırma görevi** olarak taşınır.
+* **Canlı gözlem *[Kullanıcı, nitel]*:** gerçek kamerada çoklu insan takibi çalışıyor; **örtüşmede ID değişimi** (Manuel Test 4) ve **kadrajdan çıkıp yeniden girişte yeni ID** (Manuel Test 5) gözlendi. Kişi sayısı, değişim sayısı/sıklığı, kenar/süre, cihaz bildirilmedi; **sayı/oran üretilmedi**, başarılı/başarısız etiketi verilmedi. Yer değiştirme (Manuel Test 3) ayrıca bildirilmedi. Bu davranışlar önceden belgelenmiş sınırlamalarla uyumludur ve açıkça kayda geçti: **KL-4B-009** (örtüşmede ID değişimi), **KL-4B-010** (çıkıp-girişte yeni ID); gözlem `OBS-4B-003`.
+* **Karar (kullanıcı onayı, 2026-11-13):** Aşama 4B **`COMPLETED`** — yalnızca kapsam içi prototip geliştirme ve doğrulama, belgelenmiş sınırlamalarla. Dayanak: özgün 28 kabul kriterinin 28'i karşılandı (**24 tam kanıtlı, 4 sınırlı kanıtlı:** #9, #17, #19, #21 — §23). Durum kayıtları: 4B `ready_for_manual_verification` → `completed`; **Aşama 4 `in_progress` → `completed`** (yaml'daki mevcut kural: Aşama 4 yalnızca 4B de `COMPLETED` olunca `COMPLETED` olur); Aşama 1–3 `completed`, **Aşama 5–12 `planned` (değişmedi)**; Aşama 5 başlatılmadı, Aşama 5 kodu yazılmadı.
+* **Bu kapanış şunları ifade etmez:** "ID sürekliliği doğrulandı", "takip doğruluğu ölçüldü", "%85 hedefi karşılandı", "poster/yorgan sorunu çözüldü".
+
+### 29.2 Yapılmayan / ölçülmeyen / açık unsurlar (başarılı sayılmaz; kapanışı engellemez)
+
+| Unsur | Durum | Kayıt |
+|---|---|---|
+| Poster T1/T2 (aynı koşullarda) | **Yapılamıyor** (ortam değişti) | `FP-4B-001`, `OT-4B-005` (araştırma görevi) |
+| Poster/çakışan kutu kaynağı (YOLO mu ByteTrack mı) | **Ayrıştırılmadı** | `OBS-4B-001`, `OT-4B-005` |
+| FP-4A-001 (yorgan) ve FP-4B-001 (poster) çözümü | **Çözülmedi** | `KL-4B-002/008`, §27 |
+| Gerçek yorgan canlı testi (Manuel Test 7) | **Yapılmadı** | `OT-4B-002` |
+| Üç kişilik canlı test (Manuel Test 2) | **Belirsiz** (kişi sayısı bildirilmedi) | `OT-4B-001` |
+| Yer değiştirme (Manuel Test 3) | **Ayrıca bildirilmedi** | `OT-4B-001` |
+| Yüksek açı ≈ 2 m (Manuel Test 6) | **Yapılmadı** | `OT-4B-001` |
+| Esc / kırmızı düğme / Ctrl+C gerçek kamerada (Manuel Test 8) | **Bildirilmedi** (Q doğrulandı); otomatik + gerçek Cocoa testiyle karşılandı | `OT-4B-001` (≈ 10 dk'lık isteğe bağlı teyit önerilir) |
+| Örtüşme / çıkış-giriş ID değişimlerinin ayrıntılı kaydı | **Yalnızca nitel gözlem** | `OBS-4B-003`, `KL-4B-009/010`, `OT-4B-003` |
+| ID switch oranı, IDF1 / HOTA / MOTA | **Ölçülmedi; hiçbir değer üretilmedi** (etiketli veri yok) | `OT-4B-003`, `KL-4B-007` |
+| Canlı kare→sonuç gecikmesi, pencereli CPU, ham kamera tavanı | **Bildirilmedi** | `OT-4B-004` (backlog B3-3/B3-4 ertelenmiş) |
+| Pencereli 16,3 ↔ penceresiz 29,9 FPS nedeni | **Açık** | `OBS-4B-002` |
+| Gerçek IP kamera | **Yapılmadı** (4B kapanış koşulu değil) | `OT-4A-003` |
+
+Yaml'da 4B açık görevlerine `closure_blocking: false` alanı eklendi (`configs/project_stages.yaml`); görevler **açık** kalır.
+
+### 29.3 Kapanış sonrası doğrulama *[Ölçüldü; tüm belge/kayıt değişiklikleri yapıldıktan sonra]*
+
+| Kontrol | Sonuç |
+|---|---|
+| `unittest discover -s tests` (varsayılan) | **883 test, `OK (skipped=7)`** — 876 çalıştı ve geçti, 7 isteğe bağlı GUI testi atlandı (28,2 sn) |
+| `ISG_GUI_TESTS=1 … unittest discover -s tests` | **883 test, `OK`, 0 atlandı** (32,1 sn; gerçek Cocoa pencereleri, kamera açılmadı) |
+| `scripts/run_stage2c_checks.py` (Aşama 2 bütünlüğü) | **12/12 geçti** (T2D.2 belge aşama numaraları dahil) |
+| `scripts/check_environment.py` | **BAŞARILI** (0 uyarı, 0 kritik hata) |
+| Yan etki | Aşama 2 denetim betiği izlenen `reports/dataset_audit/stage2c_integrity_checks.json` dosyasının yalnızca `date` alanını güncelledi; **`git checkout` ile geri alındı** (diff'te yok) |
+
+Test kapsamı (883 / 7 atlanan) §12'de ayrıntılandırılmıştır; önceki raporlarla tutarlıdır (Aşama 3: 340/3; 4A: 596/5; 4B: 883/7).
+
+### 29.4 Değişmeyenler ve değişen dosyalar
+
+* **Değişmedi:** 4A ve diğer kaynak kodlar (`src/`, `scripts/`, `tests/`), YOLO model ağırlıkları (`models/`, SHA-256 `0ebbc80d…ee1`), ham veri (`data/`), **ByteTrack algoritması ve adaptörü**, tüm eşikler (`conf 0.25`, `track_high 0.25`, `track_low 0.1`, `new_track 0.25`, `track_buffer 30`, `match_thresh 0.8`, `fuse_score True`), `requirements*.txt`, 4A ve Aşama 3 raporları.
+* **Değişen (yalnızca belge ve durum kayıtları):** `configs/project_stages.yaml`, `README.md`, `docs/project_plan.md`, `docs/architecture.md`, `docs/person_tracking.md`, bu rapor; gerekçeli düzeltme: `docs/person_detection.md` satır 4 (eski "Aşama 4 `IN_PROGRESS`, 4B `READY…`" ifadesi yeni durumla çelişiyordu); yeni dosya: `reports/tracking/STAGE_4B_CLOSURE_ASSESSMENT.md`.
+* **Git:** commit/push yapılmadı; kapanış commit'i kullanıcı kararıdır.
