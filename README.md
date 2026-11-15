@@ -1,6 +1,15 @@
 # ISG_VISION — Yapay Zekâ Destekli Çoklu Çalışan Tanıma ve İSG Denetim Sistemi
 
-> **Mevcut durum: Aşama 4B — Çoklu insan takibi `COMPLETED` (2026-11-13; kullanıcı onayıyla; yalnızca kapsam içi prototip geliştirme ve doğrulama, açık sınırlamalarla).** Önceki durum `READY_FOR_MANUAL_VERIFICATION` (2026-11-12). 4A'nın YOLO insan tespitleri Ultralytics **ByteTrack** ile kareler arasında takip edilir; her aktif kişiye **geçici, oturum kapsamlı Track ID** atanır
+> **Mevcut durum: Aşama 5B — Yüz–kişi (Track ID) ilişkilendirme ve çoklu insan takibi entegrasyonu `READY_FOR_MANUAL_VERIFICATION` (2026-11-15; `COMPLETED` DEĞİL).** YOLO11n insan tespiti, ByteTrack takibi ve YuNet yüz tespiti **aynı süreçte, her model kare başına yalnızca bir kez** çalışır; her yüz, **geometrik kanıt güvenilirse** ilgili **geçici Track ID**'ye bağlanır ("karşılıklı en iyi + belirsizlik payı"; **belirsizde eşleştirilmez**; bir yüz en fazla bir kişiye). ID switch/devralma/örtüşme/oturum değişiminde eski eşleşme taşınmaz; izlere `epoch` + `trusted` verilir. **Gerçek çalışan kimliği, yüz tanıma, embedding/biyometrik veri YOKTUR; yüz–kişi bağı canlı insan doğrulaması DEĞİLDİR** (poster/ekrandaki yüz bağlanabilir). **1404 otomatik test** (önceki 1145 korundu + 259 yeni: 218 mock/birim, 18 sahne/değerlendirme, 23 gerçek model; 10 isteğe bağlı GUI atlanır, 0 başarısız).
+> **Gerçek MacBook kamerasında YALNIZCA tek kişilik (Bölüm A) manuel kontroller yapıldı; altı kontrol kullanıcı tarafından BAŞARILI BİLDİRİLDİ** (birleşik görüntü, baş çevirme/takip sürekliliği, kadrajdan çıkış → yeni ID + `FACE*`, yüz kapatma → `NO FACE`, `keep`/`restore` denemesi, Q/Esc/kırmızı düğme/Ctrl+C; **nitel bildirimdir: tam konsol çıktısı, sayısal ölçüm ve çıkış kodları paylaşılmadı, bağımsız doğruluk ölçümü değildir**). **Bölüm B (2-3 kişi) YAPILMADI; gerçek çoklu-kişi videosu YOK; doğruluk ve ID switch oranı gerçek veride ÖLÇÜLMEDİ** (otomatik kanıt: gerçek fotoğraflar + **sentetik montaj**). Canlı ekran görüntülerinde tek kişide **ek insan kutuları ve yüzün `ambiguous` kalması** gözlendi; kök neden ayrıştırılmadı, **çözülmedi**. OpenCV–Ultralytics iş parçacığı sorunu araştırıldı (kayıtlı sentetik videoda `--opencv-threads restore`: MPS 22,1→43,1 FPS, CPU 19,5→32,1 FPS; sonuç aynı); **varsayılan DEĞİŞTİRİLMEDİ, karar kullanıcıda.** 4B'nin açık sınırlamaları (KL-4B-009/010, FP-4B-001, FP-4A-001, OT-4B-001/003) ve 5A'nın açık görevleri **aynen geçerlidir.** Aşama 5 genel durumu `IN_PROGRESS`; 5C başlatılmadı.
+> Ayrıntı: [docs/face_association.md](docs/face_association.md), [reports/face_association/STAGE_5B_REPORT.md](reports/face_association/STAGE_5B_REPORT.md).
+>
+> **Aşama 5A — Çoklu yüz tespiti `READY_FOR_MANUAL_VERIFICATION` (2026-11-13; `COMPLETED` DEĞİL).** Kamera/video karesindeki birden fazla yüz, OpenCV `FaceDetectorYN` üzerinden **YuNet** (MIT lisanslı, 230 KB, yalnızca CPU; **yeni paket yok**) ile tespit edilir; yüz kutusu, güven, toplam yüz sayısı, FPS ve çıkarım süresi gösterilir.
+> **Yüz tespiti kimlik veya canlı insan doğrulaması DEĞİLDİR** (poster/fotoğraf/ekrandaki yüz de tespit edilir); yüz tanıma, çalışan kimliği, embedding/biyometrik veri ve yüz–Track ID eşleştirmesi (5B) **YOKTUR**. **1145 otomatik test** (önceki 883 korundu + 262 yeni: 225 mock/birim, 37 gerçek model; varsayılanda 10 isteğe bağlı GUI testi atlanır); gerçek YuNet kamerasız örnek fotoğraflarda, 1–16 yüzlük montajlarda ve kayıtlı videoda doğrulandı; 1280×720'de ≈ 11 ms/kare (kayıtlı video, penceresiz ≈ 88 FPS).
+> **Gerçek MacBook kamerasında yalnızca tek kişilik yüz tespiti kullanıcı tarafından nitel olarak doğrulandı (sayısal ölçüm yok); çoklu yüz, mesafe, açı, canlı FPS ve yüksek açı YAPILMADI; doğruluk (precision/recall) ÖLÇÜLMEDİ; test verisi yetersiz** (iki örnek fotoğraf ve türevleri). Aşama 4B'nin açık sorunları (poster yanlış pozitifi FP-4B-001 dâhil) çözülmüş değildir. Aşama 5 genel durumu `IN_PROGRESS`; 5B/5C başlatılmadı (5A/5B/5C ayrımı öneridir). Aşağıdaki 4B/4A metinlerindeki "Aşama 5 başlatılmadı" ifadeleri o kapanış anını anlatır.
+> Ayrıntı: [docs/face_detection.md](docs/face_detection.md), [reports/face_detection/STAGE_5A_REPORT.md](reports/face_detection/STAGE_5A_REPORT.md).
+>
+> **Aşama 4B — Çoklu insan takibi `COMPLETED` (2026-11-13; kullanıcı onayıyla; yalnızca kapsam içi prototip geliştirme ve doğrulama, açık sınırlamalarla).** Önceki durum `READY_FOR_MANUAL_VERIFICATION` (2026-11-12). 4A'nın YOLO insan tespitleri Ultralytics **ByteTrack** ile kareler arasında takip edilir; her aktif kişiye **geçici, oturum kapsamlı Track ID** atanır
 > (çalışan kimliği DEĞİLDİR). YOLO her karede yalnızca bir kez çalışır. **883 otomatik test** (4A'daki 596 korundu + 287 yeni; varsayılanda 876 çalışır ve geçer, 7 isteğe bağlı gerçek-pencere GUI testi atlanır, `ISG_GUI_TESTS=1` ile 0 atlanan); gerçek YOLO + gerçek ByteTrack zinciri CPU ve MPS'te çevrimdışı çalıştırıldı; ByteTrack ≈ 0,4 ms/kare (kayıtlı sentetik videoda ölçüldü). **İlk görev tanımındaki 28 kabul kriterinin 28'i karşılandı: 24'ü tam kanıtlı, 4'ü (#9, #17, #19, #21) sınırlı kanıtlı (canlı kamera kanıtı kısmi; tam doğrulanmış sayılmaz).**
 > **Gerçek MacBook kamerası (kullanıcı) yalnızca KISMEN test edildi:** pencereli MPS 16,3 FPS, penceresiz CPU/MPS 29,9 FPS, Q ile çıkış; 2026-11-13: çoklu takip çalışıyor, **örtüşmede ID değişimi ve kadrajdan çıkıp-girişte yeni ID gözlendi (nitel; oran ölçülmedi)** — bilinen sınırlamalar (KL-4B-009/010). **Poster yanlış pozitifi FP-4B-001 AÇIK ve ÇÖZÜLMEDİ** (test ortamı değişti; aynı koşullarda T1/T2 yeniden doğrulanamıyor; araştırma görevi; kapanışı engellemez); hiçbir eşik değiştirilmedi. **Yapılmayanlar/ölçülmeyenler:** üç kişi (belirsiz), yüksek açı, yorgan, Esc/kırmızı düğme/Ctrl+C (gerçek kamerada), ID switch oranı, IDF1/HOTA/MOTA; "%85 hedefi karşılandı" iddiası yoktur. **Aşama 5 başlatılmadı.**
 > Ayrıntı: [docs/person_tracking.md](docs/person_tracking.md), [reports/tracking/STAGE_4B_REPORT.md](reports/tracking/STAGE_4B_REPORT.md).
@@ -53,7 +62,7 @@ sistem geliştirmektir.
 | Derin öğrenme | PyTorch (+ torchvision), MPS hızlandırma | Evet |
 | Görüntü işleme | OpenCV | Evet |
 | Nesne tespiti | Ultralytics YOLO | Evet; `yolo11n.pt` Aşama 4A'da resmî kaynaktan indirildi (Git dışı) |
-| Yüz tespiti | MediaPipe (veya SCRFD) | MediaPipe kurulu, kullanılmadı |
+| Yüz tespiti | **YuNet** (OpenCV `FaceDetectorYN`, MIT, yalnızca CPU); MediaPipe ve SCRFD değerlendirildi, seçilmedi | Ek paket yok (OpenCV zaten kurulu); `mediapipe` Aşama 1'de kuruldu ve 5A'da **kullanılmıyor**; model dosyası Aşama 5A'da resmî kaynaktan indirildi (Git dışı) |
 | Çoklu kişi takibi | Ultralytics ByteTrack (`lap==0.5.14`); BoT-SORT kullanılmadı | Evet (Aşama 4B; `lap` 4B'de kontrollü kuruldu) |
 | Yüz tanıma | ArcFace tabanlı önceden eğitilmiş model | Hayır (Aşama 7) |
 | Sürüm kontrolü | Git | Evet |
@@ -67,7 +76,7 @@ ISG_VISION/
 │   ├── processed/  merged_ppe/  employees/
 ├── models/ (human_detection, tracking, face_detection, face_recognition, ppe_detection)
 ├── src/isg_vision/
-│   ├── camera/  human_detection/  tracking/  face_detection/
+│   ├── camera/  human_detection/  tracking/  face_detection/  face_association/
 │   ├── face_recognition/  ppe_detection/  integration/  storage/  utils/
 ├── configs/   scripts/   tests/   results/   reports/   docs/
 ├── scripts/git-hooks/pre-commit        (biyometrik veri koruması)
@@ -305,6 +314,44 @@ Kod: `src/isg_vision/tracking/` (`config.py`, `results.py`, `bytetrack_adapter.p
 * **Aşama 5 için not (başlatılmadı):** geçici Track ID, kayıtlı çalışan kimliği değildir; ID değişimlerinde yanlış çalışan eşleştirmesi önlenmelidir (çok kareli doğrulama, belirsizlikte eşleştirmeme). Ayrıntı: docs/person_tracking.md §18.
 * Testler: `.venv/bin/python -m unittest discover -s tests` — 883 test: 876 çalışır ve geçer, **7 atlanır** (hepsi isteğe bağlı gerçek-pencere GUI testi: Aşama 3'ten 3, 4A'dan 2, 4B'den 2; `ISG_GUI_TESTS=1` ile 0 atlanan). Gerçek kamera açmaz, ağ kullanmaz; gerçek model/ByteTrack testleri `lap`/ağırlık yoksa açık nedenle atlanırdı, bu makinede atlanmadı. Hiçbiri gerçek kamera/doğruluk kanıtı değildir (rapor §12).
 
+## 13.5 Aşama 5A — Çoklu yüz tespiti (komutlar)
+
+Durum: `READY_FOR_MANUAL_VERIFICATION` (kullanıcının gerçek MacBook kamerası testleri bekliyor; `COMPLETED` değil). Amaç: kamera/video karesindeki **birden fazla insan yüzünü** YuNet ile tespit etmek; her yüz için `bbox_xyxy`, `confidence`, `frame_index`, `timestamp`, `image_size` üretmek. **Yüz–Track ID eşleştirmesi, yüz tanıma, çalışan kimliği ve biyometrik veri yoktur**; görüntü kaydedilmez; ağ yalnızca model indirme betiğinde kullanılır. Tam teknik doküman: [docs/face_detection.md](docs/face_detection.md).
+
+```bash
+.venv/bin/python scripts/download_face_model.py                  # model (~230 KB, MIT; boyut+SHA-256 doğrulanır) — ağ kullanan TEK adım
+.venv/bin/python scripts/run_face_detection.py --source camera --camera-index 0
+.venv/bin/python scripts/run_face_detection.py --source video --video-path /yol/video.mp4
+.venv/bin/python scripts/run_face_detection.py --source camera --conf 0.7 --detect-width 960
+.venv/bin/python scripts/run_face_detection.py --source camera --no-display --max-frames 300
+.venv/bin/python scripts/run_face_detection.py --help
+.venv/bin/python scripts/benchmark_face_detection.py --gui       # sentetik montajlarla hız ölçümü (doğruluk DEĞİL)
+```
+
+* Pencere: her yüz için kutu + güven; `FACES: n`, FPS, `INFERENCE ms`; her zaman `FACE BOX = detection only (not identity, not liveness)`. Çıkış `Q` / `Esc` / pencereyi kapatma / `Ctrl+C`. **Cihaz seçeneği yoktur** (YuNet OpenCV'de yalnızca CPU'da çalışır; OpenCL hedefi etkisiz ölçüldü).
+* **Ölçülen (kayıtlı sentetik video, penceresiz, yalnızca bu makine):** çıkarım ≈ 11 ms/kare (1280×720), ≈ 88 FPS; yüz sayısı süreyi etkilemiyor (0–16 yüz); `--detect-width 960` ≈ 124 FPS. `ultralytics` aynı süreçte içe aktarılırsa OpenCV tek iş parçacığına düşer ve ≈ 2,7× yavaşlar (5B için not). **Ölçülmeyen:** canlı kamera performansı, doğruluk (precision/recall/AP), gerçek kamera.
+* **Bilinen sınırlamalar:** kimlik/canlılık değildir; poster/fotoğraf/ekrandaki yüz de tespit edilir; düzlem içi 60°+ dönmüş yüz, kadrajda ~%75+ kesik yüz kaçabilir (tek görüntüde ölçüldü); bulanık arka plan yüzleri `conf 0,6`'da kabul edilebilir; test verisi yetersiz.
+* **Açık görevler:** `OT-5A-001…008` (gerçek kamera manuel testleri, doğruluk ölçümü, veri çeşitliliği, canlı performans, yüksek açı, ortak süreç iş parçacığı, kullanılmayan `mediapipe`, alternatif modeller); manuel test planı: docs/face_detection.md §13.
+* Testler: `.venv/bin/python -m unittest discover -s tests` — **1145 test: 1135 çalışır ve geçer, 10 atlanır** (hepsi isteğe bağlı gerçek-pencere GUI testi; `ISG_GUI_TESTS=1` ile 0 atlanan). Mock (225) ve gerçek model (37) testleri ayrı raporlanır; hiçbiri gerçek kamera veya doğruluk kanıtı değildir.
+
+## 13.6 Aşama 5B — Yüz–kişi ilişkilendirme ve çoklu insan takibi entegrasyonu (komutlar)
+
+```bash
+.venv/bin/python scripts/run_face_person_association.py --source camera --camera-index 0 --device mps
+.venv/bin/python scripts/run_face_person_association.py --source video --video-path /yol/video.mp4 --device mps
+.venv/bin/python scripts/run_face_person_association.py --source camera --device mps --no-display --max-frames 300
+.venv/bin/python scripts/run_face_person_association.py --source camera --device mps --opencv-threads restore   # YuNet yavaşlamasını deney
+.venv/bin/python scripts/run_face_person_association.py --help
+.venv/bin/python scripts/benchmark_face_person_association.py          # performans + iş parçacığı matrisi (kayıtlı SENTETİK video)
+.venv/bin/python scripts/evaluate_face_association_scenarios.py       # senaryo doğruluğu (sentetik montaj) + eşik duyarlılığı
+```
+
+* Pencere: insan kutusu + `ID n` (+ `FACE` / `FACE*` / `NO FACE` / `FACE ?`), yüz kutusu + `FACE>ID n` (eşleşmeyen/belirsiz yüze ID yazılmaz), insan/yüz/eşleşme sayıları, FPS, YOLO/ByteTrack/YuNet/ilişkilendirme süreleri; her zaman `LINK = geometry only (not identity, not liveness)`. Çıkış `Q` / `Esc` / pencereyi kapatma / `Ctrl+C`; görüntü kaydedilmez, ağ kullanılmaz.
+* **Ölçülen (kayıtlı sentetik video, M4, 1280×720, penceresiz; canlı kamera DEĞİL):** `keep` (varsayılan) MPS 22,1 / CPU 19,5 FPS; `--opencv-threads restore` MPS 43,1 / CPU 32,1 FPS (YuNet 30,7 → 11,0 ms; YOLO/ByteTrack gerilemedi; sonuç imzası 12/12 koşuda aynı); ilişkilendirme ≈ 0,1 ms.
+* **Bilinen sınırlamalar:** bağ kimlik/canlılık değildir (poster/ekran yüzü bağlanabilir); ID switch/devralma 4B'nin açık sınırlamasıdır (5B yanlış taşımayı önler, switch'i önlemez); belirsizlik muhafazakârdır; eşikler gerçek veriyle ayarlanmadı; kanıt sentetik montajdır.
+* **Açık görevler:** `OT-5B-001…010` (gerçek kamera Bölüm A/B, doğruluk/ID switch oranı, canlı performans, gerçek poster/telefon, yüksek açı, eşik ayarı, `--opencv-threads` varsayılan kararı, kutu bölünmesi, paralelleştirme); manuel test planı ve BOŞ kayıt şablonu: docs/face_association.md §13.
+* Testler: `.venv/bin/python -m unittest discover -s tests` — **1404 test: 1394 çalışır ve geçer, 10 atlanır** (hepsi isteğe bağlı gerçek-pencere GUI testi), 0 başarısız. Mock/birim (218), sahne/değerlendirme (18) ve gerçek model (23) ayrı raporlanır; hiçbiri gerçek kamera veya doğruluk kanıtı değildir.
+
 ## 14. Geliştirme aşamaları
 
 Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [docs/project_plan.md](docs/project_plan.md)
@@ -314,7 +361,7 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 2. **Veri setlerinin analizi ve doğrulanması** — `COMPLETED` (22/22 kullanıcı kararı uygulandı; 990 görüntü = 794 train + 196 validation)
 3. **Canlı kamera altyapısı** — `COMPLETED`: OpenCV kamera erişimi, video akışı, FPS hesaplama, kamera hata yönetimi, çoklu kişi analizi için akış altyapısı (YOLO eğitimi ve veri birleştirme YOK)
 4. **Çoklu insan tespiti ve takibi** — `COMPLETED`: 4A tespit `COMPLETED` (kapsam içi prototip); 4B takip `COMPLETED` (2026-11-13; kapsam içi prototip, açık sınırlamalarla; "Aşama 4, yalnızca 4B de `COMPLETED` olunca `COMPLETED` olur" kuralı uygulandı)
-5. **Çoklu yüz tespiti**
+5. **Çoklu yüz tespiti** — `IN_PROGRESS`: 5A (yüz tespiti) `READY_FOR_MANUAL_VERIFICATION` (2026-11-13; `COMPLETED` değil; gerçek kamera testleri kullanıcıda); 5B (yüz–Track ID ilişkilendirme + çoklu insan takibi entegrasyonu) `READY_FOR_MANUAL_VERIFICATION` (2026-11-15; `COMPLETED` değil; gerçek kamera ve gerçek çoklu-kişi testleri kullanıcıda); 5C başlatılmadı (alt aşama ayrımı öneridir)
 6. **Çalışan kayıt sistemi**
 7. **Çoklu çalışan kimlik tanıma**
 8. **İlk YOLO İSG modelinin eğitilmesi** — türetilmiş eğitim verisi ve manifest tabanlı sınıf dönüşümü bu aşamanın hazırlığında
@@ -326,6 +373,10 @@ Proje 12 aşamada geliştirilir. Bu sıra proje boyunca **tek referanstır**: [d
 Aşama kapanış kararları (Aşama 3 dahil) ve sonraki aşamaya geçiş kullanıcıya aittir.
 
 ## 15. Mevcut geliştirme durumu
+
+**Aşama 5B — Yüz–kişi ilişkilendirme ve çoklu insan takibi entegrasyonu (`READY_FOR_MANUAL_VERIFICATION`, 2026-11-15; `COMPLETED` değil).** Eklenenler: `src/isg_vision/face_association/` (`FacePersonAssociator`: geometrik "karşılıklı en iyi + belirsizlik payı" eşleştirme; `ContinuityMonitor`: ID switch/devralma/örtüşme/oturum için `epoch` + `trusted`; `AssociatedPerson`/`AssociatedFace`/`FaceAssociationResult` + oluşturma anında denetlenen değişmezler; `run_face_association` döngüsü; `draw_face_associations`; CLI; `--opencv-threads`; sentetik sahne üretici, ground-truth değerlendirme ve performans ölçüm aracı), `scripts/run_face_person_association.py`, `benchmark_face_person_association.py`, `evaluate_face_association_scenarios.py`, `docs/face_association.md`, `reports/face_association/STAGE_5B_REPORT.md`. **259 yeni test** (218 mock/birim, 18 sahne/değerlendirme, 23 gerçek model); toplam 1404, önceki 1145 korundu. **Gerçek kamera (kullanıcı bildirimi, nitel):** Bölüm A'dan 6 kontrol başarılı bildirildi (sayısal kayıt yok; docs/face_association.md §13.4); ek insan kutuları/`ambiguous` yüz gözlendi (çözülmedi). **Yapılmayan / açık (başarılı sayılmaz):** Bölüm B (2-3 kişi) ve Bölüm A'dan A2/A4/A6/A10, canlı `keep`/`restore` sayısal özetleri, çıkış kodları, gerçek çoklu-kişi videosu, doğruluk/ID switch oranı, gerçek poster/telefon, yüksek açı, canlı performans, `--opencv-threads` varsayılan kararı, eşik ayarı. Yeni paket/model eklenmedi; ByteTrack/YOLO ayarları değişmedi. Aşama 4B'nin açık sorunları çözülmedi.
+
+**Aşama 5A — Çoklu yüz tespiti (`READY_FOR_MANUAL_VERIFICATION`, 2026-11-13; `COMPLETED` değil).** Eklenenler: `FaceDetector` (OpenCV `FaceDetectorYN` + YuNet ONNX; model bir kez yüklenir, boyut+SHA-256 doğrulanır, ağ/indirme yok), `FaceDetectionConfig`, `FaceDetection`/`FaceDetectionResult` (`bbox_xyxy`, `confidence`, `frame_index`, `timestamp`, `image_size`, `face_index`, `at_border`; kimlik/Track ID/embedding/işaret noktası YOK), `draw_face_detections` (kopya üzerinde çizim; "kimlik/canlılık değildir" uyarısı), `run_face_detection` döngüsü, `scripts/run_face_detection.py`, `download_face_model.py`, `benchmark_face_detection.py`. **262 yeni test** (225 mock/birim, 37 gerçek model); toplam 1145, önceki 883 korundu. **Yapılmayan / açık (başarılı sayılmaz):** gerçek MacBook kamerası testlerinin çoğu (yalnızca tek kişilik canlı yüz tespiti kullanıcı tarafından nitel doğrulandı; çoklu yüz, mesafe, açı, kısmi görünüm, ışık yok), doğruluk ölçümü, yüksek açı, canlı performans, gerçek poster/basılı fotoğraf testi, yüz–Track ID eşleştirmesi (5B'de geliştirildi). Yeni bağımlılık eklenmedi; model: YuNet (MIT; sabit commit + SHA-256 kaydı docs/face_detection.md §6). Aşama 4B'nin açık sorunları çözülmedi.
 
 **Aşama 4B — Çoklu insan takibi (`COMPLETED`, 2026-11-13; kapsam içi prototip geliştirme ve doğrulama; önceki durum `READY_FOR_MANUAL_VERIFICATION`, 2026-11-12).** Eklenenler: `PersonTracker` (4A `DetectionResult` → gerçek Ultralytics ByteTrack → `TrackingResult`; YOLO kare başına tek çağrı; geçici, oturum kapsamlı Track ID; kayıp tamponu ve aktif iz ayrımı; kaynak/çözünürlük değişiminde otomatik sıfırlama; kare sırası ve girdi doğrulaması),
 `TrackingConfig` (Ultralytics varsayılanları; YOLO `conf` ↔ ByteTrack eşik etkileşiminin çalışma anı açıklaması), canlı görselleştirme (kutu + `ID n`, `DETECTIONS`/`ACTIVE TRACKS`/`LOST TRACKS`), `run_tracking` döngüsü, `scripts/run_person_tracking.py`, benchmark ve `lap==0.5.14` bağımlılığı (otomatik kurulum engellendi).

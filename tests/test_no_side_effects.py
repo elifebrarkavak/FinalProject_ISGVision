@@ -51,6 +51,32 @@ MODULES = (
     "isg_vision.tracking.cli",
     "isg_vision.tracking.benchmark",
     "isg_vision.face_detection",
+    "isg_vision.face_detection.errors",
+    "isg_vision.face_detection.config",
+    "isg_vision.face_detection.results",
+    "isg_vision.face_detection.weights",
+    "isg_vision.face_detection.detector",
+    "isg_vision.face_detection.visualization",
+    "isg_vision.face_detection.pipeline",
+    "isg_vision.face_detection.cli",
+    "isg_vision.face_detection.benchmark",
+    "isg_vision.face_detection",
+    "isg_vision.face_association",
+    "isg_vision.face_association.errors",
+    "isg_vision.face_association.config",
+    "isg_vision.face_association.geometry",
+    "isg_vision.face_association.results",
+    "isg_vision.face_association.matching",
+    "isg_vision.face_association.continuity",
+    "isg_vision.face_association.associator",
+    "isg_vision.face_association.threads",
+    "isg_vision.face_association.scenes",
+    "isg_vision.face_association.evaluation",
+    "isg_vision.face_association.visualization",
+    "isg_vision.face_association.pipeline",
+    "isg_vision.face_association.cli",
+    "isg_vision.face_association.benchmark",
+    "isg_vision.face_association",
     "isg_vision.face_recognition",
     "isg_vision.ppe_detection",
     "isg_vision.integration",
@@ -61,7 +87,9 @@ MODULES = (
 )
 WATCHED = ("data", "models")
 # Aşama 4A: models/ altında YALNIZCA bu onaylı resmî ağırlık bulunabilir (SHA-256'sı weights.py'de sabitli; Git dışında).
-APPROVED_WEIGHTS = frozenset({"models/human_detection/yolo11n.pt"})
+# Aşama 5A: yüz tespiti için YALNIZCA bu onaylı resmî model eklendi (boyutu ve SHA-256'sı face_detection/weights.py'de sabitli; Git dışında;
+# kaynak: OpenCV Zoo sabit commit'i, lisans MIT). Başka hiçbir model dosyası kabul edilmez.
+APPROVED_WEIGHTS = frozenset({"models/human_detection/yolo11n.pt", "models/face_detection/face_detection_yunet_2026may.onnx"})
 
 
 def snapshot() -> dict[str, tuple[int, int]]:
